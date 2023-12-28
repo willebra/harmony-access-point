@@ -609,9 +609,12 @@ public class WebServiceImpl implements WebServicePluginInterface {
         for (final PartInfo partInfo : getPartInfo(messaging)) {
             ExtendedPartInfo extPartInfo = (ExtendedPartInfo) partInfo;
             LargePayloadType payloadType = WEBSERVICE_OF.createLargePayloadType();
-            if (extPartInfo.getPayloadDatahandler() != null) {
-                LOG.debug("payloadDatahandler Content Type: [{}]", extPartInfo.getPayloadDatahandler().getContentType());
-                payloadType.setValue(extPartInfo.getPayloadDatahandler());
+            DataHandler payloadDatahandler = extPartInfo.getPayloadDatahandler();
+            if (payloadDatahandler != null) {
+                String contentType = payloadDatahandler.getContentType();
+                LOG.debug("payloadDatahandler Content Type: [{}]", contentType);
+                payloadType.setContentType(contentType);
+                payloadType.setValue(payloadDatahandler);
             }
             if (extPartInfo.isInBody()) {
                 retrieveMessageResponse.value.setBodyload(payloadType);
