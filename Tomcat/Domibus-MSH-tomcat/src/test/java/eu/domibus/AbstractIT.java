@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessage;
+import eu.domibus.api.multitenancy.Domain;
 import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.api.multitenancy.DomainService;
 import eu.domibus.api.property.DomibusPropertyMetadataManagerSPI;
@@ -334,6 +335,19 @@ public abstract class AbstractIT {
 
     public void deleteAllMessages(String... messageIds) {
         itTestsService.deleteAllMessages(messageIds);
+    }
+
+    protected byte[] getKeystoreContentForDomainFromClasspath(String resourceName, Domain domain) throws IOException {
+        String fullClasspath = "keystores/" + resourceName;
+        return getResourceFromClasspath(fullClasspath);
+    }
+
+    protected byte[] getResourceFromClasspath(String resourceClasspathLocation) throws IOException {
+        final InputStream contentInputStream = this.getClass().getClassLoader().getResourceAsStream(resourceClasspathLocation);
+        if (contentInputStream == null) {
+            throw new RuntimeException("Could not get resource from classpath [" + resourceClasspathLocation + "]");
+        }
+        return IOUtils.toByteArray(contentInputStream);
     }
 
 }

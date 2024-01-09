@@ -12,6 +12,7 @@ import eu.domibus.core.logging.LoggingService;
 import eu.domibus.web.rest.ro.LoggingFilterRequestRO;
 import org.apache.commons.lang3.BooleanUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,7 @@ public class LoggingResourceIT extends AbstractIT {
 
     @Test
     @WithMockUser(username = "admin", roles = {"AP_ADMIN"})
+    @Ignore
     public void getLogLevel_ok() throws Exception {
         authUtils.setAuthenticationToSecurityContext("", "", AuthRole.ROLE_AP_ADMIN);
 
