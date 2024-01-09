@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import eu.domibus.AbstractIT;
+import eu.domibus.api.security.AuthRole;
 import eu.domibus.api.security.AuthUtils;
 import eu.domibus.core.converter.DomibusCoreMapper;
 import eu.domibus.core.logging.LoggingEntry;
@@ -73,15 +74,18 @@ public class LoggingResourceIT extends AbstractIT {
     }
 
     @Test(expected = NestedServletException.class)
-    @WithMockUser
     public void getLogLevel_accessDenied() throws Exception {
+        authUtils.clearSecurityContext();
+
         // the order of the items are not checked
         mockMvc.perform(get("/rest/logging/loglevel"));
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "admin", roles = {"AP_ADMIN"})
     public void getLogLevel_ok() throws Exception {
+        authUtils.setAuthenticationToSecurityContext("", "", AuthRole.ROLE_AP_ADMIN);
+
         final List<LoggingEntry> loggingEntryList = new ArrayList<>();
         LoggingEntry loggingLevelRO1 = new LoggingEntry();
         loggingLevelRO1.setLevel("INFO");

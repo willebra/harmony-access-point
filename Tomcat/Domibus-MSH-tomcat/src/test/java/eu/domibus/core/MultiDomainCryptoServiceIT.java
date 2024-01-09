@@ -98,7 +98,6 @@ public class MultiDomainCryptoServiceIT extends AbstractIT {
     }
 
     @Test
-    @Ignore
     public void saveStoresFromDBToDisk() {
         Domain domain = DomainService.DEFAULT_DOMAIN;
         createStore(DOMIBUS_TRUSTSTORE_NAME, "keystores/gateway_truststore2.jks");

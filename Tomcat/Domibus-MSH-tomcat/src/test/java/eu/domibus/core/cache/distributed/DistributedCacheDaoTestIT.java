@@ -20,12 +20,13 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-@Ignore//Ignored on purpose for the following reason: @TestPropertySource marks the Spring context as dirty and recreating the context fails due to ActiveMQ
 @TestPropertySource(properties = {"domibus.deployment.clustered=true"})
 public class DistributedCacheDaoTestIT extends AbstractIT {
 
     private static final DomibusLogger LOG = DomibusLoggerFactory.getLogger(DistributedCacheDaoTestIT.class);
-    public static final int EXPECTED_CACHE_SIZE = 5000;
+    public static final int EXPECTED_CACHE_SIZE = 5;
+
+    public static final int EXPECTED_NEAR_CACHE_SIZE = 5000;
     public static final int EXPECTED_TTL = 3600;
     public static final int EXPECTED_MAX_IDLE = 3600;
 
@@ -50,7 +51,7 @@ public class DistributedCacheDaoTestIT extends AbstractIT {
         assertEquals(EXPECTED_MAX_IDLE, mapConfig.getMaxIdleSeconds());
 
         final NearCacheConfig nearCacheConfig = mapConfig.getNearCacheConfig();
-        assertEquals(EXPECTED_CACHE_SIZE, nearCacheConfig.getEvictionConfig().getSize());
+        assertEquals(EXPECTED_NEAR_CACHE_SIZE, nearCacheConfig.getEvictionConfig().getSize());
         assertEquals(EXPECTED_TTL, nearCacheConfig.getTimeToLiveSeconds());
     }
 

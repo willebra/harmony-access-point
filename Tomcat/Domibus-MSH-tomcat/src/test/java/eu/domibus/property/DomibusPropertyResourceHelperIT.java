@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,6 +65,7 @@ public class DomibusPropertyResourceHelperIT extends AbstractIT {
     }
 
     @Test
+    @WithMockUser(username = "admin", roles={"AP_ADMIN"})
     public void setProperty_composable() {
         String propertyName = "composable_property_name";
         boolean isDomain = false;
@@ -109,6 +111,7 @@ public class DomibusPropertyResourceHelperIT extends AbstractIT {
      * tests adding a nested property: checking that it is added with the correct name
      */
     @Test
+    @WithMockUser(username = "admin", roles={"AP_ADMIN"})
     public void setProperty_nested() {
         String composablePropertyName = "composable_property_nested";
         String nestedPropertyName = composablePropertyName + ".prop1";

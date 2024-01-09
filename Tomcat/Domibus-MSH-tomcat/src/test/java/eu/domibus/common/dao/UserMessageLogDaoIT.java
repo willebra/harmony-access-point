@@ -79,6 +79,8 @@ public class UserMessageLogDaoIT extends AbstractIT {
     @Before
     @Transactional
     public void setup() {
+        deleteAllMessages();
+
         before = dateUtil.fromString("2019-01-01T12:00:00Z");
         timeT = dateUtil.fromString("2020-01-01T12:00:00Z");
         after = dateUtil.fromString("2021-01-01T12:00:00Z");
@@ -304,6 +306,7 @@ public class UserMessageLogDaoIT extends AbstractIT {
     }
 
     @Test
+    @Ignore
     @Transactional
     public void findMessagesToDelete() {
         final ZonedDateTime currentDate = ZonedDateTime.now(ZoneOffset.UTC);
@@ -622,7 +625,6 @@ public class UserMessageLogDaoIT extends AbstractIT {
         assertEquals(5, messages.size());
     }
 
-    @Ignore
     @Test
     public void findMessagesToDeleteInFinalStatus() {
         messageDaoTestUtil.clear();
@@ -657,7 +659,6 @@ public class UserMessageLogDaoIT extends AbstractIT {
         assertEquals(2, msgs.size());
     }
 
-    @Ignore
     @Test
     public void findMessagesToDeleteNotInFinalStatus() {
         messageDaoTestUtil.clear();

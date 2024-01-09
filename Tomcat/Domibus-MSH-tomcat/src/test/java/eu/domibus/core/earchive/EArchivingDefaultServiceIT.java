@@ -82,7 +82,6 @@ public class EArchivingDefaultServiceIT extends AbstractIT {
 
     @Before
     public void setUp() throws Exception {
-        waitUntilDatabaseIsInitialized();
         Assert.assertEquals(101000000000000L, ((long) eArchiveBatchStartDao.findByReference(CONTINUOUS_ID).getLastPkUserMessage()));
         Assert.assertEquals(101000000000000L, ((long) eArchiveBatchStartDao.findByReference(SANITY_ID).getLastPkUserMessage()));
         // prepare

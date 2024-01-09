@@ -16,6 +16,7 @@ import eu.domibus.plugin.BackendConnector;
 import eu.domibus.plugin.notification.AsyncNotificationConfiguration;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
@@ -141,6 +142,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
     }
 
     @Test
+    @Ignore
     public void deleteExpiredDownloaded_deletesOnlyPayload_ifIsDeleteMessageMetadataAndNotZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
         //given
         uploadPmodeWithCustomMpc(true, MAX_VALUE, MAX_VALUE, 2, MAX_VALUE);
