@@ -91,6 +91,10 @@ public class ExtExceptionHelper {
     public ResponseEntity<ErrorDTO>handleExtException(RequestValidationException requestValidationException){
         return createResponse(requestValidationException.getMessage(),HttpStatus.BAD_REQUEST);
     }
+    public ResponseEntity<ErrorDTO> handleExtException(AuthenticationException authenticationException) {
+        LOG.error("Access denied due to incorrect role:", authenticationException);
+        return createResponse(authenticationException.getMessage(), HttpStatus.UNAUTHORIZED);
+    }
 
     protected ResponseEntity<ErrorDTO> createResponseFromCoreException(Throwable ex, HttpStatus httpStatus) {
         Throwable cause = extractCause(ex);

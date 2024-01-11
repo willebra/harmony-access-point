@@ -12,6 +12,7 @@ import eu.domibus.api.plugin.BackendConnectorService;
 import eu.domibus.api.pmode.PModeConstants;
 import eu.domibus.api.pmode.PModeException;
 import eu.domibus.api.security.AuthUtils;
+import eu.domibus.api.security.AuthenticationException;
 import eu.domibus.common.ErrorCode;
 import eu.domibus.common.model.configuration.*;
 import eu.domibus.core.ebms3.EbMS3Exception;
@@ -281,7 +282,7 @@ public class MessageSubmitterImplTest {
             times = 1;
             authUtils.isUnsecureLoginAllowed();
             times = 1;
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
             times = 1;
             errorLogService.createErrorLog((EbMS3Exception) any, MSHRole.SENDING, null);
             times = 1;
@@ -297,9 +298,6 @@ public class MessageSubmitterImplTest {
 
             messageData.getProcessingType();
             result = ProcessingType.PUSH;
-
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            result = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1";
 
             UserMessage userMessage = createUserMessage();
             transformer.transformFromSubmission(messageData);
@@ -343,7 +341,6 @@ public class MessageSubmitterImplTest {
         }
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
             messageIdGenerator.generateMessageId();
             pModeProvider.findUserMessageExchangeContext(withAny(new UserMessage()), MSHRole.SENDING, false, ProcessingType.PUSH);
             pModeProvider.getLegConfiguration(anyString);
@@ -415,7 +412,7 @@ public class MessageSubmitterImplTest {
             times = 1;
             authUtils.isUnsecureLoginAllowed();
             times = 1;
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
             times = 1;
             messageIdGenerator.generateMessageId();
             times = 1;
@@ -441,15 +438,15 @@ public class MessageSubmitterImplTest {
             transformer.transformFromSubmission(messageData);
             result = userMessage;
 
-            userMessageSecurityService.validateUserAccessWithUnsecureLoginAllowed(userMessage, originalUser, MessageConstants.ORIGINAL_SENDER);
-            result = new AccessDeniedException("You are not allowed to handle this message. You are authorized as [" + originalUser + "]");
+            userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(userMessage, MessageConstants.ORIGINAL_SENDER);
+            result = new AuthenticationException("You are not allowed to handle this message. You are authorized as [" + originalUser + "]");
         }};
 
         try {
             messageSubmitterImpl.submit(messageData, BACKEND);
-            Assert.fail("It should throw AccessDeniedException");
-        } catch (AccessDeniedException ex) {
-            LOG.debug("AccessDeniedException catched: " + ex.getMessage());
+            Assert.fail("It should throw AuthenticationException");
+        } catch (AuthenticationException ex) {
+            LOG.debug("AuthenticationException cought: " + ex.getMessage());
             assertTrue(ex.getMessage().contains("You are not allowed to handle this message. You are authorized as [mycorner]"));
         }
 
@@ -508,9 +505,6 @@ public class MessageSubmitterImplTest {
             backendConnectorService.isBackendConnectorEnabled(BACKEND);
             result = true;
 
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            result = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1";
-
             transformer.transformFromSubmission(messageData);
             result = userMessage;
 
@@ -542,7 +536,6 @@ public class MessageSubmitterImplTest {
         assertEquals(MESS_ID, messageId);
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
             messageIdGenerator.generateMessageId();
             pModeProvider.getLegConfiguration(pModeKey);
             messagingService.storeMessagePayloads(withAny(new UserMessage()), null, MSHRole.SENDING, withAny(new LegConfiguration()), anyString);
@@ -612,11 +605,9 @@ public class MessageSubmitterImplTest {
         }
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            times = 1;
             authUtils.isUnsecureLoginAllowed();
             times = 1;
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
             times = 1;
             messageIdGenerator.generateMessageId();
             times = 1;
@@ -653,9 +644,6 @@ public class MessageSubmitterImplTest {
             assertTrue(ex.getMessage().contains("already exists. Message identifiers must be unique"));
         }
 
-        new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-        }};
     }
 
     @Test
@@ -699,11 +687,9 @@ public class MessageSubmitterImplTest {
         }
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            times = 1;
             authUtils.isUnsecureLoginAllowed();
             times = 1;
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
             times = 1;
             messageIdGenerator.generateMessageId();
             times = 1;
@@ -808,13 +794,10 @@ public class MessageSubmitterImplTest {
         }
 
         new FullVerifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            times = 1;
-
             authUtils.isUnsecureLoginAllowed();
             times = 1;
 
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
             times = 1;
 
             errorLogService.createErrorLog((EbMS3Exception) any, MSHRole.SENDING, null);

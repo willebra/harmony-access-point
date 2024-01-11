@@ -6,6 +6,7 @@ import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessage;
 import eu.domibus.api.model.UserMessageLog;
+import eu.domibus.api.security.AuthUtils;
 import eu.domibus.api.usermessage.UserMessageDownloadEvent;
 import eu.domibus.common.ErrorResult;
 import eu.domibus.core.error.ErrorLogEntry;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -43,18 +45,21 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     private final ErrorLogService errorLogService;
 
-    protected final ApplicationEventPublisher applicationEventPublisher;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    protected UserMessageSecurityService userMessageSecurityService;
+    private UserMessageSecurityService userMessageSecurityService;
+
+    private final AuthUtils authUtils;
 
     public MessageRetrieverImpl(UserMessageDefaultService userMessageService, MessagingService messagingService, UserMessageLogDefaultService userMessageLogService,
-                                ErrorLogService errorLogService, ApplicationEventPublisher applicationEventPublisher, UserMessageSecurityService userMessageSecurityService) {
+                                ErrorLogService errorLogService, ApplicationEventPublisher applicationEventPublisher, UserMessageSecurityService userMessageSecurityService, AuthUtils authUtils) {
         this.userMessageService = userMessageService;
         this.messagingService = messagingService;
         this.userMessageLogService = userMessageLogService;
         this.errorLogService = errorLogService;
         this.applicationEventPublisher = applicationEventPublisher;
         this.userMessageSecurityService = userMessageSecurityService;
+        this.authUtils = authUtils;
     }
 
     @Override
@@ -66,11 +71,11 @@ public class MessageRetrieverImpl implements MessageRetriever {
     @Override
     @Transactional
     public Submission downloadMessage(final String messageId, boolean markAsDownloaded) throws MessageNotFoundException {
+        checkMessageAuthorization(messageId, eu.domibus.common.MSHRole.RECEIVING);
         LOG.info("Downloading message with id [{}]", messageId);
         final UserMessage userMessage = userMessageService.getByMessageId(messageId, MSHRole.RECEIVING);
-        userMessageSecurityService.validateUserAccessWithUnsecureLoginAllowed(userMessage);
         if (markAsDownloaded) {
-            markMessageAsDownloaded(userMessage);
+            markMessageAsDownloaded(messageId);
         }
         return messagingService.getSubmission(userMessage);
     }
@@ -84,8 +89,11 @@ public class MessageRetrieverImpl implements MessageRetriever {
     @Override
     @Transactional
     public Submission downloadMessage(final Long messageEntityId) throws MessageNotFoundException {
+        checkMessageAuthorization(messageEntityId);
         LOG.info("Downloading message with entity id [{}]", messageEntityId);
         final UserMessage userMessage = userMessageService.getByMessageEntityId(messageEntityId);
+
+        checkMessageAuthorization(messageEntityId);
 
         markMessageAsDownloaded(userMessage);
         return messagingService.getSubmission(userMessage);
@@ -93,6 +101,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     @Override
     public Submission browseMessage(String messageId) {
+        checkMessageAuthorization(messageId);
         try {
             return browseMessage(messageId, eu.domibus.common.MSHRole.RECEIVING);
         } catch (eu.domibus.api.messaging.MessageNotFoundException ex) {
@@ -103,6 +112,8 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     @Override
     public Submission browseMessage(String messageId, eu.domibus.common.MSHRole mshRole) throws eu.domibus.api.messaging.MessageNotFoundException {
+        checkMessageAuthorization(messageId, mshRole);
+
         LOG.info("Browsing message with id [{}] and role [{}]", messageId, mshRole);
 
         MSHRole role = MSHRole.valueOf(mshRole.name());
@@ -113,6 +124,8 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     @Override
     public Submission browseMessage(final Long messageEntityId) {
+        checkMessageAuthorization(messageEntityId);
+
         LOG.info("Browsing message with entity id [{}]", messageEntityId);
 
         UserMessage userMessage = userMessageService.getByMessageEntityId(messageEntityId);
@@ -122,6 +135,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     @Override
     public eu.domibus.common.MessageStatus getStatus(final String messageId) throws DuplicateMessageException {
+        userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId);
         try {
             final MessageStatus messageStatus = userMessageLogService.getMessageStatusById(messageId);
             return eu.domibus.common.MessageStatus.valueOf(messageStatus.name());
@@ -136,6 +150,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
     public eu.domibus.common.MessageStatus getStatus(String messageId, eu.domibus.common.MSHRole mshRole) {
         try {
             MSHRole role = MSHRole.valueOf(mshRole.name());
+            userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId, role);
             final MessageStatus messageStatus = userMessageLogService.getMessageStatus(messageId, role);
             return eu.domibus.common.MessageStatus.valueOf(messageStatus.name());
         } catch (eu.domibus.api.messaging.MessageNotFoundException exception) {
@@ -146,6 +161,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
     @Override
     public eu.domibus.common.MessageStatus getStatus(final Long messageEntityId) {
         try {
+            userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageEntityId);
             final MessageStatus messageStatus = userMessageLogService.getMessageStatus(messageEntityId);
             return eu.domibus.common.MessageStatus.valueOf(messageStatus.name());
         } catch (eu.domibus.api.messaging.MessageNotFoundException exception) {
@@ -157,6 +173,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
     public List<? extends ErrorResult> getErrorsForMessage(final String messageId) throws MessageNotFoundException, DuplicateMessageException {
         UserMessageLog userMessageLog = null;
         try {
+            userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId);
             userMessageLog = userMessageLogService.findByMessageId(messageId);
         } catch (DuplicateMessageFoundException e) {
             throw new DuplicateMessageException(e.getMessage(), e.getCause());
@@ -172,7 +189,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
     @Override
     public List<? extends ErrorResult> getErrorsForMessage(String messageId, eu.domibus.common.MSHRole mshRole) throws MessageNotFoundException {
         MSHRole role = MSHRole.valueOf(mshRole.name());
-
+        userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId, role);
         UserMessageLog userMessageLog = userMessageLogService.findByMessageId(messageId, role);
         if (userMessageLog == null) {
             throw new MessageNotFoundException("Message [" + messageId + "] does not exist");
@@ -182,6 +199,7 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     @Override
     public void markMessageAsDownloaded(String messageId) {
+        checkMessageAuthorization(messageId, eu.domibus.common.MSHRole.RECEIVING);
         final UserMessage userMessage = userMessageService.getByMessageId(messageId, MSHRole.RECEIVING);
         markMessageAsDownloaded(userMessage);
     }
@@ -211,5 +229,32 @@ public class MessageRetrieverImpl implements MessageRetriever {
         downloadEvent.setMshRole(roleName);
         LOG.debug("Publishing [{}] for message [{}] and role [{}]", downloadEvent.getClass().getName(), messageId, roleName);
         applicationEventPublisher.publishEvent(downloadEvent);
+    }
+
+    protected void checkMessageAuthorization(String messageId, eu.domibus.common.MSHRole mshRole) {
+        MSHRole role = MSHRole.valueOf(mshRole.name());
+        checkMessageAuthorization(() -> userMessageService.getByMessageId(messageId, role));
+    }
+
+    protected void checkMessageAuthorization(Long messageEntityId) {
+        checkMessageAuthorization(() -> userMessageService.getByMessageEntityId(messageEntityId));
+    }
+
+    protected void checkMessageAuthorization(String messageId) {
+        checkMessageAuthorization(() -> userMessageService.getByMessageId(messageId));
+    }
+
+    protected void checkMessageAuthorization(Supplier<UserMessage> messageGetter) {
+        checkUserRoleWithUnsecuredLoginAllowed();
+
+        final UserMessage userMessage = messageGetter.get();
+        userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(userMessage, MessageConstants.FINAL_RECIPIENT);
+    }
+
+    private void checkUserRoleWithUnsecuredLoginAllowed() {
+        if (authUtils.isUnsecureLoginAllowed()) {
+            return;
+        }
+        authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
     }
 }
