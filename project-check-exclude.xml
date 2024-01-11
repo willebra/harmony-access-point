@@ -256,6 +256,7 @@
         <cve>CVE-2022-45688</cve>
         <!--Domibus receives json strings only from controlled environment -->
         <cve>CVE-2023-5072</cve>
+        <vulnerabilityName>CVE-2023-51074</vulnerabilityName>
     </suppress>
     <suppress>
         <notes><![CDATA[
