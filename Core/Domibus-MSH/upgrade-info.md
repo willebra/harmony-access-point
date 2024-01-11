@@ -1,5 +1,53 @@
 # Domibus upgrade information
+## Domibus 5.1.3 (from 5.1.2)
+    ### Wildfly only
+         - in file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml":
+            - remove the following datasources from datasources section
+                .............................
+                <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryMysqlNonXADS" enabled="true" use-ccm="true">
+                    <connection-url>jdbc:mysql://localhost:3306/domibus?autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</connection-url>
+                    <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
+                    <driver>com.mysql</driver>
+                    <pool>
+                        <min-pool-size>20</min-pool-size>
+                        <initial-pool-size>5</initial-pool-size>
+                        <max-pool-size>100</max-pool-size>
+                    </pool>
+                    <security>
+                        <user-name>edelivery</user-name>
+                        <password>edelivery</password>
+                    </security>
+                    <validation>
+                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker"/>
+                        <background-validation>true</background-validation>
+                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter"/>
+                    </validation>
+                </datasource>
+                <!-- Oracle
+                <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryOracleNonXADS" enabled="true" use-ccm="true">
+                    <connection-url>jdbc:oracle:thin:@localhost:1521[:SID|/Service]</connection-url>
+                    <driver-class>oracle.jdbc.OracleDriver</driver-class>
+                    <driver>com.oracle</driver>
+                    <pool>
+                        <min-pool-size>20</min-pool-size>
+                        <initial-pool-size>5</initial-pool-size>
+                        <max-pool-size>100</max-pool-size>
+                    </pool>
+                    <security>
+                        <user-name>edelivery_user</user-name>
+                        <password>edelivery_password</password>
+                    </security>
+                    <validation>
+                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker"/>
+                        <background-validation>true</background-validation>
+                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter"/>
+                    </validation>
+                </datasource>
+                -->
+                .............................
 
+    ### Weblogic only
+        - execute the WLST API script remove.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-removeJDBCDatasources.properties to remove unused datasource
 
 ## Domibus 5.1.2 (from 5.1.1)
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
