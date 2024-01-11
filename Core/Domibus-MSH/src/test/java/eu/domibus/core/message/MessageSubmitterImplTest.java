@@ -53,7 +53,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.access.AccessDeniedException;
 
 import javax.jms.Queue;
 import java.io.IOException;
@@ -244,7 +243,6 @@ public class MessageSubmitterImplTest {
         }
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
             messageIdGenerator.generateMessageId();
             pModeProvider.findUserMessageExchangeContext(withAny(new UserMessage()), MSHRole.SENDING, false, ProcessingType.PULL);
         }};
@@ -278,8 +276,6 @@ public class MessageSubmitterImplTest {
         }
 
         new FullVerifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            times = 1;
             authUtils.isUnsecureLoginAllowed();
             times = 1;
             authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
@@ -408,8 +404,6 @@ public class MessageSubmitterImplTest {
         }
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            times = 1;
             authUtils.isUnsecureLoginAllowed();
             times = 1;
             authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
@@ -432,9 +426,6 @@ public class MessageSubmitterImplTest {
             backendConnectorService.isBackendConnectorEnabled(BACKEND);
             result = true;
 
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            result = originalUser;
-
             transformer.transformFromSubmission(messageData);
             result = userMessage;
 
@@ -449,10 +440,6 @@ public class MessageSubmitterImplTest {
             LOG.debug("AuthenticationException cought: " + ex.getMessage());
             assertTrue(ex.getMessage().contains("You are not allowed to handle this message. You are authorized as [mycorner]"));
         }
-
-        new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-        }};
     }
 
     @Test
@@ -710,9 +697,6 @@ public class MessageSubmitterImplTest {
             backendConnectorService.isBackendConnectorEnabled(BACKEND);
             result = true;
 
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
-            result = "urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1";
-
             UserMessage userMessage = createUserMessage();
             transformer.transformFromSubmission(messageData);
             result = userMessage;
@@ -757,7 +741,6 @@ public class MessageSubmitterImplTest {
         assertEquals(MESS_ID, messageId);
 
         new Verifications() {{
-            authUtils.getOriginalUserWithUnsecureLoginAllowed();
             messageIdGenerator.generateMessageId();
             pModeProvider.getLegConfiguration(anyString);
             messagingService.storeMessagePayloads(withAny(new UserMessage()), null, MSHRole.SENDING, withAny(new LegConfiguration()), anyString);
