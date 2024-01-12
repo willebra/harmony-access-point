@@ -104,7 +104,6 @@ public class EArchivingRetentionServiceIT extends AbstractIT {
 
     @Before
     public void setUp() throws Exception {
-        waitUntilDatabaseIsInitialized();
 
         temp = Files.createTempDirectory(Paths.get("target"), "tmpDirPrefix").toFile();
         LOG.info("temp folder created: [{}]", temp.getAbsolutePath());

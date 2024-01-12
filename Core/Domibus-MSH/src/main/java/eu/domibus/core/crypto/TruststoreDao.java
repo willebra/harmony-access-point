@@ -3,6 +3,7 @@ package eu.domibus.core.crypto;
 import eu.domibus.core.dao.BasicDao;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -35,6 +36,13 @@ public class TruststoreDao extends BasicDao<TruststoreEntity> {
         Query q = em.createNamedQuery("Truststore.countByName", Long.class);
         q.setParameter("NAME", name);
         return (Long) q.getSingleResult() > 0;
+    }
+
+    @Transactional
+    public void deleteByName(String name) {
+        Query query = em.createNamedQuery("Truststore.deleteByName");
+        query.setParameter("NAME", name);
+        query.executeUpdate();
     }
 
 }

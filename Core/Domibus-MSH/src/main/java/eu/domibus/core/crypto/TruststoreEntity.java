@@ -25,6 +25,8 @@ import javax.validation.constraints.NotNull;
                 query = "select t from TruststoreEntity t where t.name=:NAME"),
         @NamedQuery(name = "Truststore.countByName",
                 query = "select count(t) from TruststoreEntity t where t.name=:NAME"),
+        @NamedQuery(name = "Truststore.deleteByName",
+                query = "DELETE from TruststoreEntity t where t.name=:NAME"),
 })
 public class TruststoreEntity extends AbstractBaseEntity {
 

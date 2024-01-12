@@ -1,7 +1,6 @@
 package eu.domibus.user;
 
 import eu.domibus.AbstractIT;
-import eu.domibus.ext.delegate.services.cache.CacheServiceDelegate;
 import eu.domibus.api.multitenancy.DomainService;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.api.security.AuthRole;
@@ -9,6 +8,7 @@ import eu.domibus.api.user.UserManagementException;
 import eu.domibus.api.user.UserState;
 import eu.domibus.core.security.UserDetailServiceImpl;
 import eu.domibus.core.user.ui.*;
+import eu.domibus.ext.delegate.services.cache.CacheServiceDelegate;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.web.security.AuthenticationService;
@@ -57,6 +57,10 @@ public class UserManagementServiceTestIT extends AbstractIT {
     @Before
     public void before() {
         userDao.delete(userDao.listUsers());
+    }
+
+    protected void setAuth() {
+        // intentionally avoid setting the base class auth
     }
 
     @Test
@@ -117,16 +121,20 @@ public class UserManagementServiceTestIT extends AbstractIT {
     @Transactional
     @WithUserDetails(value = "customUsername", userDetailsServiceBeanName = "testUserDetailService")
     public void updateUsers_notLoggedIn_atLeastOneAdmin_multitenancy() {
-        LOG.info("LOGGED: [{}]", authenticationService.getLoggedUser().getUsername());
+        try {
+            LOG.info("LOGGED: [{}]", authenticationService.getLoggedUser().getUsername());
 
-        domibusPropertyProvider.setProperty(DomainService.GENERAL_SCHEMA_PROPERTY, "generalSchema");
-        cacheServiceDelegate.evictCaches();
-        final User userEntity = createUser("baciuco", "Password-0123456", "test@domibus.eu", AuthRole.ROLE_USER);
-        final eu.domibus.api.user.User apiUser = convert(userEntity);
-        apiUser.setActive(false);
-        userManagementService.updateUsers(Collections.singletonList(apiUser));
-        cacheServiceDelegate.evictCaches();
-        domibusPropertyProvider.setProperty(DomainService.GENERAL_SCHEMA_PROPERTY, "");
+            domibusPropertyProvider.setProperty(DomainService.GENERAL_SCHEMA_PROPERTY, "generalSchema");
+            cacheServiceDelegate.evictCaches();
+            final User userEntity = createUser("baciuco", "Password-0123456", "test@domibus.eu", AuthRole.ROLE_USER);
+            final eu.domibus.api.user.User apiUser = convert(userEntity);
+            apiUser.setActive(false);
+            userManagementService.updateUsers(Collections.singletonList(apiUser));
+            cacheServiceDelegate.evictCaches();
+        } finally {
+            domibusPropertyProvider.setProperty(DomainService.GENERAL_SCHEMA_PROPERTY, "");
+        }
+
     }
 
     @Test

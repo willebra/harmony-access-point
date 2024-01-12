@@ -4,14 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessage;
+import eu.domibus.api.multitenancy.Domain;
 import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.api.multitenancy.DomainService;
 import eu.domibus.api.property.DomibusPropertyMetadataManagerSPI;
 import eu.domibus.api.proxy.DomibusProxyService;
+import eu.domibus.api.security.AuthUtils;
 import eu.domibus.common.JPAConstants;
 import eu.domibus.common.model.configuration.Configuration;
 import eu.domibus.core.crypto.TruststoreDao;
 import eu.domibus.core.crypto.TruststoreEntity;
+import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageLogDao;
 import eu.domibus.core.message.dictionary.StaticDictionaryService;
 import eu.domibus.core.pmode.ConfigurationDAO;
@@ -25,6 +28,7 @@ import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.XmlProcessingException;
 import eu.domibus.test.common.DomibusTestDatasourceConfiguration;
 import eu.domibus.web.spring.DomibusWebConfiguration;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -58,9 +62,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -92,6 +98,9 @@ public abstract class AbstractIT {
     protected UserMessageLogDao userMessageLogDao;
 
     @Autowired
+    protected AuthUtils authUtils;
+
+    @Autowired
     protected PModeProvider pModeProvider;
 
     @Autowired
@@ -112,43 +121,65 @@ public abstract class AbstractIT {
     @PersistenceContext(unitName = JPAConstants.PERSISTENCE_UNIT_NAME)
     protected EntityManager em;
 
-    public static boolean springContextInitialized = false;
+    @Autowired
+    protected ITTestsService itTestsService;
 
     @Autowired
-    private StaticDictionaryService staticDictionaryService;
+    UserMessageDao userMessageDao;
+
+    public static boolean springContextInitialized = false;
+
+
 
     @BeforeClass
     public static void init() throws IOException {
-        if (springContextInitialized) {
-            return;
-        }
+        springContextInitialized = false;
         LOG.info(WarningUtil.warnOutput("Initializing Spring context"));
 
         FileUtils.deleteDirectory(new File("target/temp"));
-        System.setProperty("domibus.config.location", new File("target/test-classes").getAbsolutePath());
+        final File domibusConfigLocation = new File("target/test-classes");
+        final String absolutePath = domibusConfigLocation.getAbsolutePath();
+        System.setProperty("domibus.config.location", absolutePath);
 
-        //we are using randomly available port in order to allow run in parallel
-        int activeMQConnectorPort = SocketUtils.findAvailableTcpPort(2000, 3100);
-        int activeMQBrokerPort = SocketUtils.findAvailableTcpPort(61616, 62690);
-        System.setProperty(DomibusPropertyMetadataManagerSPI.ACTIVE_MQ_CONNECTOR_PORT, String.valueOf(activeMQConnectorPort)); // see EDELIVERY-10294 and check if this can be removed
-        System.setProperty(DomibusPropertyMetadataManagerSPI.ACTIVE_MQ_TRANSPORT_CONNECTOR_URI, "vm://localhost:" + activeMQBrokerPort + "?broker.persistent=false&create=false"); // see EDELIVERY-10294 and check if this can be removed
-        LOG.info("activeMQBrokerPort=[{}]", activeMQBrokerPort);
-        LOG.info("activeMQConnectorPort=[{}]", activeMQConnectorPort);
-
-        SecurityContextHolder.getContext()
-                .setAuthentication(new UsernamePasswordAuthenticationToken(
-                        "test_user",
-                        "test_password",
-                        Collections.singleton(new SimpleGrantedAuthority(eu.domibus.api.security.AuthRole.ROLE_ADMIN.name()))));
-
-        springContextInitialized = true;
+        //we are using a new ActiveMQ broker for each SpringContext instantiation
+        String activeMQBrokerName = "localhost" + SocketUtils.findAvailableTcpPort(61616, 62690);
+        System.setProperty(DomibusPropertyMetadataManagerSPI.ACTIVE_MQ_TRANSPORT_CONNECTOR_URI, "vm://" + activeMQBrokerName + "?broker.persistent=false&create=false");
+        System.setProperty(DomibusPropertyMetadataManagerSPI.ACTIVE_MQ_BROKER_NAME, activeMQBrokerName);
+        LOG.info("activeMQBrokerName=[{}]", activeMQBrokerName);
     }
 
     @Before
     public void setDomain() {
         domainContextProvider.setCurrentDomain(DomainService.DEFAULT_DOMAIN);
-        waitUntilDatabaseIsInitialized();
-        staticDictionaryService.createStaticDictionaryEntries();
+
+        setAuth();
+
+        if (!springContextInitialized) {
+            LOG.info("Executing the ApplicationContextListener initialization");
+            try {
+                int secondsToSleep = 5;
+                LOG.info("Waiting for database initialization: sleeping for [{}] seconds", secondsToSleep);
+                //we need to wait a bit until all schemas and tables are completely initialized; the code below which waits for the records to be created in each schema is not enough for the database to be fully initialized
+                Thread.sleep(secondsToSleep * 1000L);
+                LOG.info("Finished waiting for database initialization");
+
+                waitUntilDatabaseIsInitialized();
+                domibusApplicationContextListener.initializeForTests();
+            } catch (Exception ex) {
+                LOG.warn("Domibus Application Context initialization failed", ex);
+            } finally {
+                springContextInitialized = true;
+            }
+        }
+        domainContextProvider.setCurrentDomain(DomainService.DEFAULT_DOMAIN);
+    }
+
+    protected void setAuth() {
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken(
+                        "test_user",
+                        "test_password",
+                        Collections.singleton(new SimpleGrantedAuthority(eu.domibus.api.security.AuthRole.ROLE_ADMIN.name()))));
     }
 
 
@@ -189,7 +220,7 @@ public abstract class AbstractIT {
     }
 
 
-    protected void waitUntilDatabaseIsInitialized() {
+    private void waitUntilDatabaseIsInitialized() {
         with().pollInterval(500, TimeUnit.MILLISECONDS).await().atMost(120, TimeUnit.SECONDS).until(databaseIsInitialized());
     }
 
@@ -214,7 +245,7 @@ public abstract class AbstractIT {
         return () -> messageStatus == userMessageLogDao.getMessageStatus(messageId, mshRole);
     }
 
-    protected Callable<Boolean> databaseIsInitialized() {
+    private Callable<Boolean> databaseIsInitialized() {
         return () -> {
             try {
                 return userRoleDao.listRoles().size() > 0;
@@ -291,6 +322,32 @@ public abstract class AbstractIT {
         } catch (Exception ex) {
             LOG.info("Error creating store entity [{}]", storeName, ex);
         }
+    }
+
+    protected void deleteAllMessages() {
+        final List<UserMessage> userMessages = userMessageDao.findAll();
+        if (CollectionUtils.isEmpty(userMessages)) {
+            return;
+        }
+        final List<String> userMessageIds = userMessages.stream().map(userMessage -> userMessage.getMessageId()).collect(Collectors.toList());
+        deleteAllMessages(userMessageIds.toArray(new String[0]));
+    }
+
+    public void deleteAllMessages(String... messageIds) {
+        itTestsService.deleteAllMessages(messageIds);
+    }
+
+    protected byte[] getKeystoreContentForDomainFromClasspath(String resourceName, Domain domain) throws IOException {
+        String fullClasspath = "keystores/" + resourceName;
+        return getResourceFromClasspath(fullClasspath);
+    }
+
+    protected byte[] getResourceFromClasspath(String resourceClasspathLocation) throws IOException {
+        final InputStream contentInputStream = this.getClass().getClassLoader().getResourceAsStream(resourceClasspathLocation);
+        if (contentInputStream == null) {
+            throw new RuntimeException("Could not get resource from classpath [" + resourceClasspathLocation + "]");
+        }
+        return IOUtils.toByteArray(contentInputStream);
     }
 
 }
