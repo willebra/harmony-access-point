@@ -48,7 +48,7 @@
 
     ### Weblogic only
         - execute the WLST API script remove.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-removeJDBCDatasources.properties to remove unused datasource
-
+    - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
 ## Domibus 5.1.2 (from 5.1.1)
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
                 - Replace the default dss extension jar into "/domibus/conf/domibus/extensions/lib"
