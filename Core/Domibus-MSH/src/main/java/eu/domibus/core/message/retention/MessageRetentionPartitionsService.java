@@ -163,7 +163,7 @@ public class MessageRetentionPartitionsService implements MessageRetentionServic
 
         Date newestPartitionToCheckDate = DateUtils.addMinutes(dateUtil.getUtcDate(), maxRetention * -1);
         LOG.debug("Date to check partitions expiration: [{}]", newestPartitionToCheckDate);
-        Long expiredHighValue = partitionService.getPartitionHighValueFromDate(newestPartitionToCheckDate);
+        Long maxHighValue = partitionService.getExpiredPartitionsHighValue(partitions, newestPartitionToCheckDate);
 
         //we have to keep the newest non default partition, otherwise the hourly interval partitioning will generate more
         //than the maximum nr of partitions allowed by Oracle (ORA-14300) when we would insert a new message
@@ -172,7 +172,7 @@ public class MessageRetentionPartitionsService implements MessageRetentionServic
         List<String> partitionNames =
                 partitions.stream()
                         .filter(p -> !DEFAULT_PARTITION.equalsIgnoreCase(p.getPartitionName()))
-                        .filter(p -> p.getHighValue() < expiredHighValue )
+                        .filter(p -> p.getHighValue() < maxHighValue )
                         .filter(p -> !p.equals(newestNonDefaultPartition))
                         .map(DatabasePartition::getPartitionName)
                         .collect(Collectors.toList());

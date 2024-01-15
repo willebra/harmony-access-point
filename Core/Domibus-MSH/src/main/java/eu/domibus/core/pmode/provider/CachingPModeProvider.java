@@ -443,20 +443,12 @@ public class CachingPModeProvider extends PModeProvider {
      */
     protected Set<LegConfiguration> filterMatchingLegConfigurations(List<Process> matchingProcessesList, LegFilterCriteria legFilterCriteria) {
         Set<LegConfiguration> candidateLegs = new LinkedHashSet<>();
-        Set<String> mismatchedMpcs = new HashSet<>();
-        boolean foundMatchedMpc = false;
         matchingProcessesList.forEach(process -> candidateLegs.addAll(process.getLegs()));
         for (LegConfiguration candidateLeg : candidateLegs) {
             checkServiceMismatch(candidateLeg, legFilterCriteria);
             checkActionMismatch(candidateLeg, legFilterCriteria);
-            boolean matchedMpc = checkMpcMismatch(candidateLeg, legFilterCriteria, mismatchedMpcs);
-            if (matchedMpc == true) {
-                foundMatchedMpc = true;
-            }
-        }
-        if (foundMatchedMpc == false && !mismatchedMpcs.isEmpty()) {
-            String joinedMismatchedMPcs = String.join(", ", mismatchedMpcs);
-            LOG.warn("The PMode Mpc value [{}] doesn't match with the Mpc value [{}] in the message.", joinedMismatchedMPcs, legFilterCriteria.getMpc());
+            checkMpcMismatch(candidateLeg, legFilterCriteria);
+
         }
         candidateLegs.removeAll(legFilterCriteria.listLegConfigurationsWitMismatchErrors());
         if (LOG.isDebugEnabled()) {
@@ -485,27 +477,22 @@ public class CachingPModeProvider extends PModeProvider {
         legFilterCriteria.appendLegMismatchErrors(candidateLeg, "Action:[" + legFilterCriteria.getAction() + DOES_NOT_MATCH_END_STRING);
     }
 
-    protected boolean checkMpcMismatch(LegConfiguration candidateLeg, LegFilterCriteria legFilterCriteria, Set<String> mismatchedMPcs) {
-        boolean mpcValidationEnabled = domibusPropertyProvider.getBooleanProperty(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED);
-        if (!mpcValidationEnabled) {
+    protected void checkMpcMismatch(LegConfiguration candidateLeg, LegFilterCriteria legFilterCriteria) {
+        boolean mpcEnabled = domibusPropertyProvider.getBooleanProperty(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED);
+        if (!mpcEnabled) {
             LOG.debug("Mpc validation disabled");
-            if (equalsIgnoreCase(candidateLeg.getDefaultMpc().getQualifiedName(), legFilterCriteria.getMpc())) {
-                LOG.debug("Mpc:[{}] matched for Leg:[{}]", legFilterCriteria.getMpc(), candidateLeg.getName());
-                return true;
-            } else {
-                mismatchedMPcs.add(candidateLeg.getDefaultMpc().getQualifiedName());
-                LOG.debug("Mpc:[{}] does not match for Leg:[{}]", legFilterCriteria.getMpc(), candidateLeg.getName());
-                return false;
+            if (!equalsIgnoreCase(candidateLeg.getDefaultMpc().getQualifiedName(), legFilterCriteria.getMpc())) {
+                LOG.warn("For legConfiguration [{}], the PMode Mpc value [{}] doesn't match with the Mpc value [{}] in the message.", candidateLeg.getName(), candidateLeg.getDefaultMpc().getQualifiedName(), legFilterCriteria.getMpc());
             }
+            return;
         }
 
         if (equalsIgnoreCase(candidateLeg.getDefaultMpc().getQualifiedName(), legFilterCriteria.getMpc())) {
             LOG.debug("Mpc:[{}] matched for Leg:[{}]", legFilterCriteria.getMpc(), candidateLeg.getName());
-            return true;
+            return ;
         }
         LOG.debug("Mpc:[{}] does not match for Leg:[{}]", legFilterCriteria.getMpc(), candidateLeg.getName());
         legFilterCriteria.appendLegMismatchErrors(candidateLeg, "Mpc:[" + legFilterCriteria.getMpc() + DOES_NOT_MATCH_END_STRING);
-        return false;
     }
 
 
