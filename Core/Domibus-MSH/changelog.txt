@@ -1,3 +1,9 @@
+Domibus 5.1.3
+- Improved the self sending mechanism
+- Added property for disabling the use of system default certificates (cacerts) on https downloads (CRLs).
+- Added support for special characters in message ids
+- Improved the handling/persistence of digital certificates
+- Handle receipts with the same message id
 Domibus 5.1.2
 - Optimise HQL queries by eliminating unnecessary cross joins, resulting in enhanced overall performance.
 - Users can now update the truststore with varying types and passwords, increasing adaptability.
@@ -37,7 +43,7 @@ Domibus 5.1
 - Added two internal API to resend selected failed messages and resend all failed messages as batches from the admin console.
 - Added property domibus.earchive.batch.size.payload to specify a total payload size limit of all archived messages in a batch
 - Added properties for the party ID type and responder role that are specific to Oasis and Peppol
-- Update the property types for activeMQ.JMXURL and activeMQ.brokerName to a comma-separated list to allow users to define multiple ActiveMQ broker entries for networks of brokers or brokers in a Master-Slave setup
+- Updated the property types for activeMQ.JMXURL and activeMQ.brokerName to a comma-separated list to allow users to define multiple ActiveMQ broker entries for networks of brokers or brokers in a Master-Slave setup
 - Split DatabaseMessageHandler bean in 3 beans (MessageSubmitter, MessageRetriever, MessagePuller), each implementing just one interface
 - New Keystore page in the Domibus Admin Console
 - Smart retry introduced for failed messages retrials (now taking advantage of the monitoring and attempting retry only after remote party is reachable)

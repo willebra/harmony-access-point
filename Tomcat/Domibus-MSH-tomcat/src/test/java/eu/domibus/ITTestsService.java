@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.soap.SOAPMessage;
 import java.util.HashSet;
 import java.util.List;
 
@@ -69,13 +70,20 @@ public class ITTestsService {
     @Transactional
     public String sendMessageWithStatus(MessageStatus endStatus) throws MessagingProcessingException {
 
-        Submission submission = submissionUtil.createSubmission();
-        final String messageId = messageSubmitter.submit(submission, "mybackend");
+        UserMessageLog userMessageLog = sendMessageWithStatus(endStatus, null);
+        return userMessageLog.getUserMessage().getMessageId();
+    }
 
-        final UserMessageLog userMessageLog = userMessageLogDao.findByMessageId(messageId, MSHRole.SENDING);
+    @Transactional
+    public UserMessageLog sendMessageWithStatus(MessageStatus endStatus, String messageId) throws MessagingProcessingException {
+
+        Submission submission = submissionUtil.createSubmission(messageId);
+        final String dbMessageId = messageSubmitter.submit(submission, "mybackend");
+
+        final UserMessageLog userMessageLog = userMessageLogDao.findByMessageId(dbMessageId, MSHRole.SENDING);
         userMessageLogDao.setMessageStatus(userMessageLog, endStatus);
 
-        return messageId;
+        return userMessageLog;
     }
 
     @Transactional
@@ -119,7 +127,8 @@ public class ITTestsService {
     @Transactional
     public void receiveMessage(String messageId) throws Exception {
         String filename = "SOAPMessage2.xml";
-        mshWebserviceTest.invoke(soapSampleUtil.createSOAPMessage(filename, messageId));
+        SOAPMessage soapMessage = soapSampleUtil.createSOAPMessage(filename, messageId);
+        mshWebserviceTest.invoke(soapMessage);
     }
 
 

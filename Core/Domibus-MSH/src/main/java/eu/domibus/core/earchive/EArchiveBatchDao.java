@@ -133,7 +133,7 @@ public class EArchiveBatchDao extends BasicDao<EArchiveBatchEntity> {
         query.setParameter("MAX_ENTITY_ID", endMessageId);
 
         List<MessageStatusEntity> statuses = messageStatusDao.getEntitiesOf(MessageStatus.getSuccessfulStates());
-        query.setParameter("STATUS_IDS", statuses);
+        query.setParameter("STATUSES", statuses);
 
         return query.getSingleResult();
     }
