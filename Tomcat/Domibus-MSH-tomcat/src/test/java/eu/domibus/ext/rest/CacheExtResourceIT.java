@@ -3,6 +3,7 @@ package eu.domibus.ext.rest;
 import eu.domibus.AbstractIT;
 import eu.domibus.api.model.MpcEntity;
 import eu.domibus.api.multitenancy.DomainService;
+import eu.domibus.api.security.AuthRole;
 import eu.domibus.core.message.dictionary.MpcDao;
 import eu.domibus.ext.services.CacheExtService;
 import eu.domibus.logging.DomibusLogger;
@@ -28,7 +29,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  * @author François Gautier
  * @since 5.0
  */
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class CacheExtResourceIT extends AbstractIT {
 
     private final static DomibusLogger LOG = DomibusLoggerFactory.getLogger(DomibusEArchiveExtResourceIT.class);
@@ -97,6 +97,8 @@ public class CacheExtResourceIT extends AbstractIT {
 
     @Test
     public void deleteCache_noUser() throws Exception {
+        authUtils.clearSecurityContext();
+
         expectedException.expectCause(CoreMatchers.isA(AuthenticationCredentialsNotFoundException.class));
 
         mockMvc.perform(delete("/ext/cache"));
@@ -115,6 +117,8 @@ public class CacheExtResourceIT extends AbstractIT {
     @Test
     @WithMockUser
     public void deleteCache_notAdmin() throws Exception {
+        authUtils.setAuthenticationToSecurityContext("test", "test", AuthRole.ROLE_USER);
+
         expectedException.expectCause(CoreMatchers.isA(AccessDeniedException.class));
 
         mockMvc.perform(delete("/ext/cache"));
@@ -132,6 +136,8 @@ public class CacheExtResourceIT extends AbstractIT {
 
     @Test
     public void delete2LCache_noUser() throws Exception {
+        authUtils.clearSecurityContext();
+
         expectedException.expectCause(CoreMatchers.isA(AuthenticationCredentialsNotFoundException.class));
 
         mockMvc.perform(delete("/ext/2LCache"));
@@ -150,6 +156,8 @@ public class CacheExtResourceIT extends AbstractIT {
     @Test
     @WithMockUser
     public void delete2LCache_notAdmin() throws Exception {
+        authUtils.setAuthenticationToSecurityContext("test", "test", AuthRole.ROLE_USER);
+
         expectedException.expectCause(CoreMatchers.isA(AccessDeniedException.class));
 
         mockMvc.perform(delete("/ext/2LCache"));

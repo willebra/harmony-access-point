@@ -33,17 +33,6 @@ public class SignalMessageRawServiceIT extends AbstractIT {
     protected SignalMessageRawEnvelopeDao signalMessageRawEnvelopeDao;
 
 
-    @Ignore //TODO: to be removed by EDELIVERY-11795
-    @Test
-    public void noSignalFound() {
-        try {
-            signalMessageRawService.saveSignalMessageRawService("", 1L);
-            Assert.fail();
-        } catch (DomibusCoreException e) {
-            //OK
-        }
-    }
-
     @Test
     @Transactional
     public void SignalFoundNoRaw() {

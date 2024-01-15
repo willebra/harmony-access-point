@@ -1,9 +1,6 @@
 Domibus 5.1.3
-- Improved the self sending mechanism
-- Added property for disabling the use of system default certificates (cacerts) on https downloads (CRLs).
-- Added support for special characters in message ids
-- Improved the handling/persistence of digital certificates
-- Handle receipts with the same message id
+- Removed edeliveryNonXA datasources for weblogic from cli and properties files
+- removed eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS datasources from wildfly standalone-full.xml file
 Domibus 5.1.2
 - Optimise HQL queries by eliminating unnecessary cross joins, resulting in enhanced overall performance.
 - Users can now update the truststore with varying types and passwords, increasing adaptability.

@@ -18,7 +18,6 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-@Ignore////Ignored on purpose for the following reason: @TestPropertySource marks the Spring context as dirty and recreating the context fails due to ActiveMQ
 @TestPropertySource(properties = {"domibus.deployment.clustered=true"})
 public class DistributedCacheServiceClusterTestIT extends AbstractIT {
 
