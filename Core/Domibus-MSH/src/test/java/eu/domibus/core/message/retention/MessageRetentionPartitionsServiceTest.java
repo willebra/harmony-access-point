@@ -189,7 +189,7 @@ public class MessageRetentionPartitionsServiceTest {
         }};
 
         List<String> expiredPartitions = messageRetentionPartitionsService.getExpiredPartitionNames(120);
-        assertFalse(expiredPartitions.isEmpty());
+        assertTrue(expiredPartitions.size() > 0);
     }
 
     @Test
