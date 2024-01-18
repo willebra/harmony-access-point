@@ -117,14 +117,7 @@ public class EArchiveBatchDao extends BasicDao<EArchiveBatchEntity> {
         query.setParameter("MAX_ENTITY_ID", endMessageId);
         query.setParameter("STATUSES", messageStatusDao.getEntitiesOf(MessageStatus.getSuccessfulStates()));
         queryUtil.setPaginationParametersToQuery(query, pageStart, pageSize);
-        List<EArchiveBatchUserMessage> res =  query.getResultList();
-        res.forEach(eArchiveBatchUserMessage -> {
-            MessageStatusEntity entity = messageStatusDao.read(eArchiveBatchUserMessage.getMessageStatusId());
-            if (entity != null) {
-                eArchiveBatchUserMessage.setMessageStatus(entity.getMessageStatus());
-            }
-        });
-        return res;
+        return query.getResultList();
     }
 
     public Long getNotArchivedMessageCountForPeriod(Long startMessageId, Long endMessageId) {
