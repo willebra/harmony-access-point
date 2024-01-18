@@ -174,7 +174,7 @@ import java.util.Date;
                         "from UserMessageLog uml                                                                     " +
                         "where uml.entityId > :LAST_ENTITY_ID                                                        " +
                         "  and (:MAX_ENTITY_ID IS NULL OR uml.entityId < :MAX_ENTITY_ID)                             " +
-                        "  and uml.messageStatus.messageStatus in :STATUSES                                          " +
+                        "  and uml.messageStatus in :STATUSES                                          " +
                         "  and uml.deleted IS NULL                                                                   " +
                         "  and uml.archived IS NULL                                                                  " +
                         "  and uml.userMessage.testMessage IS FALSE                                                  " +
@@ -185,7 +185,7 @@ import java.util.Date;
                         "from UserMessageLog uml " +
                         "where uml.entityId > :LAST_ENTITY_ID " +
                         "  and (:MAX_ENTITY_ID IS NULL OR uml.entityId < :MAX_ENTITY_ID) " +
-                        "  and uml.messageStatus.messageStatus in :STATUSES " +
+                        "  and uml.messageStatus in :STATUSES " +
                         "  and uml.userMessage.testMessage IS FALSE " +
                         "  and uml.deleted IS NULL " +
                         "  and uml.archived IS NULL "),
