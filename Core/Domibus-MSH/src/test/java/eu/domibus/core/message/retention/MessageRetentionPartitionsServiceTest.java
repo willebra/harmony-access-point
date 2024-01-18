@@ -32,8 +32,7 @@ import static eu.domibus.core.message.retention.MessageRetentionPartitionsServic
 import static eu.domibus.core.message.retention.MessageRetentionPartitionsService.PARTITION_NAME_REGEXP;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author idragusa
@@ -190,7 +189,7 @@ public class MessageRetentionPartitionsServiceTest {
         }};
 
         List<String> expiredPartitions = messageRetentionPartitionsService.getExpiredPartitionNames(120);
-        assertTrue(expiredPartitions.size() > 0);
+        assertFalse(expiredPartitions.isEmpty());
     }
 
     @Test
