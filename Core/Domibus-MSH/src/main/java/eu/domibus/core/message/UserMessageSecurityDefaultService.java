@@ -66,7 +66,6 @@ public class UserMessageSecurityDefaultService implements UserMessageSecuritySer
         LOG.debug("Check authorization as [{}]", authOriginalUser == null ? "super user" : authOriginalUser);
 
         if (StringUtils.isBlank(authOriginalUser)) {
-            LOG.trace("OriginalUser is [{}] admin", authOriginalUser);
             return;
         }
         LOG.trace("OriginalUser is [{}] not admin", authOriginalUser);
