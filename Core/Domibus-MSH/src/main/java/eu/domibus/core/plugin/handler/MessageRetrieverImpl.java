@@ -136,8 +136,8 @@ public class MessageRetrieverImpl implements MessageRetriever {
 
     @Override
     public eu.domibus.common.MessageStatus getStatus(final String messageId) throws DuplicateMessageException {
-        userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId);
         try {
+            userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId);
             final MessageStatus messageStatus = userMessageLogService.getMessageStatusById(messageId);
             return eu.domibus.common.MessageStatus.valueOf(messageStatus.name());
         } catch (eu.domibus.api.messaging.MessageNotFoundException exception) {
