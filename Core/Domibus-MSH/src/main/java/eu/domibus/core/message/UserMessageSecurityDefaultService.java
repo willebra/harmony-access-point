@@ -65,18 +65,16 @@ public class UserMessageSecurityDefaultService implements UserMessageSecuritySer
         String authOriginalUser = authUtils.getOriginalUserWithUnsecureLoginAllowed();
         LOG.debug("Check authorization as [{}]", authOriginalUser == null ? "super user" : authOriginalUser);
 
-        if(authOriginalUser != null) {
-            check(userMessage, propertyName, authOriginalUser);
+        if (StringUtils.isBlank(authOriginalUser)) {
+            LOG.trace("OriginalUser is [{}] admin", authOriginalUser);
+            return;
         }
-        LOG.trace("Could validate originalUser for [{}]", authOriginalUser);
-    }
-
-    public void check(UserMessage userMessage, String authOriginalUser, String propertyName) {
+        LOG.trace("OriginalUser is [{}] not admin", authOriginalUser);
         /* check the message belongs to the authenticated user */
         String originalUser = userMessageServiceHelper.getPropertyValue(userMessage, propertyName);
         if (!StringUtils.equalsIgnoreCase(originalUser, authOriginalUser)) {
-            LOG.debug("Could not validate originalUser. User [{}] is trying to submit/access a message having the originalUser: [{}]", authOriginalUser, originalUser);
-            throw new AuthenticationException("You are not allowed to handle this message ["+ userMessage.getMessageId() + "].. You are authorized as [" + authOriginalUser + "]");
+            LOG.debug("User [{}] is trying to submit/access a message having as final recipient: [{}]", authOriginalUser, originalUser);
+            throw new AuthenticationException("You are not allowed to handle this message. You are authorized as [" + authOriginalUser + "]");
         }
     }
 
