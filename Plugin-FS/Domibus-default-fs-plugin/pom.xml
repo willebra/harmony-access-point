@@ -250,38 +250,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <dependencies>
-                    <dependency>
-                        <groupId>eu.domibus</groupId>
-                        <artifactId>domibus-msh-test-common</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>eu.domibus</groupId>
-                        <artifactId>domibus-logging</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-
-                    <!-- needed to get the server dependencies from the classes directory -->
-                    <dependency>
-                        <groupId>eu.domibus</groupId>
-                        <artifactId>domibus-MSH-tomcat-distribution</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>classes</classifier>
-                    </dependency>
-                    <dependency>
-                        <groupId>eu.domibus</groupId>
-                        <artifactId>domibus-MSH-weblogic</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>classes</classifier>
-                    </dependency>
-                    <dependency>
-                        <groupId>eu.domibus</groupId>
-                        <artifactId>domibus-MSH-wildfly</artifactId>
-                        <version>${project.version}</version>
-                        <classifier>classes</classifier>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <id>enforce-banned-dependencies</id>
