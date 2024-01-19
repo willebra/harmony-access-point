@@ -19,6 +19,7 @@ import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.*;
 import eu.domibus.plugin.Submission;
 import eu.domibus.plugin.handler.MessageRetriever;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -189,12 +190,17 @@ public class MessageRetrieverImpl implements MessageRetriever {
     @Override
     public List<? extends ErrorResult> getErrorsForMessage(String messageId, eu.domibus.common.MSHRole mshRole) throws MessageNotFoundException {
         MSHRole role = MSHRole.valueOf(mshRole.name());
-        userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId, role);
+        try {
+            userMessageSecurityService.checkMessageAuthorizationWithUnsecureLoginAllowed(messageId, role);
+        } catch (eu.domibus.api.messaging.MessageNotFoundException messageNotFoundException) {
+            throw new MessageNotFoundException("Message [" + messageId + "]-[" + role + "] does not exist");
+        }
         UserMessageLog userMessageLog = userMessageLogService.findByMessageId(messageId, role);
-        if (userMessageLog == null) {
+        List<? extends ErrorResult> errorResults = errorLogService.getErrors(messageId, role);
+        if (userMessageLog == null && CollectionUtils.isEmpty(errorResults)) {
             throw new MessageNotFoundException("Message [" + messageId + "] does not exist");
         }
-        return errorLogService.getErrors(messageId, role);
+        return errorResults;
     }
 
     @Override
