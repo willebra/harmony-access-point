@@ -86,7 +86,7 @@
                 <executions>
                     <execution>
                         <id>enforce-no-duplicate-dependencies</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
