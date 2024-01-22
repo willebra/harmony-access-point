@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_EARCHIVE_ACTIVE;
-import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_SEND_MESSAGE_SUCCESS_DELETE_PAYLOAD;
+import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.*;
 
 /**
  * @author François Gautier
@@ -39,15 +38,27 @@ public class DomibusPropertyValidatorService {
 
     public void enforceValidation() {
         if (domibusConfigurationService.isMultiTenantAware()) {
-            final List<Domain> domains = domainService.getDomains();
-            for (Domain domain : domains) {
-                domainTaskExecutor.submit(() -> validationEArchiveAndRetention(), domain);
-            }
+            validationEArchiveAndRetentionForAllDomains();
+
+            validateUnsecureLoginAllowed();
         } else {
             validationEArchiveAndRetention();
         }
     }
 
+    private void validationEArchiveAndRetentionForAllDomains() {
+        final List<Domain> domains = domainService.getDomains();
+        for (Domain domain : domains) {
+            domainTaskExecutor.submit(this::validationEArchiveAndRetention, domain);
+        }
+    }
+
+    private void validateUnsecureLoginAllowed() {
+        Boolean unsecureLoginAllowed = domibusPropertyProvider.getBooleanProperty(DOMIBUS_AUTH_UNSECURE_LOGIN_ALLOWED);
+        if (unsecureLoginAllowed) {
+            LOG.warn(WarningUtil.warnOutput(DOMIBUS_AUTH_UNSECURE_LOGIN_ALLOWED + " property is true but it has no effect in multi-tenancy environment!"));
+        }
+    }
     private void validationEArchiveAndRetention() {
         Boolean eArchive = domibusPropertyProvider.getBooleanProperty(DOMIBUS_EARCHIVE_ACTIVE);
         Boolean deleteOnSuccess = domibusPropertyProvider.getBooleanProperty(DOMIBUS_SEND_MESSAGE_SUCCESS_DELETE_PAYLOAD);

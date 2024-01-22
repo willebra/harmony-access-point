@@ -541,7 +541,7 @@ public class JMSManagerImpl implements JMSManager {
         LOG.debug("Listing pending messages for queue [{}]", queueName);
 
         if (!authUtils.isUnsecureLoginAllowed()) {
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
         }
 
         String originalUser = authUtils.getOriginalUserWithUnsecureLoginAllowed();
@@ -590,7 +590,7 @@ public class JMSManagerImpl implements JMSManager {
     @MDCKey({DomibusLogger.MDC_MESSAGE_ID, DomibusLogger.MDC_MESSAGE_ROLE, DomibusLogger.MDC_MESSAGE_ENTITY_ID})
     public void removeFromPending(String queueName, String messageId) throws MessageNotFoundException {
         if (!authUtils.isUnsecureLoginAllowed()) {
-            authUtils.hasUserOrAdminRole();
+            authUtils.checkHasAdminRoleOrUserRoleWithOriginalUser();
         }
 
         //add messageId to MDC map

@@ -450,11 +450,11 @@ public class CachingPModeProvider extends PModeProvider {
             checkServiceMismatch(candidateLeg, legFilterCriteria);
             checkActionMismatch(candidateLeg, legFilterCriteria);
             boolean matchedMpc = checkMpcMismatch(candidateLeg, legFilterCriteria, mismatchedMpcs);
-            if (matchedMpc == true) {
+            if (matchedMpc) {
                 foundMatchedMpc = true;
             }
         }
-        if (foundMatchedMpc == false && !mismatchedMpcs.isEmpty()) {
+        if (!foundMatchedMpc && !mismatchedMpcs.isEmpty()) {
             String joinedMismatchedMPcs = String.join(", ", mismatchedMpcs);
             LOG.warn("The PMode Mpc value [{}] doesn't match with the Mpc value [{}] in the message.", joinedMismatchedMPcs, legFilterCriteria.getMpc());
         }
