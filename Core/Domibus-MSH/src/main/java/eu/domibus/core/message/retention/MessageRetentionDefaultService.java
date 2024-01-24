@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jms.Queue;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -134,10 +136,31 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
         List<UserMessageLogDto> messagesToClean = userMessageLogDao.getDownloadedUserMessagesOlderThan(messageRetentionDate,
                 mpc, deleteMessagesLimit, eArchiveIsActive);
         if (pModeProvider.isDeleteMessageMetadataByMpcURI(mpc) && metadataRetentionOffset == 0) {
+            List<UserMessageLogDto> messagesToCleanWithDeletedPayload = messagesToCleanWithOffsetTimeLimit(mpc, messagesToClean);
             deleteMessageMetadataAndPayload(mpc, messagesToClean);
             return;
         }
         deleteMessagePayload(messagesToClean);
+    }
+
+    public List<UserMessageLogDto>  messagesToCleanWithOffsetTimeLimit(String mpc, int metadataRetentionOffset, List<UserMessageLogDto> messagesToClean) {
+        // Get the current date and time
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        // Create a date that is 262800 minutes in the past
+        LocalDateTime targetDate = currentDate.minus(metadataRetentionOffset, ChronoUnit.MINUTES);
+
+        // Check if a given date is older than 262800 minutes from now
+        LocalDateTime inputDate = LocalDateTime.of(2023, 1, 1, 12, 0);  // Replace this with your date
+        boolean isOlder = inputDate.isBefore(targetDate);
+
+        if (isOlder) {
+            System.out.println("The date is older than 262800 minutes from now.");
+        } else {
+            System.out.println("The date is not older than 262800 minutes from now.");
+        }
+
+        return messagesToClean;
     }
 
     protected void deleteExpiredNotDownloadedMessages(String mpc, Integer deleteMessagesLimit, boolean eArchiveIsActive) {
