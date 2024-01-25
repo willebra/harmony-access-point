@@ -3,12 +3,10 @@ package eu.domibus.core.message.retention;
 import eu.domibus.api.jms.JMSManager;
 import eu.domibus.api.jms.JMSMessageBuilder;
 import eu.domibus.api.jms.JmsMessage;
-import eu.domibus.api.model.MSHRole;
-import eu.domibus.api.model.UserMessage;
-import eu.domibus.api.model.UserMessageLog;
-import eu.domibus.api.model.UserMessageLogDto;
+import eu.domibus.api.model.*;
 import eu.domibus.api.payload.PartInfoService;
 import eu.domibus.api.property.DomibusPropertyProvider;
+import eu.domibus.core.message.MessageStatusDao;
 import eu.domibus.core.message.UserMessageDefaultService;
 import eu.domibus.core.message.UserMessageLogDao;
 import eu.domibus.core.message.UserMessageServiceHelper;
@@ -27,8 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.jms.Queue;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -77,6 +73,9 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
 
     @Autowired
     private BackendNotificationService backendNotificationService;
+
+    @Autowired
+    MessageStatusDao messageStatusDao;
 
     @Override
     public boolean handlesDeletionStrategy(String retentionStrategy) {
@@ -136,31 +135,10 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
         List<UserMessageLogDto> messagesToClean = userMessageLogDao.getDownloadedUserMessagesOlderThan(messageRetentionDate,
                 mpc, deleteMessagesLimit, eArchiveIsActive);
         if (pModeProvider.isDeleteMessageMetadataByMpcURI(mpc) && metadataRetentionOffset == 0) {
-            List<UserMessageLogDto> messagesToCleanWithDeletedPayload = messagesToCleanWithOffsetTimeLimit(mpc, messagesToClean);
             deleteMessageMetadataAndPayload(mpc, messagesToClean);
             return;
         }
         deleteMessagePayload(messagesToClean);
-    }
-
-    public List<UserMessageLogDto>  messagesToCleanWithOffsetTimeLimit(String mpc, int metadataRetentionOffset, List<UserMessageLogDto> messagesToClean) {
-        // Get the current date and time
-        LocalDateTime currentDate = LocalDateTime.now();
-
-        // Create a date that is 262800 minutes in the past
-        LocalDateTime targetDate = currentDate.minus(metadataRetentionOffset, ChronoUnit.MINUTES);
-
-        // Check if a given date is older than 262800 minutes from now
-        LocalDateTime inputDate = LocalDateTime.of(2023, 1, 1, 12, 0);  // Replace this with your date
-        boolean isOlder = inputDate.isBefore(targetDate);
-
-        if (isOlder) {
-            System.out.println("The date is older than 262800 minutes from now.");
-        } else {
-            System.out.println("The date is not older than 262800 minutes from now.");
-        }
-
-        return messagesToClean;
     }
 
     protected void deleteExpiredNotDownloadedMessages(String mpc, Integer deleteMessagesLimit, boolean eArchiveIsActive) {
@@ -192,17 +170,18 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
         }
 
         int metadataRetentionOffset = pModeProvider.getMetadataRetentionOffsetByMpcURI(mpc);
+        boolean isDeleteMessageMetadata= pModeProvider.isDeleteMessageMetadataByMpcURI(mpc);
         LOG.debug("Deleting expired sent messages for MPC [{}] using deleteMessagesLimit [{}], messageRetentionMinutes [{}], metadataRetentionOffset [{}]",
                 mpc, deleteMessagesLimit, messageRetentionMinutes, metadataRetentionOffset);
         Date messageRetentionDate = DateUtils.addMinutes(new Date(), messageRetentionMinutes * -1);
-        if (pModeProvider.isDeleteMessageMetadataByMpcURI(mpc) && metadataRetentionOffset == 0) {
+        if (isDeleteMessageMetadata && metadataRetentionOffset == 0) {
             List<UserMessageLogDto> messagesToClean = userMessageLogDao.getSentUserMessagesOlderThan(messageRetentionDate,
                     mpc, deleteMessagesLimit, true, eArchiveIsActive);
             deleteMessageMetadataAndPayload(mpc, messagesToClean);
+            return;
         }
-
         List<UserMessageLogDto> messagesToClean = userMessageLogDao.getSentUserMessagesOlderThan(messageRetentionDate,
-                mpc, deleteMessagesLimit, false, eArchiveIsActive);
+                mpc, deleteMessagesLimit, isDeleteMessageMetadata, eArchiveIsActive);
         deleteMessagePayload(messagesToClean);
     }
 
@@ -323,6 +302,7 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
 
     protected void deletePayload(UserMessage userMessage, UserMessageLog userMessageLog) {
         partInfoService.clearPayloadData(userMessage.getEntityId());
+        userMessageLog.setMessageStatus(messageStatusDao.findOrCreate(MessageStatus.DELETED));
         userMessageLog.setDeleted(new Date());
     }
 
