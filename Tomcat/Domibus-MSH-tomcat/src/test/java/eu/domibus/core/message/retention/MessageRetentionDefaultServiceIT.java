@@ -203,7 +203,6 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
     }
 
     @Test
-    @Transactional
     public void deleteExpiredSent_deletesOnlyPayload_ifIsDeleteMessageMetadataAndNotZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
         //given
         uploadPmodeWithCustomMpc(true, MAX_VALUE, MAX_VALUE, MAX_VALUE, 2);
