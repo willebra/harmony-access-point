@@ -187,6 +187,23 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
     }
 
     @Test
+    public void deleteExpiredSent_deletesAll_ifIsNotDeleteMessageMetadataAndZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
+        //given
+        uploadPmodeWithCustomMpc(false, 0, MAX_VALUE, MAX_VALUE, 2);
+        Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
+        String messageId = receiveMessageToDelete();
+        setMessageStatus(messageId, MessageStatus.ACKNOWLEDGED);
+        makeMessageFieldOlderAndDeletedForSentMessage(messageId, "modificationTime", "deleted", 10);
+        //when
+        service.deleteExpiredSentMessages(MPC_URI, 100, false);
+        //then
+        Map<String, Integer> finalMap = messageDBUtil.getTableCounts(tablesToExclude);
+        assertFalse("Expecting all data to be deleted but instead we have:\n" + getMessageDetails(initialMap, finalMap),
+                CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
+    }
+
+    @Test
+    @Transactional
     public void deleteExpiredSent_deletesOnlyPayload_ifIsDeleteMessageMetadataAndNotZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
         //given
         uploadPmodeWithCustomMpc(true, MAX_VALUE, MAX_VALUE, MAX_VALUE, 2);
@@ -232,6 +249,15 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         em.createQuery("update UserMessageLog set " + field + "=:DATE where userMessage.entityId in (select entityId from UserMessage where messageId=:MESSAGE_ID)")
                 .setParameter("MESSAGE_ID", messageId)
                 .setParameter("DATE", date)
+                .executeUpdate();
+    }
+
+    private void makeMessageFieldOlderAndDeletedForSentMessage(String messageId, String field1, String field2, int nrMinutesBack) {
+        Date date = DateUtils.addMinutes(new Date(), nrMinutesBack * -1);
+        em.createQuery("update UserMessageLog set " + field1 + "=:DATE ,  " + field2 + "=:DELETED_DATE where userMessage.entityId in (select entityId from UserMessage where messageId=:MESSAGE_ID)")
+                .setParameter("MESSAGE_ID", messageId)
+                .setParameter("DATE", date)
+                .setParameter("DELETED_DATE", date)
                 .executeUpdate();
     }
 
