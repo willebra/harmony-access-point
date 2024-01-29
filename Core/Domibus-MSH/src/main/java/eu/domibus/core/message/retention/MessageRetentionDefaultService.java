@@ -74,8 +74,6 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
     @Autowired
     private BackendNotificationService backendNotificationService;
 
-    @Autowired
-    MessageStatusDao messageStatusDao;
 
     @Override
     public boolean handlesDeletionStrategy(String retentionStrategy) {
@@ -302,7 +300,6 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
 
     protected void deletePayload(UserMessage userMessage, UserMessageLog userMessageLog) {
         partInfoService.clearPayloadData(userMessage.getEntityId());
-       // userMessageLog.setMessageStatus(messageStatusDao.findOrCreate(MessageStatus.DELETED));
         userMessageLog.setDeleted(new Date());
     }
 
