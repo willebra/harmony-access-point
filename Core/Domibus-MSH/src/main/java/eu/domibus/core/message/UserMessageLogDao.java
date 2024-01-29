@@ -322,8 +322,10 @@ public class UserMessageLogDao extends MessageLogDao<UserMessageLog> {
     }
 
     public List<UserMessageLogDto> getDeletedUserMessagesOlderThan(Date date, String mpc, Integer expiredDeletedMessagesLimit, boolean eArchiveIsActive) {
+        // Message status won't change to 'DELETED' if the payloads gets deleted based on the property domibus.sendMessage.success.delete.payload/domibus.sendMessage.failure.delete.payload =true.
+        // To delete the metadata of all the payload deleted messages, here we get all the payload deleted messages including the messages in ACKNOWLEDGED, SEND_FAILURE and DELETED statuses.
         return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredDeletedMessagesLimit, "UserMessageLog.findDeletedUserMessagesOlderThan",
-                eArchiveIsActive, messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.DELETED)));
+                eArchiveIsActive, messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.DELETED, MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE)));
     }
 
     public List<UserMessageLogDto> getUndownloadedUserMessagesOlderThan(Date date, String mpc, Integer expiredNotDownloadedMessagesLimit, boolean eArchiveIsActive) {
@@ -350,14 +352,14 @@ public class UserMessageLogDao extends MessageLogDao<UserMessageLog> {
         return query.getResultList();
     }
 
-    public List<UserMessageLogDto> getSentUserMessagesOlderThan(Date date, String mpc, Integer expiredSentMessagesLimit, boolean isDeleteMessageMetadata, boolean eArchiveIsActive) {
-        if (isDeleteMessageMetadata) {
+    public List<UserMessageLogDto> getSentUserMessagesOlderThan(Date date, String mpc, Integer expiredSentMessagesLimit, boolean eArchiveIsActive) {
+     //   if (isDeleteMessageMetadata) {
             List<MessageStatusEntity> msgStatuses = messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE));
             return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredSentMessagesLimit, "UserMessageLog.findSentUserMessagesOlderThan",
                     eArchiveIsActive, msgStatuses);
-        }
+      //  }
         // return only messages with payload not already cleared
-        return getSentUserMessagesWithPayloadNotClearedOlderThan(date, mpc, expiredSentMessagesLimit, eArchiveIsActive);
+      //  return getSentUserMessagesWithPayloadNotClearedOlderThan(date, mpc, expiredSentMessagesLimit, eArchiveIsActive);
     }
 
     public List<UserMessageLogDto> getAllMessages() {
@@ -416,11 +418,11 @@ public class UserMessageLogDao extends MessageLogDao<UserMessageLog> {
         }
     }
 
-    protected List<UserMessageLogDto> getSentUserMessagesWithPayloadNotClearedOlderThan(Date date, String mpc, Integer expiredSentMessagesLimit, boolean eArchiveIsActive) {
+ /*   protected List<UserMessageLogDto> getSentUserMessagesWithPayloadNotClearedOlderThan(Date date, String mpc, Integer expiredSentMessagesLimit, boolean eArchiveIsActive) {
         List<MessageStatusEntity> msgStatuses = messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE));
         return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredSentMessagesLimit, "UserMessageLog.findSentUserMessagesWithPayloadNotClearedOlderThan",
                 eArchiveIsActive, msgStatuses);
-    }
+    }*/
 
     @Transactional(readOnly = true)
     public int getAllMessagesWithStatus(String mpc, MessageStatus messageStatus, String partitionName) {

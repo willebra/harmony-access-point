@@ -203,6 +203,22 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
     }
 
     @Test
+    public void deleteExpiredSent_deletesAll_ifIsDeleteMessageMetadataAndNonZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
+        //given
+        uploadPmodeWithCustomMpc(true, MAX_VALUE, MAX_VALUE, MAX_VALUE, 2);
+        Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
+        String messageId = receiveMessageToDelete();
+        setMessageStatus(messageId, MessageStatus.SEND_FAILURE);
+        makeMessageFieldOlderAndDeletedForSentMessage(messageId, "modificationTime", "deleted", 10);
+        //when
+        service.deleteExpiredSentMessages(MPC_URI, 100, false);
+        //then
+        Map<String, Integer> finalMap = messageDBUtil.getTableCounts(tablesToExclude);
+        assertFalse("Expecting all data to be deleted but instead we have:\n" + getMessageDetails(initialMap, finalMap),
+                CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
+    }
+
+    @Test
     public void deleteExpiredSent_deletesOnlyPayload_ifIsDeleteMessageMetadataAndNotZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
         //given
         uploadPmodeWithCustomMpc(true, MAX_VALUE, MAX_VALUE, MAX_VALUE, 2);
@@ -227,6 +243,22 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.DELETED);
+        makeMessageFieldOlder(messageId, "deleted", 10);
+        //when
+        service.deleteExpiredPayloadDeletedMessages(MPC_URI, 100, false);
+        //then
+        Map<String, Integer> finalMap = messageDBUtil.getTableCounts(tablesToExclude);
+        assertTrue("Expecting all data to be deleted but instead we have:\n" + getMessageDetails(initialMap, finalMap),
+                CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
+    }
+
+    @Test
+    public void deleteExpiredPayloadDeleted_Ack_Msg_deletesAll_ifIsDeleteMessageMetadata() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
+        //given
+        uploadPmodeWithCustomMpc(true, 0, MAX_VALUE, MAX_VALUE, 2);
+        Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
+        String messageId = receiveMessageToDelete();
+        setMessageStatus(messageId, MessageStatus.ACKNOWLEDGED);
         makeMessageFieldOlder(messageId, "deleted", 10);
         //when
         service.deleteExpiredPayloadDeletedMessages(MPC_URI, 100, false);

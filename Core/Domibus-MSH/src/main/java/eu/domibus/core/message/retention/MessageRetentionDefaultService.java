@@ -176,12 +176,12 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
         Date messageRetentionDate = DateUtils.addMinutes(new Date(), messageRetentionMinutes * -1);
         if (isDeleteMessageMetadata && metadataRetentionOffset == 0) {
             List<UserMessageLogDto> messagesToClean = userMessageLogDao.getSentUserMessagesOlderThan(messageRetentionDate,
-                    mpc, deleteMessagesLimit, true, eArchiveIsActive);
+                    mpc, deleteMessagesLimit, eArchiveIsActive);
             deleteMessageMetadataAndPayload(mpc, messagesToClean);
             return;
         }
         List<UserMessageLogDto> messagesToClean = userMessageLogDao.getSentUserMessagesOlderThan(messageRetentionDate,
-                mpc, deleteMessagesLimit, isDeleteMessageMetadata, eArchiveIsActive);
+                mpc, deleteMessagesLimit, eArchiveIsActive);
         deleteMessagePayload(messagesToClean);
     }
 
@@ -302,7 +302,7 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
 
     protected void deletePayload(UserMessage userMessage, UserMessageLog userMessageLog) {
         partInfoService.clearPayloadData(userMessage.getEntityId());
-        userMessageLog.setMessageStatus(messageStatusDao.findOrCreate(MessageStatus.DELETED));
+       // userMessageLog.setMessageStatus(messageStatusDao.findOrCreate(MessageStatus.DELETED));
         userMessageLog.setDeleted(new Date());
     }
 
