@@ -353,13 +353,9 @@ public class UserMessageLogDao extends MessageLogDao<UserMessageLog> {
     }
 
     public List<UserMessageLogDto> getSentUserMessagesOlderThan(Date date, String mpc, Integer expiredSentMessagesLimit, boolean eArchiveIsActive) {
-     //   if (isDeleteMessageMetadata) {
-            List<MessageStatusEntity> msgStatuses = messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE));
-            return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredSentMessagesLimit, "UserMessageLog.findSentUserMessagesOlderThan",
-                    eArchiveIsActive, msgStatuses);
-      //  }
-        // return only messages with payload not already cleared
-      //  return getSentUserMessagesWithPayloadNotClearedOlderThan(date, mpc, expiredSentMessagesLimit, eArchiveIsActive);
+        List<MessageStatusEntity> msgStatuses = messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE));
+        return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredSentMessagesLimit, "UserMessageLog.findSentUserMessagesOlderThan",
+                eArchiveIsActive, msgStatuses);
     }
 
     public List<UserMessageLogDto> getAllMessages() {
@@ -417,12 +413,6 @@ public class UserMessageLogDao extends MessageLogDao<UserMessageLog> {
             }
         }
     }
-
- /*   protected List<UserMessageLogDto> getSentUserMessagesWithPayloadNotClearedOlderThan(Date date, String mpc, Integer expiredSentMessagesLimit, boolean eArchiveIsActive) {
-        List<MessageStatusEntity> msgStatuses = messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE));
-        return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredSentMessagesLimit, "UserMessageLog.findSentUserMessagesWithPayloadNotClearedOlderThan",
-                eArchiveIsActive, msgStatuses);
-    }*/
 
     @Transactional(readOnly = true)
     public int getAllMessagesWithStatus(String mpc, MessageStatus messageStatus, String partitionName) {

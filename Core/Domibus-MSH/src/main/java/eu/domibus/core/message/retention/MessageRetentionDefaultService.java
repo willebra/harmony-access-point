@@ -74,7 +74,6 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
     @Autowired
     private BackendNotificationService backendNotificationService;
 
-
     @Override
     public boolean handlesDeletionStrategy(String retentionStrategy) {
         return DeletionStrategy.DEFAULT == DeletionStrategy.valueOf(retentionStrategy);
