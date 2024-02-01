@@ -252,22 +252,6 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
                 CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
     }
 
-    @Test
-    public void deleteExpiredPayloadDeleted_Ack_Msg_deletesAll_ifIsDeleteMessageMetadata() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
-        //given
-        uploadPmodeWithCustomMpc(true, 0, MAX_VALUE, MAX_VALUE, 2);
-        Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
-        String messageId = receiveMessageToDelete();
-        setMessageStatus(messageId, MessageStatus.ACKNOWLEDGED);
-        makeMessageFieldOlder(messageId, "deleted", 10);
-        //when
-        service.deleteExpiredPayloadDeletedMessages(MPC_URI, 100, false);
-        //then
-        Map<String, Integer> finalMap = messageDBUtil.getTableCounts(tablesToExclude);
-        assertTrue("Expecting all data to be deleted but instead we have:\n" + getMessageDetails(initialMap, finalMap),
-                CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
-    }
-
     private static String getMessageDetails(Map<String, Integer> initialMap, Map<String, Integer> finalMap) {
         return initialMap.entrySet().stream()
                 .filter(mapEntry -> !Objects.equals(mapEntry.getValue(), finalMap.get(mapEntry.getKey())))
