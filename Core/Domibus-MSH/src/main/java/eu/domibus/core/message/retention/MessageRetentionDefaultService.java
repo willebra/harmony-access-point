@@ -6,10 +6,7 @@ import eu.domibus.api.jms.JmsMessage;
 import eu.domibus.api.model.*;
 import eu.domibus.api.payload.PartInfoService;
 import eu.domibus.api.property.DomibusPropertyProvider;
-import eu.domibus.core.message.MessageStatusDao;
-import eu.domibus.core.message.UserMessageDefaultService;
-import eu.domibus.core.message.UserMessageLogDao;
-import eu.domibus.core.message.UserMessageServiceHelper;
+import eu.domibus.core.message.*;
 import eu.domibus.core.metrics.Counter;
 import eu.domibus.core.metrics.Timer;
 import eu.domibus.core.plugin.notification.BackendNotificationService;
@@ -64,6 +61,9 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
 
     @Autowired
     private UserMessageDefaultService userMessageDefaultService;
+
+    @Autowired
+    private UserMessageLogDefaultService userMessageLogService;
 
     @Autowired
     private UserMessageServiceHelper userMessageServiceHelper;

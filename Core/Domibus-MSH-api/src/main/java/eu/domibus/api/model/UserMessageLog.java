@@ -120,8 +120,7 @@ import java.util.Date;
                         "INNER JOIN uml.userMessage um                                                                  " +
                         "left join um.messageProperties p on p.name = 'finalRecipient'                                  " +
                         "where uml.messageStatus IN :MSG_STATUSES                                                       " +
-                        "and um.mpc = :MPC   " +
-                        "and uml.deleted is null                                                                            " +
+                        "and um.mpc = :MPC                                                                              " +
                         "and uml.modificationTime is not null                                                           " +
                         "and uml.modificationTime < :DATE                                                               " +
                         "and ((:EARCHIVE_IS_ACTIVE = true and uml.archived is not null) or :EARCHIVE_IS_ACTIVE = false)"),

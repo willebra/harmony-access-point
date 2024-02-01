@@ -322,10 +322,8 @@ public class UserMessageLogDao extends MessageLogDao<UserMessageLog> {
     }
 
     public List<UserMessageLogDto> getDeletedUserMessagesOlderThan(Date date, String mpc, Integer expiredDeletedMessagesLimit, boolean eArchiveIsActive) {
-        // Message status won't change to 'DELETED' if the payloads gets deleted based on the property domibus.sendMessage.success.delete.payload/domibus.sendMessage.failure.delete.payload =true.
-        // To delete the metadata of all the payload deleted messages, here we get all the payload deleted messages including the messages in ACKNOWLEDGED, SEND_FAILURE and DELETED statuses.
         return getMessagesOlderThan(date, mpcDao.findMpc(mpc), expiredDeletedMessagesLimit, "UserMessageLog.findDeletedUserMessagesOlderThan",
-                eArchiveIsActive, messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.DELETED, MessageStatus.ACKNOWLEDGED, MessageStatus.SEND_FAILURE)));
+                eArchiveIsActive, messageStatusDao.getEntitiesOf(Arrays.asList(MessageStatus.DELETED)));
     }
 
     public List<UserMessageLogDto> getUndownloadedUserMessagesOlderThan(Date date, String mpc, Integer expiredNotDownloadedMessagesLimit, boolean eArchiveIsActive) {
