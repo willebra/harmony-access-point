@@ -1,53 +1,49 @@
 # Domibus upgrade information
 ## Domibus 5.1.3 (from 5.1.2)
-    ### Wildfly only
-         - in file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml":
-            - remove the following datasources from datasources section
-                .............................
-                <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryMysqlNonXADS" enabled="true" use-ccm="true">
-                    <connection-url>jdbc:mysql://localhost:3306/domibus?autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</connection-url>
-                    <driver-class>com.mysql.cj.jdbc.Driver</driver-class>
-                    <driver>com.mysql</driver>
-                    <pool>
-                        <min-pool-size>20</min-pool-size>
-                        <initial-pool-size>5</initial-pool-size>
-                        <max-pool-size>100</max-pool-size>
-                    </pool>
-                    <security>
-                        <user-name>edelivery</user-name>
-                        <password>edelivery</password>
-                    </security>
-                    <validation>
-                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker"/>
-                        <background-validation>true</background-validation>
-                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter"/>
-                    </validation>
-                </datasource>
-                <!-- Oracle
-                <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryOracleNonXADS" enabled="true" use-ccm="true">
-                    <connection-url>jdbc:oracle:thin:@localhost:1521[:SID|/Service]</connection-url>
-                    <driver-class>oracle.jdbc.OracleDriver</driver-class>
-                    <driver>com.oracle</driver>
-                    <pool>
-                        <min-pool-size>20</min-pool-size>
-                        <initial-pool-size>5</initial-pool-size>
-                        <max-pool-size>100</max-pool-size>
-                    </pool>
-                    <security>
-                        <user-name>edelivery_user</user-name>
-                        <password>edelivery_password</password>
-                    </security>
-                    <validation>
-                        <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker"/>
-                        <background-validation>true</background-validation>
-                        <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter"/>
-                    </validation>
-                </datasource>
-                -->
-                .............................
-
+    ### Tomcat only
+    - add values for quartz data source properties if defaults are not good
+      #the name of the DataSource class provided by the JDBC driver
+      domibus.quartz.datasource.driverClassName=com.mysql.cj.jdbc.Driver
+      #the JDBC url for the DB
+      domibus.quartz.datasource.url=jdbc:mysql://${domibus.database.serverName}:${domibus.database.port}/${domibus.database.schema}?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+      #default authentication username used when obtaining Connections from the underlying driver
+      domibus.quartz.datasource.user=edelivery
+      #the default authentication password used when obtaining Connections from the underlying driver
+      domibus.quartz.datasource.password=edelivery
+      #HikariCP specific
+      #Controls the maximum lifetime of a connection in the pool (in seconds)
+      domibus.quartz.datasource.maxLifetime=1800
+      #Controls the maximum amount of time (in seconds) that a client will wait for a connection from the pool
+      domibus.quartz.datasource.connectionTimeout=30
+      #Controls the maximum amount of time (in seconds) that a connection is allowed to sit idle in the pool
+      domibus.quartz.datasource.idleTimeout=600
+      #Controls the maximum size that the pool is allowed to reach, including both idle and in-use connections
+      domibus.quartz.datasource.maxPoolSize=10
+      #Controls the minimum number of idle connections that HikariCP tries to maintain in the pool
+      domibus.quartz.datasource.minimumIdle=1
+    
     ### Weblogic only
-        - execute the WLST API script remove.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-removeJDBCDatasources.properties to remove unused datasource
+    - execute the WLST API script(from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-renameJDBCDatasources.properties to rename quartz datasources
+    
+    ### Wildfly only
+     - in file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml":
+        - replace the following datasource and pool names from 
+            .............................
+            <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryMysqlNonXADS" enabled="true" use-ccm="true">
+            .....................    
+            to
+            .............................
+            <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryMysqlQuartzDS" enabled="true" use-ccm="true">
+            .....................    
+            and from
+            <!-- Oracle
+            <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryOracleNonXADS" enabled="true" use-ccm="true">
+            .............................
+            to
+            <!-- Oracle
+            <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryOracleQuartzDS" enabled="true" use-ccm="true">
+            .............................
+
     - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
 ## Domibus 5.1.2 (from 5.1.1)
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
