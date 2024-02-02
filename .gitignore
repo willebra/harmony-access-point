@@ -1,4 +1,4 @@
-﻿## Eclipse config files ##
+## Eclipse config files ##
 .settings/
 .classpath
 .project
@@ -39,3 +39,4 @@ cargo
 ## maven-shade-plugin generated files
 dependency-reduced-pom.xml
 /.idea/
+**/.angular/cache/
