@@ -1,4 +1,6 @@
 Domibus 5.1.3
+- Added domibus properties for quartz data source in Tomcat
+- Renamed edeliveryNonXA datasources to eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS in wildfly standalone-full.xml file
 - Removed edeliveryNonXA datasources for weblogic from cli and properties files
 - removed eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS datasources from wildfly standalone-full.xml file
 - Improved the self sending mechanism

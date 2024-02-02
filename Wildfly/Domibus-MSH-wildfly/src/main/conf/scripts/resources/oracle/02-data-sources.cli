@@ -15,3 +15,19 @@ data-source add \
 --max-pool-size=100 \
 --enabled=true
 
+data-source add \
+--name=eDeliveryOracleQuartzDS \
+--driver-name=com.oracle \
+--driver-class=oracle.jdbc.OracleDriver \
+--jndi-name=java:/jdbc/cipaeDeliveryQuartzDs \
+--user-name=${DB_USER} \
+--password=${DB_PASS} \
+--connection-url=${JDBC_CONNECTION_URL} \
+--use-ccm=true \
+--valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker \
+--exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter \
+--background-validation=true \
+--min-pool-size=2 \
+--initial-pool-size=5 \
+--max-pool-size=10 \
+--enabled=true

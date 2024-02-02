@@ -321,6 +321,8 @@ public interface DomibusPropertyMetadataManagerSPI {
     String DOMIBUS_SECURITY_KEY_PRIVATE_PASSWORD = "domibus.security.key.private.password";//NOSONAR
     String DOMIBUS_DATABASE_GENERAL_SCHEMA = "domibus.database.general.schema";
     String DOMIBUS_DATABASE_SCHEMA = "domibus.database.schema";
+
+    // application data source props
     String DOMIBUS_DATASOURCE_DRIVER_CLASS_NAME = "domibus.datasource.driverClassName";
     String DOMIBUS_DATASOURCE_URL = "domibus.datasource.url";
     String DOMIBUS_DATASOURCE_USER = "domibus.datasource.user";
@@ -331,6 +333,18 @@ public interface DomibusPropertyMetadataManagerSPI {
     String DOMIBUS_DATASOURCE_IDLE_TIMEOUT = "domibus.datasource.idleTimeout";
     String DOMIBUS_DATASOURCE_MINIMUM_IDLE = "domibus.datasource.minimumIdle";
     String DOMIBUS_DATASOURCE_POOL_NAME = "domibus.datasource.poolName";
+
+    // quartz data source props
+    String DOMIBUS_QUARTZ_DATASOURCE_DRIVER_CLASS_NAME = "domibus.quartz.datasource.driverClassName";
+    String DOMIBUS_QUARTZ_DATASOURCE_URL = "domibus.quartz.datasource.url";
+    String DOMIBUS_QUARTZ_DATASOURCE_USER = "domibus.quartz.datasource.user";
+    String DOMIBUS_QUARTZ_DATASOURCE_PASSWORD = "domibus.quartz.datasource.password";//NOSONAR
+    String DOMIBUS_QUARTZ_DATASOURCE_MAX_LIFETIME = "domibus.quartz.datasource.maxLifetime";
+    String DOMIBUS_QUARTZ_DATASOURCE_MAX_POOL_SIZE = "domibus.quartz.datasource.maxPoolSize";
+    String DOMIBUS_QUARTZ_DATASOURCE_CONNECTION_TIMEOUT = "domibus.quartz.datasource.connectionTimeout";
+    String DOMIBUS_QUARTZ_DATASOURCE_IDLE_TIMEOUT = "domibus.quartz.datasource.idleTimeout";
+    String DOMIBUS_QUARTZ_DATASOURCE_MINIMUM_IDLE = "domibus.quartz.datasource.minimumIdle";
+    String DOMIBUS_QUARTZ_DATASOURCE_POOL_NAME = "domibus.quartz.datasource.poolName";
 
     String DOMIBUS_ENTITY_MANAGER_FACTORY_PACKAGES_TO_SCAN = "domibus.entityManagerFactory.packagesToScan";
     String DOMIBUS_ENTITY_MANAGER_FACTORY_JPA_PROPERTY = "domibus.entityManagerFactory.jpaProperty";
