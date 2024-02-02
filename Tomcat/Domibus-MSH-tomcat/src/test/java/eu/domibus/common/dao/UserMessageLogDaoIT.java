@@ -183,7 +183,7 @@ public class UserMessageLogDaoIT extends AbstractIT {
     @Test
     public void getSentUserMessagesWithPayloadNotClearedOlderThan_found() {
         List<UserMessageLogDto> downloadedUserMessagesOlderThan =
-                userMessageLogDao.getSentUserMessagesOlderThan(dateUtil.fromString(LocalDate.now().getYear() + 2 + "-01-01T12:00:00Z"), MPC, 10, false, false);
+                userMessageLogDao.getSentUserMessagesOlderThan(dateUtil.fromString(LocalDate.now().getYear() + 2 + "-01-01T12:00:00Z"), MPC, 10, false);
         assertEquals(2, downloadedUserMessagesOlderThan.size());
         assertThat(downloadedUserMessagesOlderThan
                 .stream()
@@ -194,21 +194,21 @@ public class UserMessageLogDaoIT extends AbstractIT {
     @Test
     public void getSentUserMessagesWithPayloadNotClearedOlderThan_found_eArchive() {
         List<UserMessageLogDto> downloadedUserMessagesOlderThan =
-                userMessageLogDao.getSentUserMessagesOlderThan(dateUtil.fromString(LocalDate.now().getYear() + 2 + "-01-01T12:00:00Z"), MPC, 10, false, true);
+                userMessageLogDao.getSentUserMessagesOlderThan(dateUtil.fromString(LocalDate.now().getYear() + 2 + "-01-01T12:00:00Z"), MPC, 10, true);
         assertEquals(1, downloadedUserMessagesOlderThan.size());
     }
 
     @Test
     public void getSentUserMessagesWithPayloadNotClearedOlderThan_notFound() {
         List<UserMessageLogDto> deletedUserMessagesOlderThan =
-                userMessageLogDao.getSentUserMessagesOlderThan(before, MPC, 10, false, false);
+                userMessageLogDao.getSentUserMessagesOlderThan(before, MPC, 10, false);
         assertEquals(0, deletedUserMessagesOlderThan.size());
     }
 
     @Test
     public void getSentUserMessagesOlderThan_found() {
         List<UserMessageLogDto> downloadedUserMessagesOlderThan =
-                userMessageLogDao.getSentUserMessagesOlderThan(dateUtil.fromString(LocalDate.now().getYear() + 2 + "-01-01T12:00:00Z"), MPC, 10, true, false);
+                userMessageLogDao.getSentUserMessagesOlderThan(dateUtil.fromString(LocalDate.now().getYear() + 2 + "-01-01T12:00:00Z"), MPC, 10, false);
         assertEquals(2, downloadedUserMessagesOlderThan.size());
         assertThat(downloadedUserMessagesOlderThan
                 .stream()
@@ -219,7 +219,7 @@ public class UserMessageLogDaoIT extends AbstractIT {
     @Test
     public void getSentUserMessagesOlderThan_notFound() {
         List<UserMessageLogDto> deletedUserMessagesOlderThan =
-                userMessageLogDao.getSentUserMessagesOlderThan(before, MPC, 10, true, false);
+                userMessageLogDao.getSentUserMessagesOlderThan(before, MPC, 10, false);
         assertEquals(0, deletedUserMessagesOlderThan.size());
     }
 

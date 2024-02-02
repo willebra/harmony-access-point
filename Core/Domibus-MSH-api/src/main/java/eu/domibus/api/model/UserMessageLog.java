@@ -114,17 +114,6 @@ import java.util.Date;
                         "and um.mpc = :MPC                                                                              " +
                         "and uml.downloaded is not null and uml.downloaded < :DATE                                      " +
                         "and ((:EARCHIVE_IS_ACTIVE = true and uml.archived is not null) or :EARCHIVE_IS_ACTIVE = false)"),
-        @NamedQuery(name = "UserMessageLog.findSentUserMessagesWithPayloadNotClearedOlderThan",
-                query = "SELECT new eu.domibus.api.model.UserMessageLogDto(um.entityId,um.messageId,uml.backend,p)      " + // need this property in WSPlugin
-                        "FROM UserMessageLog uml                                                                        " +
-                        "INNER JOIN uml.userMessage um                                                                  " +
-                        "left join um.messageProperties p on p.name = 'finalRecipient'                                  " +
-                        "where uml.messageStatus IN :MSG_STATUSES                                                       " +
-                        "and um.mpc = :MPC                                                                              " +
-                        "and uml.deleted is null                                                                        " +
-                        "and uml.modificationTime is not null                                                           " +
-                        "and uml.modificationTime < :DATE                                                               " +
-                        "and ((:EARCHIVE_IS_ACTIVE = true and uml.archived is not null) or :EARCHIVE_IS_ACTIVE = false)"),
         @NamedQuery(name = "UserMessageLog.findSentUserMessagesOlderThan",
                 query = "SELECT new eu.domibus.api.model.UserMessageLogDto(um.entityId,um.messageId,uml.backend,p)      " + // need this property in WSPlugin
                         "FROM UserMessageLog uml                                                                        " +
