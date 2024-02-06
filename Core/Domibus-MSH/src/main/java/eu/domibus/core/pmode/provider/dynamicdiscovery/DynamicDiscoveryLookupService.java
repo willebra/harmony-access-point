@@ -170,6 +170,10 @@ public class DynamicDiscoveryLookupService implements PModeEventListener {
     public void deleteDDCLookupEntriesNotDiscoveredInTheLastPeriod(int retentionInHours) {
         Date dateLimit = DateUtils.addHours(new Date(), retentionInHours * -1);
 
+        deleteDDCLookupEntriesNotDiscoveredInTheLastPeriod(dateLimit);
+    }
+
+    public void deleteDDCLookupEntriesNotDiscoveredInTheLastPeriod(Date dateLimit) {
         //clean expired DDC certificates from the truststore
         deleteFromTruststoreExpiredDdcCertificates(dateLimit);
 
@@ -184,6 +188,11 @@ public class DynamicDiscoveryLookupService implements PModeEventListener {
         //DDC certificates
         LOG.info("Getting the DDC certificates which were not discovered more recently than [{}]", dateLimit);
         final List<String> certificateCNs = dynamicDiscoveryLookupDao.findCertificatesNotDiscoveredInTheLastPeriod(dateLimit);
+        if (CollectionUtils.isEmpty(certificateCNs)) {
+            LOG.info("No DDC certificates not discovered more recently than [{}] found", dateLimit);
+            return;
+        }
+
         LOG.info("Deleting [{}] from truststore the DDC certificates not discovered more recently than [{}] with the following CNs: [{}]", certificateCNs.size(), dateLimit, certificateCNs);
         deleteCertificatesFromTruststore(certificateCNs);
     }
@@ -191,11 +200,19 @@ public class DynamicDiscoveryLookupService implements PModeEventListener {
     protected void deleteFromPmodeExpiredDdcParties(Date dateLimit) {
         LOG.info("Getting the DDC parties which were not discovered more recently than [{}]", dateLimit);
         List<String> partyNames = dynamicDiscoveryLookupDao.findPartiesNotDiscoveredInTheLastPeriod(dateLimit);
-        LOG.info("Deleting [{}] from PMode the DDC parties not discovered more recently than [{}] with the following party names: [{}]", partyNames.size(), dateLimit, partyNames);
-        deletePartiesFromPMode(partyNames);
+        final String accessPointPartyName = pModeProvider.getGatewayParty().getName();
+        List<String> partyNamesToDelete = partyNames.stream().filter(partyName -> !StringUtils.equalsIgnoreCase(partyName, accessPointPartyName)).collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(partyNamesToDelete)) {
+            LOG.info("No DDC parties not discovered more recently than [{}] found", dateLimit);
+            return;
+        }
+
+        LOG.info("Deleting [{}] from PMode the DDC parties not discovered more recently than [{}] with the following party names: [{}]", partyNamesToDelete.size(), dateLimit, partyNamesToDelete);
+        deletePartiesFromPMode(partyNamesToDelete);
 
         //signal to delete pmode parties also from the other members from the cluster
-        signalService.signalDeletePmodeParties(partyNames);
+        signalService.signalDeletePmodeParties(partyNamesToDelete);
     }
 
     public void deleteExpiredDdcFinalRecipients(Date dateLimit) {
