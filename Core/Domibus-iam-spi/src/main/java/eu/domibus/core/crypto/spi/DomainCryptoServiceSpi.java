@@ -143,4 +143,8 @@ public interface DomainCryptoServiceSpi {
     default boolean isKeyStoreChanged() {
         return false;
     }
+
+    default void refreshTrustedLists() {
+        // do nothing
+    }
 }

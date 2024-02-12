@@ -1,4 +1,5 @@
 Domibus 5.1.3
+- Added endpoint for refreshing DSS Trusted lists. Can be accessed with POST /ext/trustedlists/refreshoperation
 - Added domibus properties for quartz data source in Tomcat
 - Renamed edeliveryNonXA datasources to eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS in wildfly standalone-full.xml file
 - Removed edeliveryNonXA datasources for weblogic from cli and properties files
