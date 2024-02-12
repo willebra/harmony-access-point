@@ -296,6 +296,11 @@ public class DomainCryptoServiceImpl implements DomainCryptoService {
         return iamProvider.isKeyStoreChanged();
     }
 
+    @Override
+    public void refreshTrustedLists() {
+        iamProvider.refreshTrustedLists();
+    }
+
     protected void getIAMProvider() {
         String spiIdentifier = getSpiIdentifier();
         if (DEFAULT_AUTHENTICATION_SPI.equals(spiIdentifier) && domainCryptoServiceSpiList.size() > 1) {
