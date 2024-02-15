@@ -20,6 +20,9 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,6 +34,10 @@ import org.springframework.util.SocketUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
 
 /**
  * @author Cosmin Baciu
@@ -82,12 +89,11 @@ public abstract class AbstractIT {
         final File domibusConfigLocation = new File("target/test-classes");
         System.setProperty("domibus.config.location", domibusConfigLocation.getAbsolutePath());
 
-        final File projectRoot = new File("").getAbsoluteFile().getParentFile();
-
-        copyActiveMQFile(domibusConfigLocation, projectRoot);
-        copyKeystores(domibusConfigLocation, projectRoot);
-        copyPolicies(domibusConfigLocation, projectRoot);
-        copyDomibusProperties(domibusConfigLocation, projectRoot);
+        copyActiveMQFile(domibusConfigLocation);
+        copyResourceFolder(domibusConfigLocation, "abstractIT/keystores", "keystores");
+        copyResourceFolder(domibusConfigLocation, "abstractIT/policies", "policies");
+        copyDomibusProperties(domibusConfigLocation);
+        copyDomainResourceFolders(domibusConfigLocation);
 
         FileUtils.deleteDirectory(new File("target/temp"));
 
@@ -118,31 +124,48 @@ public abstract class AbstractIT {
         }
     }
 
-    private static void copyPolicies(File domibusConfigLocation, File projectRoot) throws IOException {
-        final File policiesDirectory = new File(projectRoot, "../Core/Domibus-MSH/src/main/conf/domibus/policies");
-        final File destPoliciesDirectory = new File(domibusConfigLocation, "policies");
-        FileUtils.forceMkdir(destPoliciesDirectory);
-        FileUtils.copyDirectory(policiesDirectory, destPoliciesDirectory);
-    }
-
-    private static void copyDomibusProperties(File domibusConfigLocation, File projectRoot) throws IOException {
-        final File domibusPropertiesFile = new File(projectRoot, "../Core/Domibus-MSH-test/src/main/conf/domibus.properties");
+    private static void copyDomibusProperties(File domibusConfigLocation) throws IOException {
         final File destDomibusPropertiesFile = new File(domibusConfigLocation, "domibus.properties");
-        FileUtils.copyFile(domibusPropertiesFile, destDomibusPropertiesFile);
+        try (InputStream inputStream = ResourceLoader.class.getClassLoader().getResourceAsStream("abstractIT/domibus.properties")) {
+            if (inputStream != null) {
+                Files.copy(inputStream, destDomibusPropertiesFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
     }
 
-    private static void copyKeystores(File domibusConfigLocation, File projectRoot) throws IOException {
-        final File keystoresDirectory = new File(projectRoot, "../Tomcat/Domibus-MSH-tomcat/src/test/resources/keystores");
-        final File destKeystoresDirectory = new File(domibusConfigLocation, "keystores");
-        FileUtils.forceMkdir(destKeystoresDirectory);
-        FileUtils.copyDirectory(keystoresDirectory, destKeystoresDirectory);
-    }
-
-    private static void copyActiveMQFile(File domibusConfigLocation, File projectRoot) throws IOException {
-        final File activeMQFile = new File(projectRoot, "../Tomcat/Domibus-MSH-tomcat/src/main/conf/domibus/internal/activemq.xml");
+    private static void copyActiveMQFile(File domibusConfigLocation) throws IOException {
         final File internalDirectory = new File(domibusConfigLocation, "internal");
         FileUtils.forceMkdir(internalDirectory);
         final File destActiveMQ = new File(internalDirectory, "activemq.xml");
-        FileUtils.copyFile(activeMQFile, destActiveMQ);
+        try (InputStream inputStream = ResourceLoader.class.getClassLoader().getResourceAsStream("abstractIT/activemq.xml")) {
+            if (inputStream != null) {
+                Files.copy(inputStream, destActiveMQ.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
     }
-}
+
+    private static void copyDomainResourceFolders(File domibusConfigLocation) throws IOException {
+        final String[] folders = {"domains",
+                "domains/default", "domains/default/encrypt", "domains/default/keystores",
+                "domains/red", "domains/red/encrypt", "domains/red/keystores"};
+
+        for (String folder : folders) {
+            copyResourceFolder(domibusConfigLocation, folder, folder);
+        }
+    }
+
+    public static void copyResourceFolder(File domibusConfigLocation, String resourceFolder, String destFolder) throws IOException {
+        final File destDirectory = new File(domibusConfigLocation, destFolder);
+        FileUtils.forceMkdir(destDirectory);
+        final PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        final Resource[] resourceList = resolver.getResources("classpath*:" + resourceFolder + "/*");
+        for (Resource resource : resourceList) {
+            final String fileName = resource.getFilename();
+            final String url = resource.getURL().toString();
+            // copy just resources from domibus-msh-test
+            if (fileName != null && url.contains("domibus-msh-test")) {
+                final File destinationPath = new File(destDirectory, fileName);
+                Files.copy(resource.getInputStream(), destinationPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }}
