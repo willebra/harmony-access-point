@@ -248,7 +248,7 @@ public abstract class UserSecurityPolicyManager<U extends UserEntityBase> {
         user.setAttemptCount(user.getAttemptCount() + 1);
         LOG.debug("setAttemptCount [{}] out of [{}] for user [{}]", user.getAttemptCount(), maxAttemptAmount, user.getUserName());
 
-        if (user.getAttemptCount() >= maxAttemptAmount) {
+        if (user.getAttemptCount() > maxAttemptAmount) {
             onSuspendUser(user, maxAttemptAmount);
         }
 

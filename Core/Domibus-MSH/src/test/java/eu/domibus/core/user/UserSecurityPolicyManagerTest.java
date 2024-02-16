@@ -812,21 +812,51 @@ public class UserSecurityPolicyManagerTest {
             result = user;
             securityPolicyManager.getMaxAttemptAmount(user);
             result = attemptCount;
-            securityPolicyManager.getUserAlertsService();
-            result = userAlertsService;
         }};
 
         securityPolicyManager.handleWrongAuthentication(userName);
 
-        new Verifications() {{
-            userAlertsService.triggerDisabledEvent(user);
-            times = 1;
-        }};
-
-        assertFalse(user.isActive());
-        assertNotNull(user.getSuspensionDate());
+        assertTrue(user.isActive());
+        assertNull(user.getSuspensionDate());
     }
 
+    @Test
+    public void handleWrongAuthenticationBadCredentialsWithMaxAttemptCount() {
+
+        String userName = "user1";
+        int maxAttemptCount = 1;
+        int userAttemptCount = 1;
+        final User user = new User() {{
+            setUserName(userName);
+            setActive(true);
+            setAttemptCount(userAttemptCount);
+        }};
+        new Expectations(securityPolicyManager) {{
+            securityPolicyManager.getUserDao();
+            result = userDao;
+
+            userDao.findByUserName(anyString);
+            result = user;
+
+            securityPolicyManager.getMaxAttemptAmount(user);
+            result = maxAttemptCount;
+
+            securityPolicyManager.getUserAlertsService();
+            result = userAlertsService;
+
+        }};
+
+        securityPolicyManager.handleWrongAuthentication(userName);
+        new Verifications() {{
+
+            userAlertsService.triggerDisabledEvent(user);
+            times = 1;
+
+        }};
+        assertFalse(user.isActive());
+        assertNotNull(user.getSuspensionDate());
+
+    }
     @Test
     public void reactivateSuspendedUsersTest() {
         final User user1 = new User() {{
