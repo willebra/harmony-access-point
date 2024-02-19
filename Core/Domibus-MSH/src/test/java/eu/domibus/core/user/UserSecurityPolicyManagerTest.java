@@ -812,6 +812,8 @@ public class UserSecurityPolicyManagerTest {
             result = user;
             securityPolicyManager.getMaxAttemptAmount(user);
             result = attemptCount;
+            securityPolicyManager.getUserAlertsService();
+            result = userAlertsService;
         }};
 
         securityPolicyManager.handleWrongAuthentication(userName);
