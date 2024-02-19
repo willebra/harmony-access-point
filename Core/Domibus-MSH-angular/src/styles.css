@@ -1,13 +1,9 @@
-/* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
-@import '~@swimlane/ngx-datatable/index.css';
-@import '~@swimlane/ngx-datatable/themes/material.css';
-@import '~@swimlane/ngx-datatable/assets/icons.css';
+@import '@angular/material/prebuilt-themes/deeppurple-amber.css';
+@import '../node_modules/@swimlane/ngx-datatable/index.css';
+@import '../node_modules/@swimlane/ngx-datatable/themes/material.css';
+@import '../node_modules/@swimlane/ngx-datatable/assets/icons.css';
 @import 'assets/fonts/fonts.css';
 
-/*--------------------------------------------------
-    [NORMALIZE]
-----------------------------------------------------*/
 html, body {
   margin: 0;
   padding: 0;
@@ -16,11 +12,11 @@ html, body {
   font-family: 'Open Sans', sans-serif;
 }
 
-.mat-dialog-title {
+.mat-mdc-dialog-title {
   font-family: 'Open Sans', sans-serif !important;
 }
 
-.mat-button, .mat-raised-button, .mat-icon-button {
+.mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-icon-button {
   font-family: 'Open Sans', sans-serif !important;
   font-weight: bolder !important;
 }
@@ -34,6 +30,7 @@ html, body {
   word-wrap: break-word !important;
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 div:before,
 table:before,
 tr:before,
@@ -162,7 +159,7 @@ mat-sidenav[_ngcontent-c0] {
   top: 0;
 }
 
-#sandwichMenu .mat-icon-button {
+#sandwichMenu .mat-mdc-icon-button {
   height: 40px;
   width: 40px;
 }
@@ -230,6 +227,7 @@ a:hover {
   /*box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 1px 2px 0 rgba(0, 0, 0, 0.24);*/
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of card that may no longer apply for the MDC version. */
 mat-card {
   margin: 0;
 }
@@ -238,34 +236,28 @@ mat-card {
   margin-top: 10px !important;
 }
 
-/* --- INPUT ---*/
-.panel mat-select, .panel md2-datepicker, .panel mat-select {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
+/* TODO(mdc-migration): The following rule targets internal classes of input that may no longer apply for the MDC version. */
 .panel mat-select, .panel mat-input-container, .panel md2-datepicker, .panel mat-select {
   margin-right: 2%;
 }
 
-.panel mat-input-container, .panel mat-select, .panel md2-datepicker, .panel mat-select {
-  width: 22%;
-}
-
 @media (max-width: 991px) {
+  /* TODO(mdc-migration): The following rule targets internal classes of input that may no longer apply for the MDC version. */
   .panel mat-input-container, .panel mat-select, .panel md2-datepicker, .panel mat-select {
     width: 46%;
   }
 }
 
 @media (max-width: 767px) {
+  /* TODO(mdc-migration): The following rule targets internal classes of input that may no longer apply for the MDC version. */
   .panel mat-input-container, .panel mat-select, .panel md2-datepicker, .panel mat-select {
     width: 100%;
   }
 }
 
+/* TODO(mdc-migration): The following rule targets internal classes of select that may no longer apply for the MDC version. */
 .mat-select-menu-container,
-.mat-select-panel {
+.mat-mdc-select-panel {
   z-index: 99999 !important;
 }
 
@@ -320,31 +312,17 @@ mat-card {
   border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
-.mat-form-field {
+.mat-mdc-form-field {
   display: inline-block;
   width: 22%;
   margin-right: 30px;
-  /*vertical-align: middle;*/
 }
 
 .mat-icon {
   margin-right: 10px;
 }
 
-input {
-  background-color: white !important;
-}
-
-.mat-select-trigger {
-  padding-bottom: 6px;
-  border-bottom: solid 0.5px lightgray;
-}
-
-mat-select .mat-select {
-  padding: 14px 0;
-}
-
-.mat-card:not([class*=mat-elevation-z]) {
+.mat-mdc-card:not([class*=mat-elevation-z]) {
   box-shadow: none !important;
 }
 
@@ -364,7 +342,8 @@ mat-select .mat-select {
   z-index: 1;
 }
 
-.mat-form-field-appearance-legacy .mat-form-field-underline {
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+.mat-mdc-form-field-appearance-legacy .mat-mdc-form-field-underline {
   height: 0.05em !important;
   background-color: lightgray !important;
 }
@@ -374,24 +353,32 @@ mat-select .mat-select {
   padding-bottom: 10px !important;
 }
 
-.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell .mat-icon-button {
+.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell .mat-mdc-icon-button {
   height: 30px !important;
   margin-top: -10px !important;
 }
 
-.mat-snack-bar-container {
+.mat-mdc-snack-bar-container {
   max-width: 50vw !important;
 }
 
-.mat-snack-bar-container.error {
+.mat-mdc-snack-bar-container.error {
   background-color: #f44336 !important;
 }
 
-.mat-snack-bar-container.success {
+.mat-mdc-snack-bar-container.success {
   background-color: forestgreen !important;
 }
 
-.mat-simple-snackbar {
+.mat-mdc-snack-bar-container.warning {
+  background-color: orange !important;
+}
+
+.mat-mdc-snack-bar-container.info {
+  background-color: #2196F3 !important;
+}
+
+.mat-mdc-simple-snack-bar {
   color: white !important;
   font-size: 16px !important;
 }
@@ -420,7 +407,7 @@ html, body, app-root, ng-component {
   background-color: #2196f3;
 }
 
-.mat-card {
+.mat-mdc-card {
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
@@ -435,7 +422,7 @@ html, body, app-root, ng-component {
 
 .domibus-grid-container {
   flex-grow: 1;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
 }
 
@@ -443,3 +430,141 @@ html, body, app-root, ng-component {
   /*flex-grow: 1;*/
   margin-left: -10px;
 }
+
+.mat-datepicker-content {
+  box-shadow: 0 2px 4px -1px #0003, 0 4px 5px #00000024, 0 1px 10px #0000001f;
+  background-color: #fff;
+  color: #000000de;
+}
+
+.mat-calendar-body-cell {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none;
+  text-align: center;
+  outline: none;
+  font-family: inherit;
+  margin: 0;
+}
+
+.mat-calendar-body-cell:before, .mat-calendar-body-cell:after, .mat-calendar-body-cell-preview {
+  content: "";
+  position: absolute;
+  top: 5%;
+  left: 0;
+  z-index: 0;
+  box-sizing: border-box;
+  display: block;
+  height: 90%;
+  width: 100%;
+}
+
+.mat-calendar-body-cell-content, .mat-date-range-input-separator {
+  color: #000000de;
+  border-color: transparent;
+}
+
+.mat-calendar-body-cell-content.mat-focus-indicator {
+  position: absolute;
+}
+
+.mat-calendar-body-today.mat-calendar-body-selected {
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.mat-calendar-body-today.mat-calendar-body-selected {
+  box-shadow: inset 0 0 0 1px #fff;
+}
+
+.mat-calendar-body-cell-content {
+  top: 5%;
+  left: 5%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 90%;
+  height: 90%;
+  line-height: 1;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 999px;
+}
+
+.mat-calendar-body-selected {
+  background-color: #009b77;
+  color: #fff;
+}
+
+.mat-calendar-body-cell-content, .mat-date-range-input-separator {
+  color: #000000de;
+  border-color: transparent;
+}
+
+.mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+  border-color: #00000061;
+}
+
+.mat-mdc-icon-button .mat-mdc-button-touch-target {
+  position: absolute;
+  top: 50%;
+  height: 48px;
+  left: 50%;
+  width: 48px;
+  transform: translate(-50%, -50%);
+}
+
+.mat-mdc-icon-button svg, .mat-mdc-icon-button img {
+  width: 24px;
+  height: 24px;
+}
+
+.mat-mdc-icon-button.mat-mdc-button-base {
+  width: 48px;
+  height: 48px;
+  padding: 12px;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+.mat-form-field-appearance-legacy .mat-form-field-prefix .mat-datepicker-toggle-default-icon, .mat-form-field-appearance-legacy .mat-form-field-suffix .mat-datepicker-toggle-default-icon {
+  width: 3em !important;
+}
+
+.mat-datepicker-actions {
+  padding: 0px !important;
+}
+
+/* TODO(mdc-migration): The following rule targets internal classes of form-field that may no longer apply for the MDC version. */
+.mat-form-field-appearance-legacy .mat-form-field-prefix .mat-datepicker-toggle .mat-mdc-icon-button, .mat-form-field-appearance-legacy .mat-form-field-suffix .mat-datepicker-toggle .mat-mdc-icon-button {
+  width: 2em !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+  background-color: white !important;
+}
+
+.mat-mdc-form-field-focus-overlay {
+  background-color: white !important;
+}
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::before {
+  border-bottom-color: lightgrey !important;
+}
+
+.mdc-button {
+  justify-content: left !important;
+}
+
+.mat-mdc-card-outlined {
+  border-color: transparent !important;
+}
+
