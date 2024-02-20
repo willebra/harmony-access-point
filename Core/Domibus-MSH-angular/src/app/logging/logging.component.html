@@ -2,19 +2,19 @@
   <page-header id="loggingheader_id">{{name}}</page-header>
 
   <div class="selectionCriteria">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
 
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (ngSubmit)="tryFilter()">
 
-            <mat-form-field>
-              <input matInput placeholder="Package or class name" name="packageClassName"
-                     [(ngModel)]="filter.loggerName" #loggerName="ngModel" id="loggerName_id"
-                     width="40px" matTooltip="Enter here the package name e.g. 'eu.domibus' or 'ROOT' or part of the name">
+            <mat-form-field style="width: 50%;">
+              <mat-label>Package or class name:</mat-label>
+              <input matInput name="packageClassName" [(ngModel)]="filter.loggerName" #loggerName="ngModel" id="loggerName_id"
+                     matTooltip="Enter here the package name e.g. 'eu.domibus' or 'ROOT' or part of the name" >
             </mat-form-field>
             <mat-checkbox name="showClasses" [(ngModel)]="filter.showClasses" #showClasses="ngModel"
-                          id="showClasses_id">
+                          id="showClasses_id" style="margin-left: 20px;">
               Show Classes
             </mat-checkbox>
 
@@ -23,11 +23,9 @@
               <filter-area-footer [parent]="this" [isAdvancedVisible]="false" [form]="filterForm"></filter-area-footer>
 
               <button mat-raised-button color="primary" id="resetbutton_id" (click)="resetLogging()"
-                      style="position: absolute;right: 0;top: 0;"
-                      matTooltip="Click to reset logging configuration"
-                      type="button">
+                      style="position: absolute;right: 0;top: 0;" matTooltip="Click to reset logging configuration" type="button">
                 <mat-icon>cached</mat-icon>
-                <span>Reset</span>
+                <span>Reset Logging Level</span>
               </button>
 
             </div>
@@ -39,7 +37,7 @@
     </mat-card>
   </div>
 
-  <div class="group-filter-button">
+  <div class="group-filter-button" style="width: 200px;">
     <span class="row-button">
       <app-row-limiter [pageSizes]="rowLimiter.pageSizes"
                        (onPageSizeChanged)="changePageSize($event.value)"></app-row-limiter>

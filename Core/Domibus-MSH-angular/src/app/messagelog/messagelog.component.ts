@@ -5,6 +5,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild
@@ -12,7 +13,7 @@ import {
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {MessageLogResult} from './support/messagelogresult';
 import {AlertService} from '../common/alert/alert.service';
-import {MatDialog, MatSelectChange} from '@angular/material';
+import {MatSelectChange} from '@angular/material/select';
 import {MessagelogDetailsComponent} from 'app/messagelog/messagelog-details/messagelog-details.component';
 import {DownloadService} from '../common/download.service';
 import {DatatableComponent} from '@swimlane/ngx-datatable';
@@ -26,13 +27,17 @@ import {ServerPageableListMixin} from '../common/mixins/pageable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {PropertiesService} from '../properties/support/properties.service';
 import * as moment from 'moment';
+import {Moment} from 'moment';
 import 'moment-precise-range-plugin';
 import {SecurityService} from '../security/security.service';
 import {ComponentName} from '../common/component-name-decorator';
 import {MessageLogEntry} from './support/messagelogentry';
+import {FormControl, NgForm} from '@angular/forms';
+import 'rxjs/add/observable/interval';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'messagelog.component.html',
   providers: [],
   styleUrls: ['./messagelog.component.css']
@@ -40,7 +45,7 @@ import {MessageLogEntry} from './support/messagelogentry';
 @ComponentName('Message Logs')
 export class MessageLogComponent extends mix(BaseListComponent)
   .with(FilterableListMixin, ServerPageableListMixin, ServerSortableListMixin)
-  implements OnInit, AfterViewInit, AfterViewChecked {
+  implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
   static readonly RESEND_URL: string = 'rest/message/restore?messageId=${messageId}';
   static readonly RESEND_SELECTED_URL: string = 'rest/message/failed/restore/selected';
@@ -50,12 +55,14 @@ export class MessageLogComponent extends mix(BaseListComponent)
   static readonly MESSAGE_LOG_URL: string = 'rest/messagelog';
   static readonly DOWNLOAD_ENVELOPE_URL: string = 'rest/message/envelopes?messageId=${messageId}&mshRole=${mshRole}';
 
-  @ViewChild('rowWithDateFormatTpl', {static: false}) public rowWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('nextAttemptInfoTpl', {static: false}) public nextAttemptInfoTpl: TemplateRef<any>;
-  @ViewChild('nextAttemptInfoWithDateFormatTpl', {static: false}) public nextAttemptInfoWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rawTextTpl', {static: false}) public rawTextTpl: TemplateRef<any>;
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
-  @ViewChild('list', {static: false}) list: DatatableComponent;
+  @ViewChild('rowWithDateFormatTpl') public rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('nextAttemptInfoTpl') public nextAttemptInfoTpl: TemplateRef<any>;
+  @ViewChild('nextAttemptInfoWithDateFormatTpl') public nextAttemptInfoWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rawTextTpl') public rawTextTpl: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
+  @ViewChild('list') list: DatatableComponent;
+  @ViewChild('receivedToField') receivedToField: FormControl;
+  @ViewChild('filterForm') filterForm: NgForm;
 
   timestampFromMaxDate: Date;
   timestampToMinDate: Date;
@@ -99,6 +106,7 @@ export class MessageLogComponent extends mix(BaseListComponent)
   detailedSearch: boolean;
   detailedSearchFields = ['originalSender', 'finalRecipient', 'action', 'serviceType', 'serviceValue'];
   sortedColumns: [{ prop: string; dir: string }];
+  receivedToFieldSub: Subscription;
 
   get messageInterval(): DateInterval {
     return this._messageInterval;
@@ -126,10 +134,17 @@ export class MessageLogComponent extends mix(BaseListComponent)
   }
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private domibusInfoService: DomibusInfoService, public dialog: MatDialog, public dialogsService: DialogsService,
+              private domibusInfoService: DomibusInfoService, public dialogsService: DialogsService,
               private elementRef: ElementRef, private changeDetector: ChangeDetectorRef, private propertiesService: PropertiesService,
               private securityService: SecurityService) {
     super();
+    this.receivedToFieldSub = Observable.interval(2000)
+      .subscribe((val) => {
+        if (this.receivedToField && this.receivedToField.errors && this.receivedToField.errors['matDatetimePickerMax']) {
+          this.filterForm.controls['receivedTo'].setErrors(null);
+          this.timestampToMaxDate = new Date(this.filter.receivedTo + 60000);
+        }
+      });
   }
 
   async ngOnInit() {
@@ -437,7 +452,7 @@ export class MessageLogComponent extends mix(BaseListComponent)
 
     this.http.put(url, {}, {}).subscribe(res => {
       this.alertService.success('The operation resend message completed successfully');
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.messageResent.emit();
       }, 500);
     }, err => {
@@ -450,7 +465,7 @@ export class MessageLogComponent extends mix(BaseListComponent)
     let url = MessageLogComponent.RESEND_ALL_URL;
     this.http.put(url, filters).subscribe(res => {
       this.alertService.success('The operation resend messages scheduled successfully. Please refresh the page after sometime.');
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.messageResent.emit();
       }, 500);
     }, err => {
@@ -462,7 +477,7 @@ export class MessageLogComponent extends mix(BaseListComponent)
     let url = MessageLogComponent.RESEND_SELECTED_URL;
     this.http.put(url, messageLogEntries).subscribe(res => {
       this.alertService.success('The operation resend messages completed successfully');
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.messageResent.emit();
       }, 500);
     }, err => {
@@ -591,7 +606,7 @@ export class MessageLogComponent extends mix(BaseListComponent)
   }
 
   showDetails(selectedRow: any) {
-    this.dialog.open(MessagelogDetailsComponent, {
+    this.dialogsService.open(MessagelogDetailsComponent, {
       data: {message: selectedRow}
     });
   }
@@ -603,14 +618,20 @@ export class MessageLogComponent extends mix(BaseListComponent)
     this.setCustomMessageInterval();
   }
 
-  onTimestampFromChange(event) {
-    this.timestampToMinDate = event.value;
-    this.setCustomMessageInterval();
+  onTimestampFromChange(param: Moment) {
+    if (param) {
+      this.timestampToMinDate = param.toDate();
+      this.filter.receivedFrom = param.toDate();
+      this.setCustomMessageInterval();
+    }
   }
 
-  onTimestampToChange(event) {
-    this.timestampFromMaxDate = event.value;
-    this.setCustomMessageInterval();
+  onTimestampToChange(param: Moment) {
+    if (param) {
+      this.timestampFromMaxDate = param.toDate();
+      this.filter.receivedTo = param.toDate();
+      this.setCustomMessageInterval();
+    }
   }
 
   private setCustomMessageInterval() {
@@ -682,6 +703,10 @@ export class MessageLogComponent extends mix(BaseListComponent)
   private async isMessageLogPageAdvancedSearchEnabled(): Promise<boolean> {
     const prop = await this.propertiesService.getMessageLogPageAdvancedSearchEnabledProperty();
     return prop && prop.value && prop.value.toLowerCase() == 'true';
+  }
+
+  ngOnDestroy() {
+    this.receivedToFieldSub.unsubscribe();
   }
 }
 

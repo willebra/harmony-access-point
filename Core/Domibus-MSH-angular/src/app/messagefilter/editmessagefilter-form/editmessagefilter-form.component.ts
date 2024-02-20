@@ -1,5 +1,5 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {RoutingCriteriaEntry} from '../support/routingcriteriaentry';
 import {BackendFilterEntry} from '../support/backendfilterentry';
 import {EditPopupBaseComponent} from '../../common/edit-popup-base.component';
