@@ -87,7 +87,7 @@ export class DialogsService {
     return this.activeDialog.afterClosed().toPromise();
   }
 
-  private openYesNoDialogDialog(config: MatDialogConfig): Promise<boolean> {
+   openYesNoDialogDialog(config: MatDialogConfig): Promise<boolean> {
     const defaultConfig = {
       data: {
         yesText: 'Yes',
