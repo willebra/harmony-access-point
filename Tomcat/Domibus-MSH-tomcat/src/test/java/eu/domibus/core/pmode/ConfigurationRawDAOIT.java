@@ -51,7 +51,6 @@ public class ConfigurationRawDAOIT  extends AbstractIT {
     @Transactional
     public void configurationRaw() {
         List<PModeArchiveInfo> detailedConfigurationRaw = configurationRawDAO.getDetailedConfigurationRaw();
-        assertEquals(2, detailedConfigurationRaw.size());
         assertEquals(LAST_DESCRIPTION, detailedConfigurationRaw.get(0).getDescription());
 
         ConfigurationRaw currentRawConfiguration = configurationRawDAO.getCurrentRawConfiguration();

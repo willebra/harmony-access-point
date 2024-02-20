@@ -1,5 +1,7 @@
 package eu.domibus.security;
 
+import eu.domibus.api.property.DomibusPropertyMetadataManagerSPI;
+import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.test.AbstractIT;
 import eu.domibus.api.exceptions.DomibusCoreException;
 import eu.domibus.api.multitenancy.DomainContextProvider;
@@ -33,6 +35,9 @@ public class ConsoleUserSecurityPolicyManagerTestIT extends AbstractIT {
 
     @Autowired
     protected UserDao userDao;
+
+    @Autowired
+    DomibusPropertyProvider domibusPropertyProvider;
 
     @Autowired
     protected DomainContextProvider domainContextProvider;
@@ -96,8 +101,18 @@ public class ConsoleUserSecurityPolicyManagerTestIT extends AbstractIT {
     @Transactional
     @Rollback
     public void testPasswordComplexity_shortPasswordShouldFail() {
-        User user = initTestUser("testUser4");
-        userSecurityPolicyManager.changePassword(user, "Aa-1");
+
+        final String initialValue = domibusPropertyProvider.getProperty(DomibusPropertyMetadataManagerSPI.DOMIBUS_PASSWORD_POLICY_PATTERN);
+
+        try {
+            domibusPropertyProvider.setProperty(DomibusPropertyMetadataManagerSPI.DOMIBUS_PASSWORD_POLICY_PATTERN, "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[~`!@#$%^&+=\\\\-_<>.,?:;*/()|\\\\[\\\\]{}'\"\\\\\\\\]).{16,32}$");
+            User user = initTestUser("testUser4");
+            userSecurityPolicyManager.changePassword(user, "Aa-1");
+        } finally {
+            domibusPropertyProvider.setProperty(DomibusPropertyMetadataManagerSPI.DOMIBUS_PASSWORD_POLICY_PATTERN, initialValue);
+        }
+
+
     }
 
     @Test(expected = UserManagementException.class)
