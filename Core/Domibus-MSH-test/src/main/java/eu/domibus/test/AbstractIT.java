@@ -211,7 +211,6 @@ public abstract class AbstractIT {
 
                 domibusApplicationContextListener.initializeForTests();
 
-                createSuperUser();
             } catch (Exception ex) {
                 LOG.warn("Domibus Application Context initialization failed", ex);
             } finally {
