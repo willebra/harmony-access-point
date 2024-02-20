@@ -1,13 +1,10 @@
-package eu.domibus;
+package eu.domibus.test;
 
-import eu.domibus.core.ebms3.sender.ResponseHandler;
 import eu.domibus.core.ebms3.sender.client.MSHDispatcher;
 import eu.domibus.core.message.reliability.ReliabilityChecker;
 import eu.domibus.core.plugin.BackendConnectorHelper;
 import eu.domibus.core.plugin.BackendConnectorProvider;
 import eu.domibus.plugin.notification.PluginAsyncNotificationConfiguration;
-import eu.domibus.test.MockAuthenticationService;
-import eu.domibus.web.security.AuthenticationService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
@@ -24,12 +21,6 @@ import org.springframework.context.annotation.Primary;
         "classpath:config/commonsTestContext.xml"
 })
 public class DomibusTestMocksConfiguration {
-
-    @Primary
-    @Bean()
-    public AuthenticationService authenticationService() {
-        return new MockAuthenticationService();
-    }
 
     @Primary
     @Bean
