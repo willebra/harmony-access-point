@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode.provider;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.ebms3.Ebms3Constants;
 import eu.domibus.api.ebms3.MessageExchangePattern;
 import eu.domibus.api.multitenancy.DomainContextProvider;

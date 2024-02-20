@@ -1,6 +1,6 @@
 package eu.domibus.core.audit;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.core.user.ui.User;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;

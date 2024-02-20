@@ -1,14 +1,12 @@
 package eu.domibus.common.dao;
 
-import eu.domibus.AbstractIT;
-import eu.domibus.ITTestsService;
+import eu.domibus.test.AbstractIT;
+import eu.domibus.test.ITTestsService;
 import eu.domibus.api.model.*;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.common.MessageDaoTestUtil;
 import eu.domibus.core.earchive.EArchiveBatchUserMessage;
 import eu.domibus.core.message.MessageLogInfo;
-import eu.domibus.core.message.MessageStatusDao;
-import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageLogDao;
 import eu.domibus.core.message.dictionary.MpcDao;
 import eu.domibus.core.message.dictionary.NotificationStatusDao;

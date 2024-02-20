@@ -1,7 +1,7 @@
 package eu.domibus.core.error;
 
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MSHRoleEntity;
 import eu.domibus.api.model.UserMessage;

@@ -1,6 +1,6 @@
 package eu.domibus.property;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.multitenancy.Domain;
 import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.api.property.DomibusConfigurationService;

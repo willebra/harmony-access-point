@@ -1,6 +1,6 @@
 package eu.domibus.rest;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.crypto.SameResourceCryptoException;
 import eu.domibus.api.exceptions.RequestValidationException;
 import eu.domibus.api.multitenancy.Domain;

@@ -1,6 +1,6 @@
 package eu.domibus.core.message.nonrepudiation;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.exceptions.DomibusCoreException;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.SignalMessage;

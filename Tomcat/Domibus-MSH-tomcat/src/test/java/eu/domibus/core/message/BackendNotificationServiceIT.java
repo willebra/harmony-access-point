@@ -1,18 +1,16 @@
 package eu.domibus.core.message;
 
-import eu.domibus.ITTestsService;
+import eu.domibus.test.ITTestsService;
 import eu.domibus.api.ebms3.model.Ebms3Messaging;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.*;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.common.*;
-import eu.domibus.common.model.configuration.LegConfiguration;
 import eu.domibus.core.ebms3.EbMS3Exception;
 import eu.domibus.core.ebms3.receiver.MSHWebservice;
 import eu.domibus.core.ebms3.sender.MessageSenderErrorHandler;
 import eu.domibus.core.ebms3.sender.ResponseHandler;
-import eu.domibus.core.ebms3.sender.ResponseResult;
 import eu.domibus.core.ebms3.sender.client.MSHDispatcher;
 import eu.domibus.core.message.dictionary.NotificationStatusDao;
 import eu.domibus.core.message.reliability.ReliabilityChecker;
@@ -31,7 +29,6 @@ import eu.domibus.test.common.BackendConnectorMock;
 import eu.domibus.test.common.SoapSampleUtil;
 import eu.domibus.test.common.SubmissionUtil;
 import eu.domibus.web.rest.ro.MessageLogResultRO;
-import org.apache.neethi.Policy;
 import org.junit.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +44,6 @@ import javax.xml.ws.WebServiceException;
 import java.io.IOException;
 import java.util.*;
 
-import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_RECEIVER_CERTIFICATE_VALIDATION_ONSENDING;
-import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_SENDER_CERTIFICATE_VALIDATION_ONSENDING;
 import static eu.domibus.common.NotificationType.DEFAULT_PUSH_NOTIFICATIONS;
 import static eu.domibus.jms.spi.InternalJMSConstants.UNKNOWN_RECEIVER_QUEUE;
 import static eu.domibus.messaging.MessageConstants.*;

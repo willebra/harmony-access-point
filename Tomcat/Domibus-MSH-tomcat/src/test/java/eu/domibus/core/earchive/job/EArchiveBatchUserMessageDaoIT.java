@@ -1,6 +1,6 @@
 package eu.domibus.core.earchive.job;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.earchive.EArchiveRequestType;
 import eu.domibus.api.model.UserMessageLog;
 import eu.domibus.api.util.DateUtil;

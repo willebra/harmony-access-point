@@ -1,4 +1,4 @@
-package eu.domibus;
+package eu.domibus.test;
 
 import eu.domibus.api.model.*;
 import eu.domibus.core.ebms3.receiver.MSHWebservice;

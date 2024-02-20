@@ -1,6 +1,6 @@
 package eu.domibus.core.message.plugin.handler;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.jms.JmsMessage;
 import eu.domibus.api.model.*;
 import eu.domibus.api.multitenancy.Domain;
