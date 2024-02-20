@@ -1,6 +1,6 @@
 import {AlertService} from '../alert/alert.service';
 import {DownloadService} from '../download.service';
-import {OnInit} from '@angular/core';
+import {Directive, OnInit} from '@angular/core';
 import {ColumnPickerBase} from '../column-picker/column-picker-base';
 import {IBaseList} from './ibase-list';
 import {instanceOfFilterableList, instanceOfModifiableList} from './type.utils';
@@ -22,6 +22,7 @@ export interface Constructable {
 export function ConstructableDecorator(constructor: Constructable) {
 }
 
+@Directive()
 @ConstructableDecorator
 export default class BaseListComponent<T> implements IBaseList<T>, OnInit {
   public rows: T[];

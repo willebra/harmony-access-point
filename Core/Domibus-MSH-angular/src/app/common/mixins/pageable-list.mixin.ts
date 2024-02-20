@@ -15,7 +15,7 @@ import {SecurityService} from '../../security/security.service';
 export let ServerPageableListMixin = (superclass: Constructable) => class extends PageableListMixin(superclass) {
   constructor(...args) {
     super(...args);
-    super.type = PaginationType.Server;
+    this.type = PaginationType.Server;
   }
 
   // when server-paging, call get data from server
@@ -43,7 +43,7 @@ export let ServerPageableListMixin = (superclass: Constructable) => class extend
 export let ClientPageableListMixin = (superclass: Constructable) => class extends PageableListMixin(superclass) {
   constructor(...args) {
     super(...args);
-    super.type = PaginationType.Client;
+    this.type = PaginationType.Client;
   }
 
   getLastPage(): number {
@@ -55,7 +55,7 @@ export let ClientPageableListMixin = (superclass: Constructable) => class extend
 
   setPage(offset: number): void {
     this.alertService.clearAlert();
-    super.offset = offset;
+    this.offset = offset;
   }
 };
 

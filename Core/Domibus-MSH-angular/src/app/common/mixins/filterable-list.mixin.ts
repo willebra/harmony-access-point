@@ -42,7 +42,7 @@ let FilterableListMixin = (superclass: Constructable) => class extends superclas
     this.activeFilter = {};
 
     this.advancedSearch = true;
-    setTimeout(() => this.advancedSearch = false, 10);
+    window.setTimeout(() => this.advancedSearch = false, 10);
   }
 
   /**
@@ -71,21 +71,18 @@ let FilterableListMixin = (superclass: Constructable) => class extends superclas
    * The method is called from code when entering a page
    */
   public filterData(): Promise<any> {
-    this.setFilterParameters();
+    if (!this.initialFilter) {
+      this.initialFilter = this.clone(this.filter);
+    }
+
+    this.onBeforeFilter();
+    this.setActiveFilter();
 
     if (instanceOfPageableList(this)) {
       this.offset = 0;
     }
 
     return this.loadServerData();
-  }
-
-  private setFilterParameters() {
-    if (!this.initialFilter) {
-      this.initialFilter = this.clone(this.filter);
-    }
-    this.onBeforeFilter();
-    this.setActiveFilter();
   }
 
   public onResetAdvancedSearchParams() {
@@ -145,16 +142,6 @@ let FilterableListMixin = (superclass: Constructable) => class extends superclas
     return filterParams;
   }
 
-  getFiltersAsHttpParams(): HttpParams {
-    this.setFilterParameters();
-    return this.createAndSetParameters();
-  }
-
-  getFiltersAsObject(): Object {
-    this.setFilterParameters();
-    return this.activeFilter;
-  }
-
   /**
    * The method takes the filter params set through widgets and copies them to the active params
    * active params are the ones that are used for actual filtering of data and can be different from the ones set by the user in the UI
@@ -206,10 +193,6 @@ let FilterableListMixin = (superclass: Constructable) => class extends superclas
   protected onSetFilters() {
   }
 
-  protected isFiltered() {
-    return Object.keys(this.filter).every(key => this.filter[key] == this.activeFilter[key]);
-  }
-
   clone(obj) {
     // Handle the 3 simple types, and null or undefined
     if (null == obj || 'object' != typeof obj) {
@@ -247,6 +230,7 @@ let FilterableListMixin = (superclass: Constructable) => class extends superclas
   }
 
 };
+
 export default FilterableListMixin;
 
 /**
