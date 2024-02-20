@@ -1,6 +1,6 @@
 package eu.domibus.core.ebms3.receiver.policy;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.core.ebms3.receiver.leg.MessageLegConfigurationFactory;
 import eu.domibus.messaging.XmlProcessingException;
 import eu.domibus.test.common.SoapSampleUtil;

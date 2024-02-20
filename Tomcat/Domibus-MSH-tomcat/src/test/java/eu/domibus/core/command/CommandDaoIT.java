@@ -1,6 +1,6 @@
 package eu.domibus.core.command;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.common.JPAConstants;
 import eu.domibus.core.clustering.CommandDao;
 import eu.domibus.core.clustering.CommandEntity;

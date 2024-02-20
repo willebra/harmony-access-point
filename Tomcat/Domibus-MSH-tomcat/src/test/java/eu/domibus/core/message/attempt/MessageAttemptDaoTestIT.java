@@ -1,7 +1,7 @@
 package eu.domibus.core.message.attempt;
 
-import eu.domibus.AbstractIT;
-import eu.domibus.ITTestsService;
+import eu.domibus.test.AbstractIT;
+import eu.domibus.test.ITTestsService;
 import eu.domibus.api.message.attempt.MessageAttemptStatus;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.UserMessage;

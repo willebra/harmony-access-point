@@ -121,6 +121,13 @@
             <artifactId>javax.el</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>eu.domibus</groupId>
+            <artifactId>domibus-MSH-tomcat</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!--        End TEST        -->
 
     </dependencies>
@@ -160,6 +167,7 @@
                                         <include>eu.domibus:domibus-logging</include>
                                         <include>eu.domibus:domibus-msh-test-common</include>
                                         <include>eu.domibus:domibus-msh-test</include>
+                                        <include>eu.domibus:domibus-MSH-tomcat:${project.version}:jar:test</include>
                                     </includes>
                                 </bannedDependencies>
                             </rules>

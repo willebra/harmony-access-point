@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode.provider.dynamicdiscovery;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.cluster.Command;
 import eu.domibus.api.cluster.SignalService;
 import eu.domibus.api.dynamicdyscovery.DynamicDiscoveryLookupEntity;

@@ -1,6 +1,6 @@
 package eu.domibus.core.message;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.*;
 import eu.domibus.common.MessageDaoTestUtil;
 import eu.domibus.core.ebms3.EbMS3Exception;

@@ -1,6 +1,6 @@
 package eu.domibus.core.alert;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.alerts.AlertLevel;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.core.alerts.dao.AlertDao;
