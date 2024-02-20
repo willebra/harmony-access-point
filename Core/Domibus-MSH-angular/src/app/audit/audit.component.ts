@@ -20,6 +20,7 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
 import {DomibusInfoService} from '../common/appinfo/domibusinfo.service';
 import {SecurityService} from '../security/security.service';
+import {Moment} from 'moment';
 
 /**
  * @author Thomas Dussart
@@ -39,8 +40,8 @@ export class AuditComponent extends mix(BaseListComponent)
   .with(FilterableListMixin, ServerPageableListMixin)
   implements OnInit, AfterViewInit, AfterViewChecked {
 
-  @ViewChild('rowWithDateFormatTpl', {static: false}) rowWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rawTextTpl', {static: false}) public rawTextTpl: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rawTextTpl') public rawTextTpl: TemplateRef<any>;
 
 // --- Search components binding ---
   existingAuditTargets = [];
@@ -169,12 +170,18 @@ export class AuditComponent extends mix(BaseListComponent)
     })
   }
 
-  onTimestampFromChange(event) {
-    this.timestampToMinDate = event.value;
+  onTimestampFromChange(param: Moment) {
+    if (param) {
+      this.timestampToMinDate = param.toDate();
+      this.filter.from = param.toDate();
+    }
   }
 
-  onTimestampToChange(event) {
-    this.timestampFromMaxDate = event.value;
+  onTimestampToChange(param: Moment) {
+    if (param) {
+      this.timestampFromMaxDate = param.toDate();
+      this.filter.to = param.toDate();
+    }
   }
 
   get csvUrl(): string {
