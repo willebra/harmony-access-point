@@ -17,16 +17,14 @@ import FilterableListMixin from '../common/mixins/filterable-list.mixin';
 import {HttpClient} from '@angular/common/http';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
-import {MAT_CHECKBOX_CLICK_ACTION} from '@angular/material/checkbox';
 import {DialogsService} from '../common/dialogs/dialogs.service';
 import {AddNestedPropertyDialogComponent} from './support/add-nested-property-dialog/add-nested-property-dialog.component';
 import {ServerSortableListMixin} from '../common/mixins/sortable-list.mixin';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'properties.component.html',
   styleUrls: ['properties.component.css'],
-  providers: [PropertiesService, {provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check'}]
+  providers: [PropertiesService]
 })
 @ComponentName('Domibus Properties')
 export class PropertiesComponent extends mix(BaseListComponent)
@@ -35,7 +33,7 @@ export class PropertiesComponent extends mix(BaseListComponent)
 
   showGlobalPropertiesControl: boolean;
 
-  @ViewChild('propertyValueTpl', {static: false}) propertyValueTpl: TemplateRef<any>;
+  @ViewChild('propertyValueTpl') propertyValueTpl: TemplateRef<any>;
   private inLostFocus: boolean;
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private propertiesService: PropertiesService,
@@ -155,7 +153,7 @@ export class PropertiesComponent extends mix(BaseListComponent)
   }
 
   onPropertyValueBlur(row: PropertyModel) {
-    row.timeoutId = setTimeout(() => {
+    row.timeoutId = window.setTimeout(() => {
       this.revertProperty(row);
       row.timeoutId = null;
     }, 500);
