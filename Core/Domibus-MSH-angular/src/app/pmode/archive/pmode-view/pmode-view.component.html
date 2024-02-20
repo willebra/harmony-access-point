@@ -1,7 +1,7 @@
 <div style="width:800px;max-width: 800px;">
   <h1 id="pmodeheader_id" style="margin: 0px; ">{{pModeType}} PMode: {{pMode.metadata.description}}</h1>
   <div class="selectionCriteria" style="width:100%;">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <div class="textarea">
           <textarea #pmode_view_content [hidden]="!display" class="textarea" style="resize: none" readonly="readonly">{{pMode.content}}</textarea>

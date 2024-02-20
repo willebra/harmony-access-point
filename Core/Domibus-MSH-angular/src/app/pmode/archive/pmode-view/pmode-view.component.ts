@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-pmode-upload',
@@ -12,7 +12,7 @@ export class PmodeViewComponent implements OnInit {
   public pModeType: string;
   public display = false;
 
-  @ViewChild('pmode_view_content', {static: false})
+  @ViewChild('pmode_view_content')
   private pmode_view_content;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { metadata: any, content: string },
@@ -23,7 +23,7 @@ export class PmodeViewComponent implements OnInit {
     this.pMode = this.data;
     this.pModeType = this.pMode.metadata.current ? 'Current' : 'Archive';
     console.log(this.pmode_view_content);
-    setTimeout(() => {
+    window.setTimeout(() => {
       this.display = true;
     }, 500);
   }

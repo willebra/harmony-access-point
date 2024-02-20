@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from '../../common/alert/alert.service';
 import {FileUploadValidatorService} from '../../common/file-upload-validator.service';
@@ -18,7 +18,7 @@ export class PmodeUploadComponent implements OnInit {
   useFileSelector = true;
   selectedFileName: string;
 
-  @ViewChild('fileInput', {static: false})
+  @ViewChild('fileInput')
   private fileInput;
 
   constructor(@Inject(MAT_DIALOG_DATA) private data: { pModeContents: string },
