@@ -16,7 +16,7 @@
 
 .group-2 .row-limiter {
   width: 200px;
-  /*flex: auto;*/
+  padding-top: 15px;
 }
 
 .group-filter-button .column-filter-button a.hide-show-column {
