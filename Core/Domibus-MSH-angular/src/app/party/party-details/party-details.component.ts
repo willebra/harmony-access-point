@@ -1,12 +1,13 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {ColumnPickerBase} from 'app/common/column-picker/column-picker-base';
 import {IdentifierRo, PartyResponseRo, ProcessInfoRo} from '../support/party';
 import {PartyIdentifierDetailsComponent} from '../party-identifier-details/party-identifier-details.component';
 import {PartyService} from '../support/party.service';
 import {AlertService} from '../../common/alert/alert.service';
 import {EditPopupBaseComponent} from '../../common/edit-popup-base.component';
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
+import {DialogsService} from '../../common/dialogs/dialogs.service';
 
 @Component({
   selector: 'app-party-details',
@@ -26,13 +27,13 @@ export class PartyDetailsComponent extends EditPopupBaseComponent implements OnI
   identifiers: Array<IdentifierRo>;
   selectedIdentifiers = [];
 
-  @ViewChild('fileInput', {static: false})
+  @ViewChild('fileInput')
   private fileInput;
 
   endpointPattern = '^(?:(?:(?:https?):)?\\/\\/)(?:\\S+)$';
 
   constructor(public dialogRef: MatDialogRef<PartyDetailsComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private dialog: MatDialog, public partyService: PartyService, public alertService: AlertService,
+              private dialogsService: DialogsService, public partyService: PartyService, public alertService: AlertService,
               private cdr: ChangeDetectorRef) {
 
     super(dialogRef, data);
@@ -156,7 +157,7 @@ export class PartyDetailsComponent extends EditPopupBaseComponent implements OnI
 
     const rowClone = JSON.parse(JSON.stringify(identifierRow));
 
-    const dialogRef = this.dialog.open(PartyIdentifierDetailsComponent, {
+    const dialogRef = this.dialogsService.open(PartyIdentifierDetailsComponent, {
       data: {
         edit: rowClone
       }
@@ -174,7 +175,7 @@ export class PartyDetailsComponent extends EditPopupBaseComponent implements OnI
   }
 
   private markDirty() {
-    if (!(this.editForm instanceof FormGroup)) {
+    if (!(this.editForm instanceof UntypedFormGroup)) {
       this.editForm.form.markAsDirty();
     }
   }

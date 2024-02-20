@@ -1,11 +1,12 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {SecurityService} from '../../security/security.service';
 import {EditPluginUserFormBaseComponent} from './edit-plugin-user-form-base.component';
 
 @Component({
   selector: 'editbasicpluginuser-form',
   templateUrl: './edit-basic-plugin-user-form.component.html',
+  styleUrls: ['./edit-plugin-user.component.css']
 })
 
 export class EditBasicPluginUserFormComponent extends EditPluginUserFormBaseComponent implements OnInit {
@@ -14,7 +15,7 @@ export class EditBasicPluginUserFormComponent extends EditPluginUserFormBaseComp
   public passwordPattern: string;
   public passwordValidationMessage: string;
 
-  @ViewChild('user_name', {static: false}) user_name: ElementRef;
+  @ViewChild('user_name') user_name: ElementRef;
 
   constructor(public dialogRef: MatDialogRef<EditBasicPluginUserFormComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
@@ -30,7 +31,7 @@ export class EditBasicPluginUserFormComponent extends EditPluginUserFormBaseComp
     this.passwordPattern = passwordPolicy.pattern;
     this.passwordValidationMessage = passwordPolicy.validationMessage;
 
-    setTimeout(() => this.user_name.nativeElement.focus(), 1000);
+    window.setTimeout(() => this.user_name.nativeElement.focus(), 1000);
   }
 
 }
