@@ -13,7 +13,7 @@ export class AdvancedFilterBehaviourDirective implements OnInit {
   parent: IFilterableList;
 
   ngOnInit() {
-    this.parent.advancedFilters.add(this.control.name);
+    this.parent.advancedFilters.add(this.control.name + '');
   }
 
 }

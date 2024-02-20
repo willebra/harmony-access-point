@@ -75,7 +75,7 @@ export class InputDebounceBehaviourDirective implements ControlValueAccessor, On
       if (this._timer) {
         clearTimeout(this._timer);
       }
-      this._timer = setTimeout(() => {
+      this._timer = window.setTimeout(() => {
         fn(...args);
         this._timer = null;
       }, this.debounceTime);
