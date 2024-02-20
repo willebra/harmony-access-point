@@ -488,7 +488,7 @@ public abstract class AbstractIT {
     }
 
     protected byte[] getKeystoreContentForDomainFromClasspath(String resourceName, Domain domain) throws IOException {
-        String fullClasspath = "domains/" + domain.getCode() + "/keystores/" + resourceName;
+        String fullClasspath = "keystores/" + resourceName;
         return getResourceFromClasspath(fullClasspath);
     }
 
