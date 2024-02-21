@@ -1,6 +1,6 @@
 package eu.domibus.ext.rest;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.messaging.XmlProcessingException;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.MatcherAssert;

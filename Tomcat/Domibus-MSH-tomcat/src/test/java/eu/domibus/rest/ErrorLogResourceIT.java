@@ -1,6 +1,6 @@
 package eu.domibus.rest;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.common.ErrorCode;
 import eu.domibus.core.error.ErrorLogDao;

@@ -1,6 +1,6 @@
 package eu.domibus.property;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.property.DomibusPropertyMetadata;
 import eu.domibus.core.property.GlobalPropertyMetadataManager;
 import org.junit.Assert;

@@ -1,6 +1,6 @@
 package eu.domibus.jms;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.core.jms.MessageListenerContainerInitializer;
 import eu.domibus.core.property.listeners.ConcurrencyChangeListener;
 import eu.domibus.ext.domain.DomainDTO;

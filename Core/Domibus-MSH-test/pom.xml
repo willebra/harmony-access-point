@@ -44,7 +44,7 @@
                                     </includes>
                                 </resource>
                                 <resource>
-                                    <directory>../../Core/Domibus-MSH-test/src/main/conf</directory>
+                                    <directory>../../Tomcat/Domibus-MSH-tomcat/src/test/resources</directory>
                                     <includes>
                                         <include>domibus.properties</include>
                                     </includes>
@@ -52,6 +52,10 @@
                                 <resource>
                                     <directory>../../Tomcat/Domibus-MSH-tomcat/src/test/resources/keystores</directory>
                                     <targetPath>keystores</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>../../Tomcat/Domibus-MSH-tomcat/src/test/resources/domains</directory>
+                                    <targetPath>domains</targetPath>
                                 </resource>
                                 <resource>
                                     <directory>../../Core/Domibus-MSH/src/main/conf/domibus/policies</directory>
@@ -167,9 +171,16 @@
     <dependencies>
         <!-- Domibus modules -->
         <dependency>
-            <groupId>eu.domibus</groupId>
-            <artifactId>domibus-MSH-tomcat</artifactId>
-            <version>${project.version}</version>
+            <groupId>eu.europa.ec.digit.commons</groupId>
+            <artifactId>commons-test</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!-- This dependency picks up commons-test's calls to Log4J and redirects them to SLF4J -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>eu.domibus</groupId>

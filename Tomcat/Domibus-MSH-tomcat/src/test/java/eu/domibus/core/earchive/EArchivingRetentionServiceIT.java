@@ -1,7 +1,7 @@
 package eu.domibus.core.earchive;
 
 import com.codahale.metrics.MetricRegistry;
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.earchive.EArchiveBatchFilter;
 import eu.domibus.api.earchive.EArchiveBatchRequestDTO;
 import eu.domibus.api.earchive.EArchiveBatchStatus;

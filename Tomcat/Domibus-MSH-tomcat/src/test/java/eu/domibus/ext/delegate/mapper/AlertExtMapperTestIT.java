@@ -1,6 +1,6 @@
 package eu.domibus.ext.delegate.mapper;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.alerts.AlertEvent;
 import eu.domibus.core.alerts.model.common.EventType;
 import eu.domibus.ext.domain.AlertEventDTO;
