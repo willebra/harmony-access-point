@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild
@@ -34,7 +35,7 @@ import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 })
 @ComponentName('Connection Monitoring')
 export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPageableListMixin)
-  implements OnInit, AfterViewInit, AfterViewChecked {
+  implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
   @ViewChild('rowActions') rowActions: TemplateRef<any>;
   @ViewChild('monitorStatus') monitorStatusTemplate: TemplateRef<any>;
@@ -225,12 +226,15 @@ export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPage
     }
   }
 
+  private refreshMonitorTimer: number;
+
   async refreshMonitor(row: ConnectionMonitorEntry) {
     let refreshedRow = await this.connectionsMonitorService.getMonitor(row.senderPartyId, row.partyId);
     Object.assign(row, refreshedRow);
 
     if (row.status == 'PENDING') {
-      window.setTimeout(() => this.refreshMonitor(row), 1500);
+      this.resetTimer();
+      this.refreshMonitorTimer = window.setTimeout(() => this.refreshMonitor(row), 1500);
     }
   }
 
@@ -327,5 +331,16 @@ export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPage
 
   anyTestable() {
     return this.rows.some(el => el.testable);
+  }
+
+  ngOnDestroy() {
+    this.resetTimer();
+  }
+
+  private resetTimer() {
+    if (this.refreshMonitorTimer) {
+      clearTimeout(this.refreshMonitorTimer);
+      this.refreshMonitorTimer = null;
+    }
   }
 }
