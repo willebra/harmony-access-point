@@ -6,8 +6,8 @@
         <mat-label>Plugin:</mat-label>
         <mat-select matInput id="backendfilter_id" name="plugin" [(ngModel)]="entity.backendName"
                     [style.width]="'100%'">
-          <mat-option *ngFor="let bName of backendFilterNames" [value]="bName">
-            {{bName}}
+          <mat-option *ngFor="let bConn of backendConnectors" [value]="bConn.name">
+            {{bConn.name}}
           </mat-option>
         </mat-select>
       </mat-form-field>

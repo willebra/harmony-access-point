@@ -144,14 +144,14 @@
 
     <div id="sandwichMenuHolder">
 
-      <domain-selector *ngIf="currentUser" [currentComponent]="applicationService.getCurrentComponent()"></domain-selector>
+      <domain-selector *ngIf="currentUser" [currentComponent]="applicationService.getCurrentComponent()" style="width: 200px;"></domain-selector>
 
       <div *ngIf="currentUser" class="helpMenu">
         <page-helper></page-helper>
       </div>
 
       <div id="sandwichMenu">
-        <button mat-icon-button [mat-menu-trigger-for]="settingsMenu" id="settingsmenu_id" mat-tooltip="Menu">
+        <button mat-icon-button [mat-menu-trigger-for]="settingsMenu" id="settingsmenu_id" mat-tooltip="Menu" style="padding: 0;">
           <mat-icon>menu</mat-icon>
         </button>
 
@@ -197,7 +197,6 @@
     <div id="routerHolder" style="height: calc(100% - 40px);">
       <div style="margin:15px;height: 100%;">
         <router-outlet class="full-height"></router-outlet>
-<!--        <footer></footer>-->
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators} from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {UserValidatorService} from '../support/uservalidator.service';
 import {SecurityService} from '../../security/security.service';
 import {UserService} from '../support/user.service';
@@ -14,6 +14,7 @@ const EDIT_MODE = 'User Edit';
 @Component({
   selector: 'edituser-form',
   templateUrl: 'edituser-form.component.html',
+  styleUrls: ['./edit-user.component.css']
 })
 
 export class EditUserComponent implements OnInit {
@@ -31,12 +32,12 @@ export class EditUserComponent implements OnInit {
   public passwordValidationMessage: string;
   isDomainVisible: boolean;
   formTitle: string;
-  userForm: FormGroup;
+  userForm: UntypedFormGroup;
 
-  @ViewChild('user_name', {static: false}) user_name: ElementRef;
+  @ViewChild('user_name') user_name: ElementRef;
 
   constructor(public dialogRef: MatDialogRef<EditUserComponent>, @Inject(MAT_DIALOG_DATA) public data: any,
-              private fb: FormBuilder, private userValidatorService: UserValidatorService,
+              private fb: UntypedFormBuilder, private userValidatorService: UserValidatorService,
               private userService: UserService, private securityService: SecurityService, private domainService: DomainService) {
     this.existingRoles = data.userroles;
     this.existingDomains = data.userdomains;
@@ -54,7 +55,7 @@ export class EditUserComponent implements OnInit {
 
     this.handleSetRole(this.user.roles);
 
-    setTimeout(() => this.user_name.nativeElement.focus(), 1000);
+    window.setTimeout(() => this.user_name.nativeElement.focus(), 1000);
   }
 
   private updateModel(changes) {
@@ -64,16 +65,16 @@ export class EditUserComponent implements OnInit {
 
   private buildFormControls() {
     this.userForm = this.fb.group({
-      'userName': new FormControl({
+      'userName': new UntypedFormControl({
         value: this.user.userName,
         disabled: !this.isNewUser()
       }, [Validators.required, Validators.maxLength(255), Validators.minLength(4), Validators.pattern(UserValidatorService.USER_NAME_PATTERN)]),
-      'email': new FormControl(this.user.email, [Validators.pattern(this.emailPattern), Validators.maxLength(255)]),
-      'roles': new FormControl({value: this.user.roles, disabled: this.isCurrentUser()}, Validators.required),
-      'domain': new FormControl({value: this.user.domain, disabled: this.isDomainDisabled()}, Validators.required),
-      'password': new FormControl(this.user.password),
-      'confirmation': new FormControl(this.confirmation),
-      'active': new FormControl({value: this.user.active, disabled: this.isCurrentUser()}, Validators.required)
+      'email': new UntypedFormControl(this.user.email, [Validators.pattern(this.emailPattern), Validators.maxLength(255)]),
+      'roles': new UntypedFormControl({value: this.user.roles, disabled: this.isCurrentUser()}, Validators.required),
+      'domain': new UntypedFormControl({value: this.user.domain, disabled: this.isDomainDisabled()}, Validators.required),
+      'password': new UntypedFormControl(this.user.password),
+      'confirmation': new UntypedFormControl(this.confirmation),
+      'active': new UntypedFormControl({value: this.user.active, disabled: this.isCurrentUser()}, Validators.required)
     }, {
       validator: [this.userValidatorService.passwordShouldMatch(), this.userValidatorService.defaultDomain()]
     });
