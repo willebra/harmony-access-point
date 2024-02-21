@@ -3,6 +3,7 @@ package eu.domibus.core.pmode.provider.dynamicdiscovery;
 import eu.domibus.api.exceptions.DomibusCoreErrorCode;
 import eu.domibus.api.exceptions.DomibusCoreException;
 import eu.domibus.api.multitenancy.Domain;
+import eu.domibus.core.certificate.CertificateTestUtils;
 import eu.domibus.test.common.PKIUtil;
 import eu.europa.ec.dynamicdiscovery.model.SMPServiceMetadata;
 import eu.europa.ec.dynamicdiscovery.model.identifiers.SMPProcessIdentifier;
@@ -31,6 +32,8 @@ public class DynamicDiscoveryServicePEPPOLConfigurationMockup {
     public static final String FINAL_RECIPIENT3 = "0208:3333";
     public static final String FINAL_RECIPIENT4 = "0208:4444";
     public static final String FINAL_RECIPIENT5 = "0208:5555";
+
+    public static final String FINAL_RECIPIENT10 = "0208:1010";
     public static final String FINAL_RECIPIENT_MULTIPLE_THREADS_FORMAT = "9925:%s";
 
     public static final String PARTY_NAME1 = "party1";
@@ -65,6 +68,9 @@ public class DynamicDiscoveryServicePEPPOLConfigurationMockup {
         final X509Certificate party2Certificate = pkiUtil.createCertificateWithSubject(BigInteger.valueOf(PARTY_NAME2_CERTIFICATE_SERIAL_NUMBER), "CN=" + PARTY_NAME2 + ",OU=Domibus,O=eDelivery,C=EU");
         final X509Certificate expiredCertificate = pkiUtil.createCertificateWithSubject(BigInteger.valueOf(300L), "CN=" + PARTY_NAME3 + ",OU=Domibus,O=eDelivery,C=EU", DateUtils.addDays(Calendar.getInstance().getTime(), -30), DateUtils.addDays(Calendar.getInstance().getTime(), -20));
         final X509Certificate party4Certificate = pkiUtil.createCertificateWithSubject(BigInteger.valueOf(PARTY_NAME2_CERTIFICATE_SERIAL_NUMBER), "CN=" + PARTY_NAME4 + ",OU=Domibus,O=eDelivery,C=EU");
+
+        final X509Certificate blueGw = CertificateTestUtils.loadCertificateFromJKSFile(DynamicDiscoveryServiceTestIT.KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS, "blue_gw", DynamicDiscoveryServiceTestIT.KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS_PASSWORD);
+        addParticipantConfiguration(FINAL_RECIPIENT10, "blue_gw", TRANSPORT_PROFILE, PROCESS_IDENTIFIER, blueGw);
 
         //final recipient 1 and 2 are configured on party1 Access Point
         addParticipantConfiguration(FINAL_RECIPIENT1, PARTY_NAME1, TRANSPORT_PROFILE, PROCESS_IDENTIFIER, party1Certificate);

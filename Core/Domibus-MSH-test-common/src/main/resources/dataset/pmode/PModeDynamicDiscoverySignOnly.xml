@@ -26,7 +26,7 @@
             <party name="blue_gw"
                    endpoint="http://localhost:8080/domibus/services/msh"
                    allowChunking="false">
-                <identifier partyId="domibus-blue" partyIdType="partyTypeUrn"/>
+                <identifier partyId="blue_gw" partyIdType="partyTypeUrn"/>
             </party>
             <party name="partyConfiguredInPmode_gw"
                    endpoint="http://localhost:8080/domibus/services/msh"
