@@ -23,7 +23,6 @@ import {SecurityEventService} from './security.event.service';
 export class SessionService implements OnDestroy {
   extAuthProviderEnabled = false;
   private timerSubscription: Subscription;
-  private loginSubscription: Subscription;
 
   constructor(private router: Router, private dialogsService: DialogsService,
               private domibusInfoService: DomibusInfoService, private securityEventService: SecurityEventService) {
@@ -33,9 +32,6 @@ export class SessionService implements OnDestroy {
     });
     this.timerSubscription = timer(0, 3000)
       .subscribe(everyThreeSeconds => this.refreshUsingSessionState());
-    this.loginSubscription = this.securityEventService.onLoginSuccessEvent()
-      .subscribe(() => this.onLoginSuccessEvent());
-
   }
 
   resetCurrentSession() {
@@ -51,13 +47,15 @@ export class SessionService implements OnDestroy {
     localStorage.setItem(LOCAL_STORAGE_KEY_CURRENT_SESSION, JSON.stringify(session));
   }
 
-  setExpiredSession(session: SessionState) {
-    if (session === SessionState.EXPIRED_LOGGED_OUT || session === SessionState.EXPIRED_INACTIVITY_OR_ERROR) {
-      const currentSession = this.getCurrentSession();
+  setExpiredSession(sessionState: SessionState) {
+    const currentSession = this.getCurrentSession();
+    const prevSession = currentSession;
+    this.updateCurrentSession(sessionState);
+    console.log('setExpiredSession=', sessionState)
+    if (sessionState === SessionState.EXPIRED_INACTIVITY_OR_ERROR) {
       // Only mark the current session as expired when the user is logged in
-      if (currentSession === SessionState.ACTIVE) {
-        this.updateCurrentSession(session);
-        // this.showExpirationPopup();
+      if (prevSession === SessionState.ACTIVE) {
+        this.showExpirationPopup();
       }
     }
   }
@@ -124,8 +122,15 @@ export class SessionService implements OnDestroy {
     this.clearSessionStorage();
   }
 
+  checkSessionState() {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+    this.timerSubscription = timer(0, 3000)
+      .subscribe(everyThreeSeconds => this.refreshUsingSessionState());
+  }
+
   ngOnDestroy() {
     this.timerSubscription.unsubscribe();
-    this.loginSubscription.unsubscribe();
   }
 }
