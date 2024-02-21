@@ -49,7 +49,9 @@ public class Event extends AbstractBaseEntity {
 
 
     public void addAlert(Alert alert) {
-        alerts.add(alert);
+        if (alert != null) {
+            alerts.add(alert);
+        }
     }
 
     public void removeAlert(Alert alert) {

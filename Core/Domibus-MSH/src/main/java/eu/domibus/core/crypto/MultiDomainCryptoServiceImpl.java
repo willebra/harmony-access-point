@@ -275,6 +275,12 @@ public class MultiDomainCryptoServiceImpl implements MultiDomainCryptoService {
         domainCertificateProviderMap.remove(domain);
     }
 
+    @Override
+    public void refreshTrustedLists(Domain domain) {
+        final DomainCryptoService domainCertificateProvider = getDomainCertificateProvider(domain);
+        domainCertificateProvider.refreshTrustedLists();
+    }
+
     protected void saveStoresFromDBToDisk(List<Domain> domains) {
         certificateService.saveStoresFromDBToDisk(keystorePersistenceService.getKeyStorePersistenceInfo(), domains);
         certificateService.saveStoresFromDBToDisk(keystorePersistenceService.getTrustStorePersistenceInfo(), domains);
