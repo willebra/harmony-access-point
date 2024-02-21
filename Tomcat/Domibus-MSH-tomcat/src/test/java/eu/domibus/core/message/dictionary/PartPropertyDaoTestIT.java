@@ -1,6 +1,6 @@
 package eu.domibus.core.message.dictionary;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.PartProperty;
 import eu.domibus.api.model.Property;
 import eu.domibus.core.message.UserMessageDefaultFactory;

@@ -2,7 +2,7 @@ package eu.domibus.core.cache.distributed;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.cache.DomibusCacheException;
 import eu.domibus.api.cache.distributed.DistributedCacheService;
 import eu.domibus.logging.DomibusLogger;

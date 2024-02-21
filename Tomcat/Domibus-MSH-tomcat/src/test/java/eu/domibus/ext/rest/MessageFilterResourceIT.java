@@ -1,6 +1,6 @@
 package eu.domibus.ext.rest;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.core.plugin.BackendConnectorProvider;
 import eu.domibus.test.common.BackendConnectorMock;
 import eu.domibus.web.rest.MessageFilterResource;

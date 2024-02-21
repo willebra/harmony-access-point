@@ -18,6 +18,7 @@ import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
 import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.*;
+import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_UI_SESSION_DATABASE_UNIQUE_NAME;
 
 /**
  * Beans and configuration needed by Spring Session
@@ -39,9 +40,13 @@ public class DomibusSessionConfiguration {
     @Bean
     @SpringSessionDataSource
     public EmbeddedDatabase dataSource() {
+        boolean generateUniqueName = domibusPropertyProvider.getBooleanProperty(DOMIBUS_UI_SESSION_DATABASE_UNIQUE_NAME);
+        LOG.info("Generate unique name for the H2 database: [{}]", generateUniqueName);
+
         return new EmbeddedDatabaseBuilder()
                 .setType(EmbeddedDatabaseType.H2)
                 .addScript("org/springframework/session/jdbc/schema-h2.sql")
+                .generateUniqueName(generateUniqueName)//for IT tests this flag is true to avoid SPRING_SESSION DB table already exists error
                 .build();
     }
 

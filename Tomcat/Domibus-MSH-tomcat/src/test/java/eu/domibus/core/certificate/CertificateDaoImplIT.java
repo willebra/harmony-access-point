@@ -1,6 +1,6 @@
 package eu.domibus.core.certificate;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.core.pmode.provider.dynamicdiscovery.DynamicDiscoveryLookupService;
 import eu.domibus.logging.DomibusLogger;

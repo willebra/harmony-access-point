@@ -1,7 +1,7 @@
 package eu.domibus.core.message;
 
 
-import eu.domibus.ITTestsService;
+import eu.domibus.test.ITTestsService;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessage;
@@ -17,7 +17,6 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

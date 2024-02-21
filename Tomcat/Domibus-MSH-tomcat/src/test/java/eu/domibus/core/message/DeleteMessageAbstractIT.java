@@ -1,7 +1,7 @@
 package eu.domibus.core.message;
 
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.core.ebms3.receiver.MSHWebservice;
 import eu.domibus.core.message.retention.MessageRetentionDefaultService;
 import eu.domibus.core.payload.persistence.filesystem.PayloadFileStorageProvider;

@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode.provider;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.pmode.PModeService;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.common.model.configuration.Party;

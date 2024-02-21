@@ -1,6 +1,6 @@
 package eu.domibus.core.message.validation;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.message.validation.UserMessageValidatorSpiService;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.PartInfo;

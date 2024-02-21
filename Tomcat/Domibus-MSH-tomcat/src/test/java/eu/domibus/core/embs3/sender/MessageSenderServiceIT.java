@@ -1,6 +1,6 @@
 package eu.domibus.core.embs3.sender;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.*;
 import eu.domibus.core.ebms3.sender.MessageSenderService;
 import eu.domibus.core.message.MessageStatusDao;
