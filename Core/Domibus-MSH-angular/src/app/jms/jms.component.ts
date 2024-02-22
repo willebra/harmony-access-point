@@ -143,17 +143,17 @@ export class JmsComponent extends mix(BaseListComponent)
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Time',
         prop: 'timestamp',
-        width: 80
+        width: 50
       },
       {
         name: 'Custom prop',
         prop: 'customPropertiesText',
-        width: 250
+        width: 400
       },
       {
         name: 'JMS prop',
         prop: 'jmspropertiesText',
-        width: 200
+        width: 250
       },
       {
         cellTemplate: this.rowActions,
