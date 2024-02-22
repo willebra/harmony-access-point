@@ -50,7 +50,6 @@ export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPage
   allDeleteHistory: boolean;
   currentSenderPartyId: any;
   sender: PartyResponseRo;
-  private refreshMonitorTimer: number;
 
   constructor(private applicationService: ApplicationContextService, private connectionsMonitorService: ConnectionsMonitorService,
               private alertService: AlertService, private changeDetector: ChangeDetectorRef,
@@ -226,6 +225,8 @@ export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPage
       await this.refreshMonitor(row);
     }
   }
+
+  private refreshMonitorTimer: number;
 
   async refreshMonitor(row: ConnectionMonitorEntry) {
     let refreshedRow = await this.connectionsMonitorService.getMonitor(row.senderPartyId, row.partyId);
