@@ -323,7 +323,7 @@ export class MessageLogComponent extends mix(BaseListComponent)
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 80,
+        width: 120,
         sortable: false
       }
     );
