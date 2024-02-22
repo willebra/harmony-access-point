@@ -16,8 +16,8 @@ public class SubmissionUtil {
 
     private static final String MIME_TYPE = "MimeType";
     private static final String DEFAULT_MT = "text/xml";
-    private static final String DOMIBUS_BLUE = "domibus-blue";
-    private static final String DOMIBUS_RED = "domibus-red";
+    public static final String DOMIBUS_BLUE = "domibus-blue";
+    public static final String DOMIBUS_RED = "domibus-red";
     private static final String INITIATOR_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator";
     private static final String RESPONDER_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
     private static final String PAYLOAD_ID = "cid:message";

@@ -785,7 +785,7 @@ public class DynamicDiscoveryServiceTestIT extends AbstractIT {
         final PartyInfo partyInfo = new PartyInfo();
         From from = new From();
         final PartyId fromPartyId = new PartyId();
-        fromPartyId.setValue("domibus-blue");
+        fromPartyId.setValue("blue_gw");
         fromPartyId.setType("urn:fdc:peppol.eu:2017:identifiers:ap");
         final PartyRole partyRole = new PartyRole();
         partyRole.setValue("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator");
