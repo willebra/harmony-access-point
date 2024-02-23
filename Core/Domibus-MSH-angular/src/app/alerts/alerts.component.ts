@@ -1,8 +1,17 @@
-import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {AlertsResult} from './support/alertsresult';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {AlertService} from '../common/alert/alert.service';
-import {ErrorStateMatcher, MatDialog, ShowOnDirtyErrorStateMatcher} from '@angular/material';
+import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
+import {MatDialog} from '@angular/material/dialog';
 import {SecurityService} from '../security/security.service';
 import mix from '../common/mixins/mixin.utils';
 import BaseListComponent from '../common/mixins/base-list.component';
@@ -15,10 +24,8 @@ import {ServerPageableListMixin} from '../common/mixins/pageable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {AlertsEntry} from './support/alertsentry';
 import {ComponentName} from '../common/component-name-decorator';
-import {Md2DateChange} from 'angular-md2';
-
+import {Moment} from 'moment';
 @Component({
-  moduleId: module.id,
   templateUrl: 'alerts.component.html',
 })
 @ComponentName('Alerts')
@@ -37,11 +44,11 @@ export class AlertsComponent extends mix(BaseListComponent)
   DATE_SUFFIX = '_DATE';
   IMMINENT_SUFFIX = '_IMMINENT';
 
-  @ViewChild('rowProcessed', {static: false}) rowProcessed: TemplateRef<any>;
-  @ViewChild('rowWithDateFormatTpl', {static: false}) rowWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rowWithFutureDateFormatTpl', {static: false}) rowWithFutureDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rowWithSpaceAfterCommaTpl', {static: false}) rowWithSpaceAfterCommaTpl: TemplateRef<any>;
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
+  @ViewChild('rowProcessed') rowProcessed: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rowWithFutureDateFormatTpl') rowWithFutureDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rowWithSpaceAfterCommaTpl') rowWithSpaceAfterCommaTpl: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
 
   aTypes: Array<any>;
   aStatuses: Array<any>;
@@ -75,7 +82,7 @@ export class AlertsComponent extends mix(BaseListComponent)
   matcher: ErrorStateMatcher = new ShowOnDirtyErrorStateMatcher;
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              public dialog: MatDialog, private dialogsService: DialogsService,
+              private dialogsService: DialogsService,
               private securityService: SecurityService, private changeDetector: ChangeDetectorRef) {
     super();
 
@@ -242,28 +249,46 @@ export class AlertsComponent extends mix(BaseListComponent)
     return alertType && alertType.includes(this.IMMINENT_SUFFIX);
   }
 
-  onTimestampCreationFromChange(event) {
-    this.creationToMinDate = event.value;
+  onTimestampCreationFromChange(param: Moment) {
+    if (param) {
+      this.creationToMinDate = param.toDate();
+      this.filter.creationFrom = param.toDate();
+    }
   }
 
-  onTimestampCreationToChange(event) {
-    this.creationFromMaxDate = event.value;
+  onTimestampCreationToChange(param: Moment) {
+    if (param) {
+      this.creationFromMaxDate = param.toDate();
+      this.filter.creationTo = param.toDate();
+    }
   }
 
-  onTimestampReportingFromChange(event) {
-    this.reportingToMinDate = event.value;
+  onTimestampReportingFromChange(param: Moment) {
+    if (param) {
+      this.reportingToMinDate = param.toDate();
+      this.filter.reportingFrom = param.toDate();
+    }
   }
 
-  onTimestampReportingToChange(event) {
-    this.reportingFromMaxDate = event.value;
+  onTimestampReportingToChange(param: Moment) {
+    if (param) {
+      this.reportingFromMaxDate = param.toDate();
+      this.filter.reportingTo = param.toDate();
+    }
   }
 
-  onDynamicDataFromChange($event: Md2DateChange) {
-    this.dynamicDataToMinDate = $event.value;
+  onDynamicDataFromChange(param: Moment) {
+    if (param) {
+      this.dynamicDataToMinDate = param.toDate();
+      this.dynamicDatesFilter.from = param.toDate();
+    }
   }
 
-  onDynamicDataToChange($event: Md2DateChange) {
-    this.dynamicDataFromMaxDate = $event.value;
+  onDynamicDataToChange(param: Moment) {
+    if (param) {
+      this.dynamicDataFromMaxDate = param.toDate();
+      this.dynamicDatesFilter.to = param.toDate();
+    }
   }
 
   setIsDirty() {

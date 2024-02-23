@@ -1,7 +1,7 @@
 ﻿import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from 'app/common/alert/alert.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {PmodeUploadComponent} from '../upload/pmode-upload.component';
 import * as FileSaver from 'file-saver';
 import {DirtyOperations} from 'app/common/dirty-operations';
@@ -12,7 +12,6 @@ import {DomainService} from '../../security/domain.service';
 import {Domain} from '../../security/domain';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'currentPMode.component.html',
   providers: [],
   styleUrls: ['./currentPMode.component.css']
@@ -108,7 +107,10 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    */
   download(pmode) {
     if (this.pModeExists) {
-      this.http.get(CurrentPModeComponent.PMODE_URL + '/' + pmode.id, {observe: 'response', responseType: 'text'}).subscribe(res => {
+      this.http.get(CurrentPModeComponent.PMODE_URL + '/' + pmode.id, {
+        observe: 'response',
+        responseType: 'text'
+      }).subscribe(res => {
         const uploadDateStr = DateFormatService.format(new Date(pmode.configurationDate));
         CurrentPModeComponent.downloadFile(res.body, uploadDateStr, this.currentDomain.name);
       }, err => {
@@ -201,8 +203,8 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
     const blob = new Blob([data], {type: 'text/xml'});
     let filename = 'PMode';
     if (domain) {
-          filename += '-' + domain;
-        }
+      filename += '-' + domain;
+    }
     if (date !== '') {
       filename += '-' + date;
     }

@@ -1,11 +1,12 @@
 ﻿import {Injectable, TemplateRef} from '@angular/core';
 import {ComponentType} from '@angular/cdk/overlay';
-import {MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material';
-import {OkDialogComponent} from './ok-dialog/ok-dialog.component';
+import { MatDialog, MatDialogConfig, MatDialogRef} from '@angular/material/dialog';
 import {YesNoDialogComponent} from './yes-no-dialog/yes-no-dialog.component';
+import {OkDialogComponent} from './ok-dialog/ok-dialog.component';
 
 @Injectable()
 export class DialogsService {
+  private activeDialog: MatDialogRef<any, any>;
 
   constructor(public dialog: MatDialog) {
   }
@@ -76,14 +77,17 @@ export class DialogsService {
   }
 
   public open<T, D = any, R = any>(dialog: ComponentType<T> | TemplateRef<T>, config?: MatDialogConfig<D>): MatDialogRef<T, R> {
-    return this.dialog.open(dialog);
+    this.activeDialog = this.dialog.open(dialog, config);
+    return this.activeDialog;
   }
 
   public openAndThen<T, D = any, R = any>(dialog: ComponentType<T> | TemplateRef<T>, config?: MatDialogConfig<D>): Promise<R | undefined> {
-    return this.dialog.open(dialog, config).afterClosed().toPromise();
+    this.activeDialog = this.dialog.open(dialog, config);
+    // console.log('setting active dialog to=', this.activeDialog);
+    return this.activeDialog.afterClosed().toPromise();
   }
 
-  public openYesNoDialogDialog(config: MatDialogConfig): Promise<boolean> {
+   openYesNoDialogDialog(config: MatDialogConfig): Promise<boolean> {
     const defaultConfig = {
       data: {
         yesText: 'Yes',
@@ -115,4 +119,12 @@ export class DialogsService {
     Object.assign(defaultConfig.data, config.data);
     return this.openAndThen(OkDialogComponent, defaultConfig);
   }
+
+  closeActive() {
+    if (this.activeDialog) {
+      console.log('closing dialog=', this.activeDialog)
+      this.activeDialog.close();
+    }
+  }
+
 }

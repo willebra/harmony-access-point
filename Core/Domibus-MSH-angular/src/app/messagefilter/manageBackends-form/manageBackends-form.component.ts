@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EditPopupBaseComponent} from '../../common/edit-popup-base.component';
 import {PropertiesService, PropertyModel} from '../../properties/support/properties.service';
 import {AlertService} from '../../common/alert/alert.service';

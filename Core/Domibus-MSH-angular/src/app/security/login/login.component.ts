@@ -1,14 +1,10 @@
-﻿import {Component, OnDestroy, OnInit} from '@angular/core';
+﻿import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {SecurityService} from '../security.service';
 import {AlertService} from '../../common/alert/alert.service';
-import {SecurityEventService} from '../security.event.service';
-import {MatDialog} from '@angular/material';
-import {DefaultPasswordDialogComponent} from 'app/security/default-password-dialog/default-password-dialog.component';
 import {Server} from '../Server';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -20,10 +16,7 @@ export class LoginComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private router: Router,
               private securityService: SecurityService,
-              private alertService: AlertService,
-              private securityEventService: SecurityEventService,
-              private dialog: MatDialog) {
-
+              private alertService: AlertService) {
   }
 
   ngOnInit() {
@@ -33,22 +26,9 @@ export class LoginComponent implements OnInit {
 
   async login() {
     try {
-      await this.securityService.login(this.model.username, this.model.password);
-      this.onLoginSuccess();
+      await this.securityService.login(this.model.username, this.model.password, this.returnUrl);
     } catch (ex) {
       this.onLoginError(ex);
-    }
-  }
-
-  onLoginSuccess() {
-    const changePassword = this.securityService.shouldChangePassword();
-    if (changePassword.response === true) {
-      this.securityService.password = this.model.password;
-      this.dialog.open(DefaultPasswordDialogComponent, {data: changePassword.reason});
-      this.router.navigate([changePassword.redirectUrl || this.returnUrl]);
-      this.alertService.error(changePassword.reason, true);
-    } else {
-      this.router.navigate([this.returnUrl]);
     }
   }
 

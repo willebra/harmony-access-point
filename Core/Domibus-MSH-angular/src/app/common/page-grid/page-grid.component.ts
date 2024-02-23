@@ -12,8 +12,9 @@ import {DatatableComponent} from '@swimlane/ngx-datatable';
 })
 
 export class PageGridComponent implements AfterViewChecked {
-  @ViewChild('tableWrapper', {static: false}) tableWrapper;
-  @ViewChild(DatatableComponent, {static: false}) table: DatatableComponent;
+  @ViewChild('tableWrapper') tableWrapper;
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+
   private currentComponentWidth;
 
   messages = {};
@@ -44,7 +45,7 @@ export class PageGridComponent implements AfterViewChecked {
       this.table.recalculate();
       this.changeDetector.detectChanges();
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         let evt = document.createEvent('HTMLEvents');
         evt.initEvent('resize', true, false);
         window.dispatchEvent(evt)

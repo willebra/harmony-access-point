@@ -12,6 +12,8 @@ import {PropertiesService} from '../properties/support/properties.service';
 import {SessionService} from './session.service';
 import {SessionState} from './SessionState';
 import {instanceOfModifiableList} from '../common/mixins/type.utils';
+import {Router} from '@angular/router';
+import {DefaultPasswordDialogComponent} from './default-password-dialog/default-password-dialog.component';
 
 @Injectable()
 export class SecurityService {
@@ -44,16 +46,18 @@ export class SecurityService {
               private dialogsService: DialogsService,
               private propertiesService: PropertiesService,
               private sessionService: SessionService,
-              private injector: Injector) {
+              private injector: Injector,
+              private router: Router) {
     SecurityService.injector = this.injector;
   }
 
-  async login(username: string, password: string) {
+  async login(username: string, password: string, returnUrl: string) {
     try {
       this.domainService.resetDomain();
       const getUserFn = () => this.doLogin(username, password);
       await this.initialiseApp(getUserFn);
-      this.securityEventService.notifyLoginSuccessEvent();
+      this.sessionService.clearSessionStorage();
+      this.handleDefaultPassword(password, returnUrl);
     } catch (error) {
       console.log('Login error:', error);
       this.securityEventService.notifyLoginErrorEvent(error);
@@ -61,8 +65,23 @@ export class SecurityService {
     }
   }
 
+  private handleDefaultPassword(password: string, returnUrl: string) {
+    const changePassword = this.shouldChangePassword();
+    if (changePassword.response === true) {
+      this.password = password;
+      this.dialogsService.open(DefaultPasswordDialogComponent, {data: changePassword.reason});
+      this.router.navigate([changePassword.redirectUrl]);
+    } else {
+      this.router.navigate([returnUrl]);
+      this.sessionService.checkSessionState();
+    }
+  }
+
   private async doLogin(username: string, password: string): Promise<User> {
-    const user = await this.http.post<User>('rest/security/authentication', {username: username, password: password}).toPromise();
+    const user = await this.http.post<User>('rest/security/authentication', {
+      username: username,
+      password: password
+    }).toPromise();
     if (!user) {
       throw new Error('An error occurred while logging in.');
     }
@@ -70,23 +89,30 @@ export class SecurityService {
   }
 
   async logout(): Promise<any> {
-    this.alertService.close();
-
     const canLogout = await this.canLogout();
     if (!canLogout) {
       return;
     }
 
-    this.sessionService.setExpiredSession(SessionState.EXPIRED_LOGGED_OUT);
-    this.clearSession();
-    this.domainService.resetDomain();
-
+    this.clearAppData(SessionState.EXPIRED_LOGGED_OUT);
     return this.http.delete('rest/security/authentication').subscribe((res) => {
+        console.log('logged out')
         this.securityEventService.notifyLogoutSuccessEvent(res);
       },
       (error: any) => {
         this.securityEventService.notifyLogoutErrorEvent(error);
       });
+  }
+
+  clearAppData(sessionState: SessionState) {
+    // did we have a valid session previously?
+    if (this.hasUser()) {
+      this.alertService.close();
+      this.dialogsService.closeActive();
+      this.sessionService.setExpiredSession(sessionState);
+      this.clearSession();
+      this.domainService.resetDomain();
+    }
   }
 
   async canLogout(): Promise<boolean> {
@@ -109,7 +135,7 @@ export class SecurityService {
     return policy;
   }
 
-  clearSession() {
+  private clearSession() {
     localStorage.removeItem(this.CURRENT_USER);
     localStorage.removeItem(this.CURRENT_USER_UPDATED_ON);
   }
@@ -124,7 +150,7 @@ export class SecurityService {
     localStorage.setItem(this.CURRENT_USER_UPDATED_ON, new Date().toJSON());
   }
 
-  isUserConnected(): Promise<string> {
+  private isUserConnected(): Promise<string> {
     return this.http.get<string>('rest/security/user/connected').toPromise();
   }
 
@@ -132,23 +158,15 @@ export class SecurityService {
     return this.http.get<User>('rest/security/user').toPromise();
   }
 
-  isAuthenticated(): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      // we 'ping' the server to check whether we are connected
-      // if not, trigger the redirection to the login screen
-      try {
-        this.isUserConnected().then(isConnected => {
-          resolve(true);
-        }, err => {
-          console.log('Error while calling isUserConnected: ', err);
-          resolve(false);
-        });
-      } catch (ex) {
-        console.log('Error while calling isUserConnected: ', ex);
-        this.alertService.error('An error occurred while checking authentication:');
-        resolve(false);
-      }
-    });
+  async isAuthenticated(): Promise<boolean> {
+    // we 'ping' the server to check whether we are connected
+    try {
+      await this.isUserConnected();
+      return true;
+    } catch (err) {
+      console.log('Error while calling isUserConnected: ', err);
+      return false;
+    }
   }
 
   isCurrentUserSuperAdmin(): boolean {
@@ -189,12 +207,12 @@ export class SecurityService {
     return this.isDefaultPasswordUsed();
   }
 
-  private isDefaultPasswordUsed(): boolean {
+  isDefaultPasswordUsed(): boolean {
     const currentUser: User = this.getCurrentUser();
     return currentUser && currentUser.defaultPasswordUsed;
   }
 
-  shouldChangePassword(): any {
+  private shouldChangePassword(): any {
     if (this.isDefaultPasswordUsed()) {
       return {
         response: true,
@@ -226,6 +244,8 @@ export class SecurityService {
     const currentUser = this.getCurrentUser();
     currentUser.defaultPasswordUsed = false;
     this.updateCurrentUser(currentUser);
+
+    this.sessionService.checkSessionState();
 
     return res;
   }
@@ -268,13 +288,18 @@ export class SecurityService {
       return true;
     }
 
-    const isAuthenticated = await this.isAuthenticated();
+    let isAuthenticated = false;
+    try {
+      isAuthenticated = await this.isAuthenticated();
+    } catch (ex) {
+      console.log('Error calling isAuthenticated()')
+    }
     if (!isAuthenticated) {
       return true;
     }
   }
 
-  isClientConnected(): boolean {
+  private hasUser(): boolean {
     return this.getCurrentUser() != null;
   }
 

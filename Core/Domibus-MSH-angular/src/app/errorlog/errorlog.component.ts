@@ -1,9 +1,18 @@
-﻿import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+﻿import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorLogResult} from './support/errorlogresult';
 import {AlertService} from '../common/alert/alert.service';
 import {ErrorlogDetailsComponent} from 'app/errorlog/errorlog-details/errorlog-details.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import mix from '../common/mixins/mixin.utils';
 import BaseListComponent from '../common/mixins/base-list.component';
 import FilterableListMixin from '../common/mixins/filterable-list.mixin';
@@ -11,9 +20,10 @@ import {ServerSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {ServerPageableListMixin} from '../common/mixins/pageable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
+import {Moment} from 'moment';
+import {DialogsService} from '../common/dialogs/dialogs.service';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'errorlog.component.html',
   providers: [],
   styleUrls: ['./errorlog.component.css']
@@ -26,8 +36,8 @@ export class ErrorLogComponent extends mix(BaseListComponent)
   static readonly ERROR_LOG_URL: string = 'rest/errorlogs';
   static readonly ERROR_LOG_CSV_URL: string = ErrorLogComponent.ERROR_LOG_URL + '/csv?';
 
-  @ViewChild('rowWithDateFormatTpl', {static: false}) rowWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rawTextTpl', {static: false}) public rawTextTpl: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rawTextTpl') public rawTextTpl: TemplateRef<any>;
 
   timestampFromMaxDate: Date = new Date();
   timestampToMinDate: Date = null;
@@ -41,7 +51,7 @@ export class ErrorLogComponent extends mix(BaseListComponent)
   errorCodes: string[];
 
   constructor(private applicationService: ApplicationContextService, private elementRef: ElementRef, private http: HttpClient,
-              private alertService: AlertService, public dialog: MatDialog, private changeDetector: ChangeDetectorRef) {
+              private alertService: AlertService, public dialogService: DialogsService, private changeDetector: ChangeDetectorRef) {
     super();
   }
 
@@ -127,24 +137,36 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     this.errorCodes = result.errorCodes;
   }
 
-  onTimestampFromChange(event) {
-    this.timestampToMinDate = event.value;
+  onTimestampFromChange(param: Moment) {
+    if (param) {
+      this.timestampToMinDate = param.toDate();
+      this.filter.timestampFrom = param.toDate();
+    }
   }
 
-  onTimestampToChange(event) {
-    this.timestampFromMaxDate = event.value;
+  onTimestampToChange(param: Moment) {
+    if (param) {
+      this.timestampFromMaxDate = param.toDate();
+      this.filter.timestampTo = param.toDate();
+    }
   }
 
-  onNotifiedFromChange(event) {
-    this.notifiedToMinDate = event.value;
+  onNotifiedFromChange(param: Moment) {
+    if (param) {
+      this.notifiedToMinDate = param.toDate();
+      this.filter.notifiedFrom = param.toDate();
+    }
   }
 
-  onNotifiedToChange(event) {
-    this.notifiedFromMaxDate = event.value;
+  onNotifiedToChange(param: Moment) {
+    if (param) {
+      this.notifiedFromMaxDate = param.toDate();
+      this.filter.notifiedTo = param.toDate();
+    }
   }
 
   showDetails(selectedRow: any) {
-    let dialogRef: MatDialogRef<ErrorlogDetailsComponent> = this.dialog.open(ErrorlogDetailsComponent);
+    let dialogRef: MatDialogRef<ErrorlogDetailsComponent> = this.dialogService.open(ErrorlogDetailsComponent);
     dialogRef.componentInstance.message = selectedRow;
   }
 

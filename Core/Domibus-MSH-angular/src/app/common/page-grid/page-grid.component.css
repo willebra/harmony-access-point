@@ -5,3 +5,13 @@
 ::ng-deep .warnNearExpiry .datatable-body-cell {
   color: darkorange !important;
 }
+
+::ng-deep ngx-datatable > div {
+  display: block;
+  height: 100%;
+}
+
+::ng-deep .ngx-datatable .datatable-body {
+  height: calc(100% - 100px) !important;
+  overflow: hidden auto;
+}

@@ -1,7 +1,7 @@
 import {Component, Inject, ViewChild} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PropertyModel} from '../properties.service';
-import {AbstractControl, FormGroup, NgControl, NgForm} from '@angular/forms';
+import {NgForm, UntypedFormGroup} from '@angular/forms';
 import {EditPopupBaseComponent} from '../../../common/edit-popup-base.component';
 
 /**
@@ -13,8 +13,8 @@ import {EditPopupBaseComponent} from '../../../common/edit-popup-base.component'
   templateUrl: './add-nested-property-dialog.component.html'
 })
 export class AddNestedPropertyDialogComponent extends EditPopupBaseComponent {
-  @ViewChild('editForm', {static: false})
-  public editForm: NgForm | FormGroup;
+  @ViewChild('editForm')
+  public editForm: NgForm | UntypedFormGroup;
 
   property: PropertyModel;
   propertySuffix = '';
@@ -27,6 +27,6 @@ export class AddNestedPropertyDialogComponent extends EditPopupBaseComponent {
   }
 
   protected getDialogResult(): any {
-    return {propertySuffix: this.propertySuffix, propertyValue: this.propertyValue };
+    return {propertySuffix: this.propertySuffix, propertyValue: this.propertyValue};
   }
 }

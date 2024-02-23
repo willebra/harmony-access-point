@@ -15,7 +15,6 @@ import {ManageBackendsComponent} from './manageBackends-form/manageBackends-form
 import {DialogsService} from '../common/dialogs/dialogs.service';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'messagefilter.component.html',
   providers: [],
   styleUrls: ['./messagefilter.component.css']
@@ -152,7 +151,7 @@ export class MessageFilterComponent extends mix(BaseListComponent).with(Modifiab
       }
     }
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       document.getElementById('pluginRow' + (this.rowNumber) + '_id').click();
     }, 50);
 
@@ -197,7 +196,7 @@ export class MessageFilterComponent extends mix(BaseListComponent).with(Modifiab
   moveAction(row, step: number = 1 || -1) {
     let rowIndex = this.rows.indexOf(row);
     this.moveInternal(rowIndex, step);
-    setTimeout(() => {
+    window.setTimeout(() => {
       rowIndex = this.rows.indexOf(row);
       document.getElementById('pluginRow' + (rowIndex) + '_id').click();
     }, 50);

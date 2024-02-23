@@ -4,7 +4,7 @@
 <mat-dialog-content style="width:450px">
 
   <form #editForm="ngForm" (submit)="submit()">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <div *ngIf="useFileSelector">
           <label class="custom-file-upload">
@@ -16,9 +16,9 @@
         </div>
         <div>
           <mat-form-field class="form-field">
+            <mat-label>Description:</mat-label>
             <textarea matInput name="desc" #desc="ngModel" rows="5" [(ngModel)]="description" id="description_id"
-                      maxlength="254" required
-                      placeholder="Description" class="custom-text-area"></textarea>
+                      maxlength="254" required class="custom-text-area"></textarea>
             <span class="help-block" *ngIf="shouldShowErrors(desc)">
               <div *ngIf="desc.errors?.required" class="error-style">Description is required</div>
             </span>
