@@ -5,8 +5,10 @@ import eu.domibus.ext.exceptions.TrustedListExtException;
 import eu.domibus.ext.rest.error.ExtExceptionHelper;
 import eu.domibus.ext.services.TrustedListExtService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/ext/trustedlists")
 @Tag(name = "trustedLists", description = "Trusted Lists API")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_AP_ADMIN')")
 public class DssTrustedListsResource {
     protected TrustedListExtService trustedListExtService;
     protected final ExtExceptionHelper extExceptionHelper;
@@ -41,6 +44,7 @@ public class DssTrustedListsResource {
 
     @Operation(summary = "Refresh trusted lists", description = "Triggers a new download of the DSS Trusted Lists and apply needed changes in DSS list of trusted CAs",
             security = @SecurityRequirement(name = "DomibusBasicAuth"))
+    @ApiResponse(responseCode = "403", description = "Admin role needed")
     @PostMapping("/refreshoperation")
     public void refreshTrustedLists() {
         trustedListExtService.refreshTrustedLists();
