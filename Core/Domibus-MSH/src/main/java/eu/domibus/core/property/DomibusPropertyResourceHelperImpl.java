@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -34,6 +35,8 @@ public class DomibusPropertyResourceHelperImpl implements DomibusPropertyResourc
     private static final Logger LOG = DomibusLoggerFactory.getLogger(DomibusPropertyResourceHelperImpl.class);
 
     public static final String ACCEPTED_CHARACTERS_IN_PROPERTY_NAMES = NAME_SEPARATOR;
+
+    DecimalFormat decimalFormat = new DecimalFormat("0.#");
 
     private final DomibusConfigurationService domibusConfigurationService;
 
@@ -306,7 +309,8 @@ public class DomibusPropertyResourceHelperImpl implements DomibusPropertyResourc
                 return String.valueOf(domibusPropertyProvider.getLongProperty(propertyName));
             }
             if (propertyType.isNumeric()) {
-                return String.valueOf(domibusPropertyProvider.getDecimalProperty(propertyName));
+                double propValue = domibusPropertyProvider.getDecimalProperty(propertyName);
+                return decimalFormat.format(propValue);
             }
             if (propertyType.isBoolean()) {
                 return String.valueOf(domibusPropertyProvider.getBooleanProperty(propertyName));
