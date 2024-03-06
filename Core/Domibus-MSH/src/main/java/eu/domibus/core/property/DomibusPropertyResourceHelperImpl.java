@@ -36,6 +36,8 @@ public class DomibusPropertyResourceHelperImpl implements DomibusPropertyResourc
 
     public static final String ACCEPTED_CHARACTERS_IN_PROPERTY_NAMES = NAME_SEPARATOR;
 
+    DecimalFormat decimalFormat = new DecimalFormat("0.#");
+
     private final DomibusConfigurationService domibusConfigurationService;
 
     private final DomibusPropertyProvider domibusPropertyProvider;
@@ -307,9 +309,8 @@ public class DomibusPropertyResourceHelperImpl implements DomibusPropertyResourc
                 return String.valueOf(domibusPropertyProvider.getLongProperty(propertyName));
             }
             if (propertyType.isNumeric()) {
-                double val = domibusPropertyProvider.getDecimalProperty(propertyName);
-                DecimalFormat format = new DecimalFormat("0.#");
-                return format.format(val);
+                double propValue = domibusPropertyProvider.getDecimalProperty(propertyName);
+                return decimalFormat.format(propValue);
             }
             if (propertyType.isBoolean()) {
                 return String.valueOf(domibusPropertyProvider.getBooleanProperty(propertyName));
