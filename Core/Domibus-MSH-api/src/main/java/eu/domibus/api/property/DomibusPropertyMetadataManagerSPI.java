@@ -214,6 +214,9 @@ public interface DomibusPropertyMetadataManagerSPI {
     String DOMIBUS_DELETE_RECEIVED_TEST_MESSAGE_HISTORY_CRON = "domibus.monitoring.connection.messages.received.history.delete.cron";
 
     String DOMIBUS_SMART_RETRY_ENABLED = "domibus.smart.retry.enabled";
+
+    //composable property
+    String DOMIBUS_ALERT_MAIL = "domibus.alert.mail";
     String DOMIBUS_ALERT_ACTIVE = "domibus.alert.active";
     String DOMIBUS_ALERT_MAIL_SENDING_ACTIVE = "domibus.alert.mail.sending.active";
     String DOMIBUS_ALERT_MAIL_SMTP_TIMEOUT = "domibus.alert.mail.smtp.timeout";
