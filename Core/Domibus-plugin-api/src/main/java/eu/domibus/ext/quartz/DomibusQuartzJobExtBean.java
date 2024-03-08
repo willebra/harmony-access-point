@@ -32,6 +32,9 @@ public abstract class DomibusQuartzJobExtBean extends QuartzJobBean {
             final DomainDTO currentDomain = getDomain(context);
             domainContextExtService.setCurrentDomain(currentDomain);
             executeJob(context, currentDomain);
+        } catch (Exception e) {
+            LOG.error("Error exception while executing job [{}]:[{}]", context.getJobDetail().getKey().getName(), context.getJobDetail().getJobClass(), e);
+            throw new JobExecutionException(e);
         } finally {
             domainContextExtService.clearCurrentDomain();
             LOG.clearCustomKeys();

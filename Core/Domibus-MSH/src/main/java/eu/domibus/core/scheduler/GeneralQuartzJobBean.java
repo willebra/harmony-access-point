@@ -34,6 +34,9 @@ public abstract class GeneralQuartzJobBean extends QuartzJobBean {
             domainContextProvider.clearCurrentDomain();
             LOG.putMDC(DomibusLogger.MDC_USER, databaseUtil.getDatabaseUserName());
             executeJob(context);
+        } catch (Exception e) {
+            LOG.error("Error exception while executing job [{}]:[{}]", context.getJobDetail().getKey().getName(), context.getJobDetail().getJobClass(), e);
+            throw new JobExecutionException(e);
         } finally {
             domainContextProvider.clearCurrentDomain();
             LOG.clearCustomKeys();
