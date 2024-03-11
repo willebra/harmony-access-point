@@ -52,7 +52,7 @@ public class DynamicDiscoveryUtil {
         List<String> profilesList = domibusPropertyProvider.getCommaSeparatedPropertyValues(DOMIBUS_SECURITY_PROFILE_ORDER);
 
         if (profilesList.size() == 0) {
-            LOG.warn("The property {} was not specified in the properties file", DOMIBUS_SECURITY_PROFILE_ORDER);
+            LOG.debug("The property {} was not specified in the properties file", DOMIBUS_SECURITY_PROFILE_ORDER);
             return null;
         }
 
