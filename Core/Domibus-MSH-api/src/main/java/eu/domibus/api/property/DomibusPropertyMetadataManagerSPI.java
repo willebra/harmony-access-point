@@ -141,6 +141,8 @@ public interface DomibusPropertyMetadataManagerSPI {
     String DOMIBUS_PMODE_VALIDATION_ACTION_PATTERN = "domibus.pmode.validation.action.pattern";
     String DOMIBUS_PMODE_VALIDATION_SERVICE_VALUE_PATTERN = "domibus.pmode.validation.service.value.pattern";
     String DOMIBUS_PMODE_VALIDATION_SERVICE_TYPE_PATTERN = "domibus.pmode.validation.service.type.pattern";
+    String DOMIBUS_PARTY_ID_TYPE_VALIDATION_PATTERN = "domibus.partIdType.validation.pattern";
+    String DOMIBUS_PARTY_ID_TYPE_VALIDATION_MESSAGE = "domibus.partIdType.validation.message";
     String DOMIBUS_DATE_TIME_PATTERN_ON_RECEIVING = "domibus.datetime.pattern.onreceiving";
     String DOMIBUS_DATE_TIME_PATTERN_ON_SENDING = "domibus.datetime.pattern.onsending";
     String DOMIBUS_DISPATCHER_CONNECTION_TIMEOUT = "domibus.dispatcher.connectionTimeout";
