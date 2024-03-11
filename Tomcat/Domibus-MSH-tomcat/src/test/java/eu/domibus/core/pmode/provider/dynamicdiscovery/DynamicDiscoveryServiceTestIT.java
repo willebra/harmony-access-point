@@ -484,7 +484,7 @@ public class DynamicDiscoveryServiceTestIT extends AbstractIT {
         fromPartyId.setValue(PARTY_NAME5);
         fromPartyId.setType("urn:fdc:peppol.eu:2017:identifiers:ap");
         final PartyRole partyRole = new PartyRole();
-        partyRole.setValue("urn:fdc:peppol.eu:2017:roles:ap:as4");
+        partyRole.setValue("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder");
         toParty.setToRole(partyRole);
         toParty.setToPartyId(fromPartyId);
 
