@@ -1,8 +1,10 @@
 package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.AgreementRefEntity;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +18,8 @@ import javax.persistence.TypedQuery;
  */
 @Repository
 public class AgreementDao extends BasicDao<AgreementRefEntity> {
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public AgreementDao() {
         super(AgreementRefEntity.class);
@@ -49,12 +53,14 @@ public class AgreementDao extends BasicDao<AgreementRefEntity> {
         final TypedQuery<AgreementRefEntity> query = this.em.createNamedQuery("AgreementRef.findByValueAndType", AgreementRefEntity.class);
         query.setParameter("VALUE", value);
         query.setParameter("TYPE", type);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
     protected AgreementRefEntity findByValue(final String value) {
         final TypedQuery<AgreementRefEntity> query = this.em.createNamedQuery("AgreementRef.findByValue", AgreementRefEntity.class);
         query.setParameter("VALUE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 }

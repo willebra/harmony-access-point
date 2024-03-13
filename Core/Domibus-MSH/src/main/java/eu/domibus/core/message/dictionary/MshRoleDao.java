@@ -2,7 +2,9 @@ package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MSHRoleEntity;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.SingleValueDictionaryDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +20,8 @@ import javax.transaction.Transactional;
  */
 @Repository
 public class MshRoleDao extends SingleValueDictionaryDao<MSHRoleEntity> {
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public MshRoleDao() {
         super(MSHRoleEntity.class);
@@ -25,7 +29,7 @@ public class MshRoleDao extends SingleValueDictionaryDao<MSHRoleEntity> {
 
     @Transactional
     public MSHRoleEntity findOrCreate(final MSHRole role) {
-        if (role == null) {
+        if(role == null) {
             return null;
         }
 
@@ -51,6 +55,7 @@ public class MshRoleDao extends SingleValueDictionaryDao<MSHRoleEntity> {
     private MSHRoleEntity getEntity(Object role) {
         final TypedQuery<MSHRoleEntity> query = this.em.createNamedQuery("MSHRoleEntity.findByValue", MSHRoleEntity.class);
         query.setParameter("ROLE", role);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 }
