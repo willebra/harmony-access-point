@@ -131,6 +131,7 @@ public interface DomibusPropertyMetadataManagerSPI {
     String DOMIBUS_SENDER_CERTIFICATE_VALIDATION_ONRECEIVING = "domibus.sender.certificate.validation.onreceiving";
     String DOMIBUS_SENDER_TRUST_VALIDATION_ONRECEIVING = "domibus.sender.trust.validation.onreceiving";
     String DOMIBUS_SENDER_TRUST_VALIDATION_EXPRESSION = "domibus.sender.trust.validation.expression";
+    String DOMIBUS_SENDER_TRUST_DYNAMIC_RECEIVER_VALIDATION_EXPRESSION = "domibus.sender.trust.dynamicReceiver.validation.expression";
     String DOMIBUS_SENDER_TRUST_VALIDATION_CERTIFICATE_POLICY_OIDS = "domibus.sender.trust.validation.allowedCertificatePolicyOIDs";
     String DOMIBUS_SENDER_CERTIFICATE_SUBJECT_CHECK = "domibus.sender.certificate.subject.check";
     String DOMIBUS_SENDER_TRUST_VALIDATION_TRUSTSTORE_ALIAS = "domibus.sender.trust.validation.truststore_alias";

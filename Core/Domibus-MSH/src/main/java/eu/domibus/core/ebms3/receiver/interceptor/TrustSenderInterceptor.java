@@ -62,8 +62,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_SENDER_CERTIFICATE_VALIDATION_ONRECEIVING;
-import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_SENDER_TRUST_VALIDATION_ONRECEIVING;
+import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.*;
 
 /**
  * This interceptor is responsible for the trust of an incoming messages.
@@ -123,6 +122,9 @@ public class TrustSenderInterceptor extends WSS4JInInterceptor {
             return;
         }
 
+        //set the regex validation for the leaf certificate in case dynamic receiver is used
+        setDynamicReceiverCertSubjectExpression(message);
+
         boolean isPullSignalMessage = false;
         MessageType messageType = (MessageType) message.get(MSHDispatcher.MESSAGE_TYPE_IN);
         if (messageType != null && messageType.equals(MessageType.SIGNAL_MESSAGE)) {
@@ -154,6 +156,22 @@ public class TrustSenderInterceptor extends WSS4JInInterceptor {
                     .mshRole(MSHRole.RECEIVING)
                     .build());
         }
+    }
+
+    /**
+     * When this property is not empty Domibus will verify before receiving a message using dynamic discovery receiver, that the subject of the sender's certificate matches the regular expression when only issuer chain is added to truststore
+     * A string separated comma(,) of regular expressions which will be applied to the subject DN of the certificate used for signature validation, after trust verification of the certificate chain associated with the certificate.
+     */
+    protected void setDynamicReceiverCertSubjectExpression(SoapMessage message) {
+        final String propertyName = DOMIBUS_SENDER_TRUST_DYNAMIC_RECEIVER_VALIDATION_EXPRESSION;
+        String dynamicReceiverCertSubjectExpression = domibusPropertyProvider.getProperty(propertyName);
+        if (StringUtils.isBlank(dynamicReceiverCertSubjectExpression)) {
+            LOG.debug("[{}] is empty, verification is disabled.", propertyName);
+            return;
+        }
+        LOG.debug("Setting value for property [{}] to [{}]", propertyName, dynamicReceiverCertSubjectExpression);
+
+        message.put("sigSubjectCertConstraints", dynamicReceiverCertSubjectExpression);
     }
 
     protected Boolean checkCertificateValidity(List<? extends Certificate> certificateChain, String sender, boolean isPullMessage) {
