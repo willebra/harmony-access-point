@@ -159,7 +159,7 @@ public class TrustSenderInterceptor extends WSS4JInInterceptor {
     }
 
     /**
-     * When this property is not empty Domibus will verify before receiving a message using dynamic discovery receiver, that the subject of the sender's certificate matches the regular expression.
+     * When this property is not empty Domibus will verify before receiving a message using dynamic discovery receiver, that the subject of the sender's certificate matches the regular expression when only issuer chain is added to truststore
      * A string separated comma(,) of regular expressions which will be applied to the subject DN of the certificate used for signature validation, after trust verification of the certificate chain associated with the certificate.
      */
     protected void setDynamicReceiverCertSubjectExpression(SoapMessage message) {
