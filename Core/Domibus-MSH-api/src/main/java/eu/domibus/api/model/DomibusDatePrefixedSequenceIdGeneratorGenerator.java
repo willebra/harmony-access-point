@@ -40,7 +40,10 @@ public interface DomibusDatePrefixedSequenceIdGeneratorGenerator extends Identif
                                          Object object) throws HibernateException {
         LocalDateTime now = getCurrentDate();
         String seqStr = now.format(dtf);
-        String paddedSequence = MIN + this.generate(session, object);
+        final Serializable generatedNumber = this.generate(session, object);
+        final long generatedLongValue = NumberUtils.toLong(generatedNumber + "");
+        final long generatedLongValueAbsolute = Math.abs(generatedLongValue);
+        String paddedSequence = MIN + generatedLongValueAbsolute;
         // add 10 right digits to the date
         seqStr += paddedSequence.substring(paddedSequence.length() - MIN.length());
         return NumberUtils.createLong(seqStr);

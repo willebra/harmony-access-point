@@ -57,6 +57,8 @@ public class ErrorHandlerService {
     }
 
     public ResponseEntity<TestErrorsInfoRO> createResponse(TestServiceException ex, HttpStatus status) {
+        logException(ex, status);
+
         HttpHeaders headers = new HttpHeaders();
         //We need to send the connection header for the tomcat/chrome combination to be able to read the error message
         headers.set(HttpHeaders.CONNECTION, "close");
@@ -141,6 +143,7 @@ public class ErrorHandlerService {
     }
 
     public ResponseEntity<ErrorRO> createConstraintViolationResponse(ConstraintViolationException ex) {
+        LOG.error("Constraint violation", ex);
         String errorMessage = ex.getConstraintViolations().stream()
                 .map(el -> getLast(el.getPropertyPath()) + " " + el.getMessage())
                 .reduce("There are validation errors: ", (accumulator, element) -> accumulator + element + "; ");

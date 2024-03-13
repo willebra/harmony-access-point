@@ -38,8 +38,6 @@ public class MailSender {
 
     private static final Logger LOG = DomibusLoggerFactory.getLogger(MailSender.class);
 
-    static final String DOMIBUS_ALERT_MAIL = "domibus.alert.mail";
-
     private static final String MAIL = ".mail";
 
 

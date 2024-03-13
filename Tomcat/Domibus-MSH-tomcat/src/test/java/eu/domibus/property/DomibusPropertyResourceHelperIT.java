@@ -168,7 +168,7 @@ public class DomibusPropertyResourceHelperIT extends AbstractIT {
 
     @Test
     public void testGetPropertyWithInvalidValue() {
-        DomibusProperty result = configurationPropertyResourceHelper.getProperty(DOMIBUS_MESSAGE_DOWNLOAD_MAX_SIZE);
+        DomibusProperty result = configurationPropertyResourceHelper.getProperty(DOMIBUS_PROPERTY_BACKUP_HISTORY_MAX);
         Assert.assertNotEquals(result.getUsedValue(), result.getValue());
     }
 

@@ -29,6 +29,7 @@ public class DomibusDatePrefixedSequenceIdGeneratorGeneratorTest {
     public static Collection<Object[]> data() {
         return asList(new Object[][]{
                 {"Base Integer sequence generator", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), Integer.valueOf(50)},
+                {"Base Integer sequence generator with negative number", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), Integer.valueOf(-50)},
                 {"Base Long sequence generator ", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), Long.valueOf(50)},
                 {"Base BigInteger sequence generator ", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), BigInteger.valueOf(50)},
                 {"Base BigInteger change hour", new Long("210809170000000050"), LocalDateTime.parse("2021-08-09T17:15:30"), BigInteger.valueOf(50)},
