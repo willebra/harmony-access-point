@@ -16,9 +16,12 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "TB_D_ROLE")
-@NamedQuery(name = "PartyRole.findByValue", hints = {
-        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-        @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select prop from PartyRole prop where prop.value=:VALUE")
+@NamedQuery(name = "PartyRole.findByValue",
+        hints = {
+                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+        // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+        query = "select prop from PartyRole prop where prop.value=:VALUE and :DOMAIN=:DOMAIN")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PartyRole extends AbstractBaseEntity implements Serializable {
 

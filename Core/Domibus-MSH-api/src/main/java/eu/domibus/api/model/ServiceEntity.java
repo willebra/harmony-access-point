@@ -14,18 +14,30 @@ import javax.persistence.*;
 @Entity
 @Table(name = "TB_D_SERVICE")
 @NamedQueries({
-        @NamedQuery(name = "Service.findByValueAndType", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select serv from ServiceEntity serv where serv.value=:VALUE and serv.type=:TYPE"),
-        @NamedQuery(name = "Service.findByValue", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select serv from ServiceEntity serv where serv.value=:VALUE and serv.type is null"),
-        @NamedQuery(name = "Service.searchByType", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select serv from ServiceEntity serv where serv.type=:TYPE"),
-        @NamedQuery(name = "Service.searchByValue", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select serv from ServiceEntity serv where serv.value=:VALUE")
+        @NamedQuery(name = "Service.findByValueAndType",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select serv from ServiceEntity serv where serv.value=:VALUE and serv.type=:TYPE and :DOMAIN=:DOMAIN"),
+        @NamedQuery(name = "Service.findByValue",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select serv from ServiceEntity serv where serv.value=:VALUE and serv.type is null and :DOMAIN=:DOMAIN"),
+        @NamedQuery(name = "Service.searchByType",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select serv from ServiceEntity serv where serv.type=:TYPE and :DOMAIN=:DOMAIN"),
+        @NamedQuery(name = "Service.searchByValue",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select serv from ServiceEntity serv where serv.value=:VALUE and :DOMAIN=:DOMAIN")
 })
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ServiceEntity extends AbstractBaseEntity {

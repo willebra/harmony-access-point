@@ -14,9 +14,13 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "TB_D_MESSAGE_STATUS")
-@NamedQuery(name = "MessageStatusEntity.findByStatus", hints = {
-        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-        @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select ms from MessageStatusEntity ms where ms.messageStatus=:MESSAGE_STATUS")
+@NamedQuery(name = "MessageStatusEntity.findByStatus",
+        hints = {
+                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                @QueryHint(name = "org.hibernate.cacheable", value = "true")
+        },
+        // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+        query = "select ms from MessageStatusEntity ms where ms.messageStatus=:MESSAGE_STATUS and :DOMAIN=:DOMAIN")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class MessageStatusEntity extends AbstractBaseEntity {
 

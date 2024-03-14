@@ -1,8 +1,10 @@
 package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.MessageProperty;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +18,8 @@ import javax.persistence.TypedQuery;
  */
 @Repository
 public class MessagePropertyDao extends BasicDao<MessageProperty> {
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public MessagePropertyDao() {
         super(MessageProperty.class);
@@ -40,6 +44,7 @@ public class MessagePropertyDao extends BasicDao<MessageProperty> {
         query.setParameter("NAME", name);
         query.setParameter("VALUE", value);
         query.setParameter("TYPE", type);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
@@ -54,6 +59,7 @@ public class MessagePropertyDao extends BasicDao<MessageProperty> {
         final TypedQuery<MessageProperty> query = this.em.createNamedQuery("MessageProperty.findByNameAndValue", MessageProperty.class);
         query.setParameter("NAME", name);
         query.setParameter("VALUE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
