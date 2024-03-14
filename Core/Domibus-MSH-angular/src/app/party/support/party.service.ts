@@ -3,6 +3,9 @@ import {HttpClient} from '@angular/common/http';
 import {CertificateRo, PartyFilteredResult, PartyResponseRo, ProcessRo} from './party';
 import {Observable} from 'rxjs/Observable';
 import {FileUploadValidatorService} from '../../common/file-upload-validator.service';
+import {PasswordPolicyRO} from '../../security/passwordPolicyRO';
+import {PartyIdTypeValidation} from './partyIdTypeValidation';
+import {PropertiesService} from '../../properties/support/properties.service';
 
 /**
  * @author Thomas Dussart
@@ -18,7 +21,8 @@ export class PartyService {
   static readonly UPDATE_PARTIES: string = 'rest/party/update';
   static readonly CSV_PARTIES: string = 'rest/party/csv';
 
-  constructor(private http: HttpClient, private fileUploadValidatorService: FileUploadValidatorService) {
+  constructor(private http: HttpClient, private fileUploadValidatorService: FileUploadValidatorService,
+              private propertiesService: PropertiesService) {
   }
 
   uploadCertificate(payload, partyName: string): Observable<CertificateRo> {
@@ -30,7 +34,7 @@ export class PartyService {
   }
 
   async getData(activeFilter): Promise<any> {
-    var serverCalls: [Promise<PartyFilteredResult>, Promise<ProcessRo[]>] = [
+    const serverCalls: [Promise<PartyFilteredResult>, Promise<ProcessRo[]>] = [
       this.listParties(activeFilter.name, activeFilter.endPoint,
         activeFilter.partyID, activeFilter.process, activeFilter.process_role).toPromise(),
       this.listProcesses().toPromise()
@@ -106,6 +110,12 @@ export class PartyService {
   async validateParties(partyList: PartyResponseRo[]) {
     this.validateIdentifiers(partyList);
     await this.validateCertificates(partyList);
+  }
+
+  async getPartyIdTypeValidation(): Promise<PartyIdTypeValidation> {
+    const pattern = await this.propertiesService.getDomainOrGlobalPropertyValue('domibus.partIdType.validation.pattern', true);
+    const message = await this.propertiesService.getDomainOrGlobalPropertyValue('domibus.partIdType.validation.message', true);
+    return new PartyIdTypeValidation(pattern, message);
   }
 
   private validateIdentifiers(partyList: PartyResponseRo[]) {
