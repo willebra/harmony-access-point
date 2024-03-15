@@ -27,7 +27,6 @@ import org.apache.commons.vfs2.VFS;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.roda_project.commons_ip2.model.IPConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_
 import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_EARCHIVE_STORAGE_LOCATION;
 import static eu.domibus.core.earchive.eark.EArchivingFileService.SOAP_ENVELOPE_XML;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * @author François Gautier
@@ -103,7 +103,7 @@ public class FileSystemEArchivePersistenceE2EIT extends AbstractIT {
     public void setUp() throws Exception {
         payloadFileStorageProvider.initialize();
 
-        Mockito.when(backendConnectorProvider.getBackendConnector(Matchers.anyString()))
+        Mockito.when(backendConnectorProvider.getBackendConnector(anyString()))
                 .thenReturn(new BackendConnectorMock("name"));
         // because we must not use DirtyContext do not use common identifiers!
         //messageId = "43bb6883-77d2-4a41-bac4-52a485d50084@domibus.eu";

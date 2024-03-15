@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.mockito.internal.matchers.Contains;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,7 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import static org.mockito.Matchers.anyList;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -89,20 +89,20 @@ public class GlobalExceptionHandlerAdviceTest {
         Throwable thrown = new DomainTaskException(exceptionMessage);
         doThrow(thrown).when(pluginUserResource).updateUsers(anyList());
         String message = mockMvcResultContent(status().is5xxServerError());
-        Assert.assertThat(message, new Contains("\"message\""));
-        Assert.assertThat(message, new Contains(exceptionMessage));
+        Assert.assertThat(message, containsString("\"message\""));
+        Assert.assertThat(message, containsString(exceptionMessage));
 
         thrown = new RollbackException(exceptionMessage);
         doThrow(thrown).when(pluginUserResource).updateUsers(anyList());
         message = mockMvcResultContent(status().is5xxServerError());
-        Assert.assertThat(message, new Contains("\"message\""));
-        Assert.assertThat(message, new Contains(exceptionMessage));
+        Assert.assertThat(message, containsString("\"message\""));
+        Assert.assertThat(message, containsString(exceptionMessage));
 
         thrown = new HibernateException(exceptionMessage);
         doThrow(thrown).when(pluginUserResource).updateUsers(anyList());
         message = mockMvcResultContent(status().is5xxServerError());
-        Assert.assertThat(message, new Contains("\"message\""));
-        Assert.assertThat(message, new Contains("Persistence exception occurred")); //HibernateException messages are now hidden from response and only logged (see EDELIVERY-9027)
+        Assert.assertThat(message, containsString("\"message\""));
+        Assert.assertThat(message, containsString("Persistence exception occurred")); //HibernateException messages are now hidden from response and only logged (see EDELIVERY-9027)
     }
 
     @Test
@@ -115,7 +115,7 @@ public class GlobalExceptionHandlerAdviceTest {
         String message = mockMvcResultContent(status().is5xxServerError());
         Assert.assertFalse(message.contains(hibExc.getMessage()));
         Assert.assertFalse(message.contains(rootCause.getMessage()));
-        Assert.assertThat(message, new Contains("Persistence exception occurred")); //HibernateException messages are now hidden from response and only logged (see EDELIVERY-9027)
+        Assert.assertThat(message, containsString("Persistence exception occurred")); //HibernateException messages are now hidden from response and only logged (see EDELIVERY-9027)
     }
 
     @Test
@@ -123,8 +123,8 @@ public class GlobalExceptionHandlerAdviceTest {
         Throwable thrown = new IllegalArgumentException(exceptionMessage);
         doThrow(thrown).when(pluginUserResource).updateUsers(anyList());
         String message = mockMvcResultContent(status().is4xxClientError());
-        Assert.assertThat(message, new Contains("\"message\""));
-        Assert.assertThat(message, new Contains(exceptionMessage));
+        Assert.assertThat(message, containsString("\"message\""));
+        Assert.assertThat(message, containsString(exceptionMessage));
     }
 
     @Test
@@ -140,7 +140,7 @@ public class GlobalExceptionHandlerAdviceTest {
         ResponseEntity<Object> restErrorResponse = unitUnderTest.handleMethodArgumentNotValid(thrown, null, null, null);
         String message = new ObjectMapper().writeValueAsString(restErrorResponse);
         // then
-        Assert.assertThat(message, new Contains(exceptionMessage));
+        Assert.assertThat(message, containsString(exceptionMessage));
     }
 
     @Test
@@ -165,9 +165,9 @@ public class GlobalExceptionHandlerAdviceTest {
 
         doThrow(thrown).when(pluginUserResource).updateUsers(anyList());
         String message = mockMvcResultContent(status().is4xxClientError());
-        Assert.assertThat(message, new Contains(generalMessage));
-        Assert.assertThat(message, new Contains(fieldName1));
-        Assert.assertThat(message, new Contains(exceptionMessage1));
+        Assert.assertThat(message, containsString(generalMessage));
+        Assert.assertThat(message, containsString(fieldName1));
+        Assert.assertThat(message, containsString(exceptionMessage1));
     }
 
     @Test

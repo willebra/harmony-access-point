@@ -55,6 +55,7 @@ import java.util.*;
 
 import static eu.domibus.logging.DomibusMessageCode.SEC_CERTIFICATE_SOON_REVOKED;
 import static eu.domibus.logging.DomibusMessageCode.SEC_DOMIBUS_CERTIFICATE_REVOKED;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
@@ -520,7 +521,7 @@ public class CertificateServiceImplTest {
             imminentExpirationCertificateConfiguration.getFrequency();
             result = imminentExpirationFrequency;
 
-            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), today, withArgThat(new GreaterThan<>(maxDate)));
+            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), today, withArgThat(greaterThan(maxDate)));
             result = certificates;
 
             certificate.getAlias();
@@ -532,7 +533,7 @@ public class CertificateServiceImplTest {
         }};
         certificateService.sendCertificateImminentExpirationAlerts();
         new VerificationsInOrder() {{
-            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), today, withArgThat(new GreaterThan<>(maxDate)));
+            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), today, withArgThat(greaterThan(maxDate)));
             times = 1;
             certificateDao.saveOrUpdate(certificates.get(0));
             times = 1;
@@ -567,7 +568,7 @@ public class CertificateServiceImplTest {
             expiredCertificateConfiguration.getFrequency();
             result = revokedFrequency;
 
-            certificateDao.findExpiredToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), withArgThat(new GreaterThan<>(endNotification)));
+            certificateDao.findExpiredToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), withArgThat(greaterThan(endNotification)));
             result = certificates;
 
             certificate.getAlias();
@@ -579,7 +580,7 @@ public class CertificateServiceImplTest {
         }};
         certificateService.sendCertificateExpiredAlerts();
         new VerificationsInOrder() {{
-            certificateDao.findExpiredToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), withArgThat(new GreaterThan<>(endNotification)));
+            certificateDao.findExpiredToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), withArgThat(greaterThan(endNotification)));
             times = 1;
             certificateDao.saveOrUpdate(certificates.get(0));
             times = 1;

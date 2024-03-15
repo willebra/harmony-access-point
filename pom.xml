@@ -59,7 +59,7 @@
         <jaxws-rt.version>2.3.6</jaxws-rt.version>
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <glassfish.javax.el.version>3.0.1-b12</glassfish.javax.el.version>
-        <mockito.version>1.10.19</mockito.version>
+        <mockito.version>4.11.0</mockito.version>
         <h2.version>2.1.214</h2.version>
         <liquibase.version>4.17.0</liquibase.version>
         <mysql.connector.java.version>8.0.32</mysql.connector.java.version>
@@ -1092,10 +1092,11 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
+
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>

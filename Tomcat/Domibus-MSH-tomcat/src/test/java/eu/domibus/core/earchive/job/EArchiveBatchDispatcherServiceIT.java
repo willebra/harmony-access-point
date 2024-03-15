@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -42,6 +41,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * @author François Gautier
@@ -95,7 +95,7 @@ public class EArchiveBatchDispatcherServiceIT extends AbstractIT {
     public void setUp() throws Exception {
         payloadFileStorageProvider.initialize();
 
-        Mockito.when(backendConnectorProvider.getBackendConnector(Matchers.anyString()))
+        Mockito.when(backendConnectorProvider.getBackendConnector(anyString()))
                 .thenReturn(new BackendConnectorMock("name"));
         domain = new Domain("default", "default");
         uploadPmode(SERVICE_PORT);

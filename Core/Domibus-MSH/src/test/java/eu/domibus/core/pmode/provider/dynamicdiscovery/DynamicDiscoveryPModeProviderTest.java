@@ -41,8 +41,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.*;
-import org.mockito.internal.util.reflection.Whitebox;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.xml.bind.JAXBContext;
 import java.io.InputStream;
@@ -263,8 +263,8 @@ public class DynamicDiscoveryPModeProviderTest {
         DynamicDiscoveryPModeProvider classUnderTest = mock(DynamicDiscoveryPModeProvider.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         doReturn(testData).when(classUnderTest).getConfiguration();
         doNothing().when(classUnderTest).refresh();
-        Whitebox.setInternalState(classUnderTest, "domainProvider", domainProvider);
-        Whitebox.setInternalState(classUnderTest, "domibusPropertyProvider", domibusPropertyProvider);
+        ReflectionTestUtils.setField(classUnderTest, "domainProvider", domainProvider);
+        ReflectionTestUtils.setField(classUnderTest, "domibusPropertyProvider", domibusPropertyProvider);
 
         classUnderTest.dynamicResponderProcesses = classUnderTest.findDynamicResponderProcesses();
 

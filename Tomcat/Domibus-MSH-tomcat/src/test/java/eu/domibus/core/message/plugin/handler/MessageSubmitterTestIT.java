@@ -71,8 +71,8 @@ import static eu.domibus.test.common.SubmissionUtil.DOMIBUS_BLUE;
 import static eu.domibus.test.common.SubmissionUtil.DOMIBUS_RED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @Transactional
 public class MessageSubmitterTestIT extends AbstractIT {
