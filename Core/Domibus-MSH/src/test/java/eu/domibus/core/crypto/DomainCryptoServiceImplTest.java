@@ -80,8 +80,6 @@ public class DomainCryptoServiceImplTest {
         final String dss = "DSS";
         final DomainCryptoServiceSpi defaultSpi = Mockito.mock(DomainCryptoServiceSpi.class);
         final DomainCryptoServiceSpi dssSpi = Mockito.mock(DomainCryptoServiceSpi.class);
-        when(defaultSpi.getIdentifier()).thenReturn(dss);
-        when(dssSpi.getIdentifier()).thenReturn(dss);
         domainCryptoService.setDomainCryptoServiceSpiList(Lists.newArrayList());
         when(domainCryptoService.getSpiIdentifier()).thenReturn(dss);
 

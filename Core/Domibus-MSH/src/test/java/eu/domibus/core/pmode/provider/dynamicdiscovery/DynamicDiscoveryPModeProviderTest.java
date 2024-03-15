@@ -175,7 +175,7 @@ public class DynamicDiscoveryPModeProviderTest {
     @Test
     public void testDynamicDiscoveryClientSelection() throws Exception {
         Configuration testData = initializeConfiguration(DYNAMIC_DISCOVERY_ENABLED);
-        doReturn(true).when(configurationDAO).configurationExists();
+//        doReturn(true).when(configurationDAO).configurationExists();
         doReturn(testData).when(configurationDAO).readEager();
 
         /* test default selection of dynamic discovery client OASIS compliant*/
@@ -191,7 +191,7 @@ public class DynamicDiscoveryPModeProviderTest {
     @Test
     public void testFindDynamicProcesses() throws Exception {
         Configuration testData = initializeConfiguration(DYNAMIC_DISCOVERY_ENABLED);
-        doReturn(true).when(configurationDAO).configurationExists();
+//        doReturn(true).when(configurationDAO).configurationExists();
         doReturn(testData).when(configurationDAO).readEager();
         dynamicDiscoveryPModeProvider.init();
         assertEquals(1, dynamicDiscoveryPModeProvider.dynamicResponderProcesses.size());
@@ -213,7 +213,7 @@ public class DynamicDiscoveryPModeProviderTest {
     @Test(expected = EbMS3Exception.class)
     public void testDoDynamicDiscoveryOnSenderNullCertificate() throws Exception {
         Configuration testData = initializeConfiguration(DYNAMIC_DISCOVERY_ENABLED);
-        doReturn(true).when(configurationDAO).configurationExists();
+//        doReturn(true).when(configurationDAO).configurationExists();
         doReturn(testData).when(configurationDAO).readEager();
         dynamicDiscoveryPModeProvider.init();
 
@@ -225,9 +225,9 @@ public class DynamicDiscoveryPModeProviderTest {
         doReturn(testDataEndpoint).when(dynamicDiscoveryServiceOASIS).lookupInformation(any(), any(), any(), any(), any(), any());
         doReturn(testDataEndpoint).when(domibusLocalCacheService).getEntryFromCache(any(), any());
 
-        doReturn(null).when(multiDomainCertificateProvider).getTrustStore(null);
-        doReturn(true).when(multiDomainCertificateProvider).addCertificate(null, testDataEndpoint.getCertificate(), EXPECTED_COMMON_NAME, true);
-        doReturn(DOMAIN).when(domainProvider).getCurrentDomain();
+//        doReturn(null).when(multiDomainCertificateProvider).getTrustStore(null);
+//        doReturn(true).when(multiDomainCertificateProvider).addCertificate(null, testDataEndpoint.getCertificate(), EXPECTED_COMMON_NAME, true);
+//        doReturn(DOMAIN).when(domainProvider).getCurrentDomain();
         UserMessage userMessage = buildUserMessageForDoDynamicThingsWithArguments(TEST_ACTION_VALUE, TEST_SERVICE_VALUE, TEST_SERVICE_TYPE, UNKNOWN_DYNAMIC_RESPONDER_PARTYID_VALUE, UNKNOWN_DYNAMIC_RESPONDER_PARTYID_TYPE, UNKNOWN_DYNAMIC_INITIATOR_PARTYID_VALUE, UNKNOWN_DYNAMIC_INITIATOR_PARTYID_TYPE, UUID.randomUUID().toString());
         dynamicDiscoveryPModeProvider.doDynamicDiscovery(userMessage, MSHRole.SENDING);
     }
@@ -235,7 +235,6 @@ public class DynamicDiscoveryPModeProviderTest {
     @Test
     public void testDoDynamicDiscoveryOnReceiver() throws Exception {
         Configuration testData = initializeConfiguration(DYNAMIC_DISCOVERY_ENABLED);
-        doReturn(true).when(configurationDAO).configurationExists();
         doReturn(testData).when(configurationDAO).readEager();
         dynamicDiscoveryPModeProvider.init();
 
@@ -270,8 +269,8 @@ public class DynamicDiscoveryPModeProviderTest {
 
         UserMessage userMessage = buildUserMessageForDoDynamicThingsWithArguments(null, null, null, UNKNOWN_DYNAMIC_RESPONDER_PARTYID_VALUE, UNKNOWN_DYNAMIC_RESPONDER_PARTYID_TYPE, UNKNOWN_DYNAMIC_INITIATOR_PARTYID_VALUE, UNKNOWN_DYNAMIC_INITIATOR_PARTYID_TYPE, UUID.randomUUID().toString());
 
-        doReturn("false").when(domibusPropertyProvider).getProperty(DOMIBUS_DYNAMICDISCOVERY_USE_DYNAMIC_DISCOVERY);
-        doReturn(false).when(domibusPropertyProvider).getBooleanProperty(DOMIBUS_PARTYINFO_ROLES_VALIDATION_ENABLED);
+//        doReturn("false").when(domibusPropertyProvider).getProperty(DOMIBUS_DYNAMICDISCOVERY_USE_DYNAMIC_DISCOVERY);
+//        doReturn(false).when(domibusPropertyProvider).getBooleanProperty(DOMIBUS_PARTYINFO_ROLES_VALIDATION_ENABLED);
         try {
             partyId = userMessage.getPartyInfo().getFrom().getFromPartyId();
             classUnderTest.findUserMessageExchangeContext(userMessage, MSHRole.SENDING, false, null);
@@ -281,7 +280,7 @@ public class DynamicDiscoveryPModeProviderTest {
             assertEquals(("Sender party could not be found for the value  " + partyId), ex.getErrorDetail());
         }
 
-        doReturn(DISCOVERY_ZONE).when(domibusPropertyProvider).getProperty(DOMIBUS_SMLZONE);
+//        doReturn(DISCOVERY_ZONE).when(domibusPropertyProvider).getProperty(DOMIBUS_SMLZONE);
         doReturn(true).when(domibusPropertyProvider).getBooleanProperty(DOMIBUS_DYNAMICDISCOVERY_USE_DYNAMIC_DISCOVERY);
         try {
             classUnderTest.findUserMessageExchangeContext(userMessage, MSHRole.SENDING, false, null);
@@ -393,7 +392,7 @@ public class DynamicDiscoveryPModeProviderTest {
     @Test
     public void testUpdateConfigurationParty_new() throws Exception {
         Configuration testData = initializeConfiguration(DYNAMIC_DISCOVERY_ENABLED);
-        doReturn(true).when(configurationDAO).configurationExists();
+//        doReturn(true).when(configurationDAO).configurationExists();
         doReturn(testData).when(configurationDAO).readEager();
         dynamicDiscoveryPModeProvider.init();
 
@@ -406,7 +405,6 @@ public class DynamicDiscoveryPModeProviderTest {
     @Test
     public void testUpdateConfigurationParty_exists() throws Exception {
         Configuration testData = initializeConfiguration(DYNAMIC_DISCOVERY_ENABLED);
-        doReturn(true).when(configurationDAO).configurationExists();
         doReturn(testData).when(configurationDAO).readEager();
         dynamicDiscoveryPModeProvider.init();
 

@@ -76,7 +76,7 @@ public class DbSchemaUtilImplTest {
 
     @Before
     public void init() {
-        Mockito.when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
+//        Mockito.when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
         dbSchemaUtilImpl = new DbSchemaUtilImpl(dataSource, domibusConfigurationService,
                 domibusPropertyProvider, schedulingTaskExecutor);
     }
