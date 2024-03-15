@@ -133,8 +133,8 @@ public class GlobalExceptionHandlerAdviceTest {
         BindingResult bindingResult = mock(BindingResult.class);
         when(bindingResult.getAllErrors()).thenReturn(Arrays.asList(new FieldError("station", "name", exceptionMessage)));
         MethodParameter methodParameter = mock(MethodParameter.class);
-        when(methodParameter.getParameterIndex()).thenReturn(1);
-        when(methodParameter.getMethod()).thenReturn(this.getClass().getDeclaredMethods()[0]);
+//        when(methodParameter.getParameterIndex()).thenReturn(1);
+//        when(methodParameter.getMethod()).thenReturn(this.getClass().getDeclaredMethods()[0]);
         MethodArgumentNotValidException thrown = new MethodArgumentNotValidException(methodParameter, bindingResult);
         // when
         ResponseEntity<Object> restErrorResponse = unitUnderTest.handleMethodArgumentNotValid(thrown, null, null, null);

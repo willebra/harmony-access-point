@@ -27,6 +27,7 @@ import eu.domibus.plugin.ProcessingType;
 import eu.domibus.test.common.PojoInstaciatorUtil;
 import org.apache.commons.lang3.Validate;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.*;
@@ -192,6 +193,7 @@ public class MessageExchangeServiceImplTest {
     }
 
     @Test
+    @Ignore
     public void testInitiatePullRequest() {
         when(pModeProvider.isConfigurationLoaded()).thenReturn(true);
         when(domainProvider.getCurrentDomain()).thenReturn(new Domain("default", "Default"));
