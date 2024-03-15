@@ -110,9 +110,9 @@ public class MessageExchangeServiceImplTest {
         findLegByName("leg2").setService(service);
 
         when(pModeProvider.getGatewayParty()).thenReturn(correctParty);
-        when(configurationDao.configurationExists()).thenReturn(true);
+//        when(configurationDao.configurationExists()).thenReturn(true);
         List<Process> processes = Lists.newArrayList(process);
-        when(pModeProvider.findPullProcessesByInitiator(correctParty)).thenReturn(processes);
+//        when(pModeProvider.findPullProcessesByInitiator(correctParty)).thenReturn(processes);
         Mockito.doNothing().when(pullProcessValidator).validatePullProcess(any(List.class));
     }
 
@@ -237,15 +237,15 @@ public class MessageExchangeServiceImplTest {
 
     @Test
     public void testInvalidRequest() throws Exception {
-        when(messageBuilder.buildSOAPMessage(any(Ebms3SignalMessage.class), any(LegConfiguration.class))).thenThrow(EbMS3ExceptionBuilder.getInstance()
-                .ebMS3ErrorCode(ErrorCode.EbMS3ErrorCode.EBMS_0004)
-                .message("An error occurred while processing your request. Please check the message header for more details.")
-                .build());
+//        when(messageBuilder.buildSOAPMessage(any(Ebms3SignalMessage.class), any(LegConfiguration.class))).thenThrow(EbMS3ExceptionBuilder.getInstance()
+//                .ebMS3ErrorCode(ErrorCode.EbMS3ErrorCode.EBMS_0004)
+//                .message("An error occurred while processing your request. Please check the message header for more details.")
+//                .build());
         Process process = PojoInstaciatorUtil.instanciate(Process.class, "legs{[name:leg1,defaultMpc[name:test1,qualifiedName:qn1]];[name:leg2,defaultMpc[name:test2,qualifiedName:qn2]]}", "initiatorParties{[name:initiator]}");
 
         List<Process> processes = Lists.newArrayList(process);
-        when(pModeProvider.findPullProcessesByInitiator(correctParty)).thenReturn(processes);
-        when(pModeProvider.findPullProcessesByMessageContext(any(MessageExchangeConfiguration.class))).thenReturn(Lists.newArrayList(process));
+//        when(pModeProvider.findPullProcessesByInitiator(correctParty)).thenReturn(processes);
+//        when(pModeProvider.findPullProcessesByMessageContext(any(MessageExchangeConfiguration.class))).thenReturn(Lists.newArrayList(process));
         messageExchangeService.initiatePullRequest();
         verify(jmsManager, times(0)).sendMessageToQueue(any(JmsMessage.class), any(Queue.class));
     }
@@ -310,7 +310,7 @@ public class MessageExchangeServiceImplTest {
         UserMessageLog userMessageLog = new UserMessageLog();
         MessageStatusEntity messageStatus = getPullMessageStatusEntity(MessageStatus.READY_TO_PULL);
         userMessageLog.setMessageStatus(messageStatus);
-        when(userMessageLogDao.findByMessageId(testMessageId, MSHRole.RECEIVING)).thenReturn(userMessageLog);
+//        when(userMessageLogDao.findByMessageId(testMessageId, MSHRole.RECEIVING)).thenReturn(userMessageLog);
 
         final String messageId = messageExchangeService.retrieveReadyToPullUserMessageId(mpc, party);
         assertEquals(testMessageId, messageId);
@@ -355,7 +355,7 @@ public class MessageExchangeServiceImplTest {
                 "serv1",
                 "action1",
                 "leg1");
-        when(pModeProvider.findPullProcessesByMessageContext(messageExchangeConfiguration)).thenReturn(Lists.<Process>newArrayList());
+//        when(pModeProvider.findPullProcessesByMessageContext(messageExchangeConfiguration)).thenReturn(Lists.<Process>newArrayList());
         when(messageStatusDao.findOrCreate(MessageStatus.SEND_ENQUEUED)).thenReturn(getPullMessageStatusEntity(MessageStatus.SEND_ENQUEUED));
 
         final MessageStatus messageStatus = messageExchangeService.getMessageStatus(messageExchangeConfiguration, ProcessingType.PUSH).getMessageStatus();
@@ -376,9 +376,9 @@ public class MessageExchangeServiceImplTest {
         mpc.setValue("mpc123");
         userMessage.setMpc(mpc);
 
-        when(userMessageDao.findByMessageId("123")).thenReturn(userMessage);
-        when(pModeProvider.findUserMessageExchangeContext(userMessage, MSHRole.SENDING)).thenReturn(messageExchangeConfiguration);
-        when(pModeProvider.findPullProcessesByMessageContext(messageExchangeConfiguration)).thenReturn(Lists.newArrayList(process));
+//        when(userMessageDao.findByMessageId("123")).thenReturn(userMessage);
+//        when(pModeProvider.findUserMessageExchangeContext(userMessage, MSHRole.SENDING)).thenReturn(messageExchangeConfiguration);
+//        when(pModeProvider.findPullProcessesByMessageContext(messageExchangeConfiguration)).thenReturn(Lists.newArrayList(process));
         when(messageStatusDao.findOrCreate(MessageStatus.SEND_ENQUEUED)).thenReturn(getPullMessageStatusEntity(MessageStatus.READY_TO_PULL));
         final MessageStatus messageStatus = messageExchangeService.retrieveMessageRestoreStatus("123", MSHRole.SENDING).getMessageStatus();
         assertEquals(MessageStatus.READY_TO_PULL, messageStatus);
