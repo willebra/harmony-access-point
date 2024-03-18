@@ -10,7 +10,6 @@ import org.hibernate.type.Type;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.io.Serializable;
@@ -74,10 +73,10 @@ public class DomibusDatePrefixedSequenceIdGeneratorGeneratorTest {
     @Test
     public void generateDomibus() {
         // given
-        Mockito.when(testInstance.generate(Matchers.anyObject(), Matchers.anyObject())).thenReturn(generatedSequenceObject);
+        Mockito.when(testInstance.generate(Mockito.any(), Mockito.any())).thenReturn(generatedSequenceObject);
         Mockito.when(testInstance.getCurrentDate()).thenReturn(currentDate);
         // when
-        Serializable sequence = testInstance.generateDomibus(Matchers.anyObject(), Matchers.anyObject());
+        Serializable sequence = testInstance.generateDomibus(Mockito.any(), Mockito.any());
         //then
         assertEquals(result, sequence);
     }

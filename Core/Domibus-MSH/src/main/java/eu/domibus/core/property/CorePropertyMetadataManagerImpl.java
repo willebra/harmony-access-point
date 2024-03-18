@@ -149,7 +149,7 @@ public class CorePropertyMetadataManagerImpl implements DomibusPropertyMetadataM
             new DomibusPropertyMetadata(DOMIBUS_ATTACHMENT_STORAGE_LOCATION, Type.URI, Usage.DOMAIN, false),
             new DomibusPropertyMetadata(DOMIBUS_PAYLOAD_ENCRYPTION_ACTIVE, Type.BOOLEAN, Usage.DOMAIN, true),
 
-            new DomibusPropertyMetadata(DOMIBUS_MSH_MESSAGEID_SUFFIX, Type.URI, Usage.DOMAIN, true),
+            new DomibusPropertyMetadata(DOMIBUS_MSH_MESSAGEID_SUFFIX, Type.URI, Usage.GLOBAL_AND_DOMAIN, true),
             DomibusPropertyMetadata.getGlobalProperty(DOMIBUS_MSH_RETRY_MESSAGE_EXPIRATION_DELAY, Type.NUMERIC),
 
             new DomibusPropertyMetadata(DOMIBUS_MSH_RETRY_TIMEOUT_DELAY, Type.NUMERIC, Usage.DOMAIN, true),
@@ -236,7 +236,7 @@ public class CorePropertyMetadataManagerImpl implements DomibusPropertyMetadataM
             DomibusPropertyMetadata.getGlobalProperty(DOMIBUS_LOGGING_METADATA_PRINT, Type.BOOLEAN),
             new DomibusPropertyMetadata(DOMIBUS_LOGGING_REMOTE_CERTIFICATES_PRINT, Type.BOOLEAN, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_LOGGING_LOCAL_CERTIFICATES_PRINT, Type.BOOLEAN, Usage.DOMAIN, true),
-            new DomibusPropertyMetadata(DOMIBUS_LOGGING_EBMS3_ERROR_PRINT, Type.BOOLEAN, Usage.DOMAIN, true),
+            new DomibusPropertyMetadata(DOMIBUS_LOGGING_EBMS3_ERROR_PRINT, Type.BOOLEAN, Usage.GLOBAL_AND_DOMAIN, true),
             DomibusPropertyMetadata.getGlobalProperty(DOMIBUS_LOGGING_CXF_LIMIT, Type.NUMERIC),         //there are still usages in xml!!!! move them?
 
             new DomibusPropertyMetadata(DOMIBUS_PAYLOAD_TEMP_JOB_RETENTION_EXCLUDE_REGEX, Type.REGEXP, Usage.DOMAIN, true),

@@ -16,7 +16,6 @@ import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.MessagingProcessingException;
 import eu.domibus.test.common.BackendConnectorMock;
 import org.junit.*;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +37,7 @@ import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * @author Ion Perpegel
@@ -107,7 +107,7 @@ public class UserMessageLogDaoIT extends AbstractIT {
         old = Date.from(before.toInstant().minusSeconds(60 * 60 * 24)); // one day older than "before"
 
         uploadPmode();
-        Mockito.when(backendConnectorProvider.getBackendConnector(Matchers.anyString()))
+        Mockito.when(backendConnectorProvider.getBackendConnector(anyString()))
                 .thenReturn(new BackendConnectorMock(WS_PLUGIN));
         String messageOneId = "msg1-" + randomUUID();
         String messageTwoId = "msg2-" + randomUUID();

@@ -1,8 +1,6 @@
-package eu.domibus.core.embs3.sender;
+package eu.domibus.core.ebms3.sender;
 
-import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.*;
-import eu.domibus.core.ebms3.sender.MessageSenderService;
 import eu.domibus.core.message.MessageStatusDao;
 import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageLogDao;
@@ -14,6 +12,7 @@ import eu.domibus.core.property.DomibusPropertyResourceHelper;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.XmlProcessingException;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.user.UserManagementServiceTestIT;
 import org.junit.Assert;
 import org.junit.Before;
