@@ -14,10 +14,9 @@
               </mat-select>
             </mat-form-field>
 
-            <mat-form-field>
+            <mat-form-field *ngIf="!extAuthProviderEnabled">
               <mat-label>User:</mat-label>
-              <mat-select matInput id="user_id" name="userId" multiple [(ngModel)]="filter.user"
-                          *ngIf="!extAuthProviderEnabled" id="user_id">
+              <mat-select matInput id="user_id" name="userId" multiple [(ngModel)]="filter.user" id="user_id">
                 <mat-option *ngFor="let item of existingUsers" [value]="item">{{item}}</mat-option>
               </mat-select>
             </mat-form-field>

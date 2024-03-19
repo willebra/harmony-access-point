@@ -65,7 +65,6 @@ export class AuditComponent extends mix(BaseListComponent)
 
     this.extAuthProviderEnabled = await this.domibusInfoService.isExtAuthProviderEnabled();
 
-// --- lets init the component's data ---
     this.existingUsers = [];
     if (!this.extAuthProviderEnabled) {
       const userObservable = this.userService.getUserNames();
