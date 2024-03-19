@@ -72,24 +72,28 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Configuration Date',
-        width: 50,
-        sortable: false
+        sortable: false,
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Username',
-        width: 50,
-        sortable: false
+        sortable: false,
+        width: 150,
+        minWidth: 140,
       },
       {
         cellTemplate: this.descriptionTpl,
         name: 'Description',
-        width: 100,
-        sortable: false
+        sortable: false,
+        width: 500,
+        minWidth: 490,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 20,
+        width: 150,
+        minWidth: 140,
         sortable: false
       }
     ];

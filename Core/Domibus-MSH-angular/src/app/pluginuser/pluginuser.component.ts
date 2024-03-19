@@ -82,34 +82,81 @@ export class PluginUserComponent extends mix(BaseListComponent)
 
   private initColumns() {
     this.columnPickerBasic.allColumns = [
-      {name: 'User Name', prop: 'userName', width: 20, showInitially: true},
-      {name: 'Role', prop: 'authRoles', width: 10, showInitially: true},
-      {name: 'Active', prop: 'active', cellTemplate: this.activeTpl, width: 25, showInitially: true},
-      {name: 'Original User', prop: 'originalUser', width: 240, showInitially: true},
+      {
+        name: 'User Name',
+        prop: 'userName',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
+      {
+        name: 'Role',
+        prop: 'authRoles',
+        width: 100,
+        minWidth: 90,
+        showInitially: true
+      },
+      {
+        name: 'Active',
+        prop: 'active',
+        cellTemplate: this.activeTpl,
+        width: 70,
+        minWidth: 60,
+        showInitially: true
+      },
+      {
+        name: 'Original User',
+        prop: 'originalUser',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Expiration Date',
         prop: 'expirationDate',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 60,
+        width: 100,
+        minWidth: 90,
         canAutoResize: true,
         sortable: false,
         showInitially: true
       }
     ];
     this.columnPickerCert.allColumns = [
-      {name: 'Certificate Id', prop: 'certificateId', width: 240, showInitially: true},
-      {name: 'Role', prop: 'authRoles', width: 10, showInitially: true},
-      {name: 'Original User', prop: 'originalUser', width: 240, showInitially: true},
+      {
+        name: 'Certificate Id',
+        prop: 'certificateId',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
+      {
+        name: 'Role',
+        prop: 'authRoles',
+        width: 70,
+        minWidth: 60,
+        showInitially: true
+      },
+      {
+        name: 'Original User',
+        prop: 'originalUser',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 60,
+        width: 100,
+        minWidth: 90,
         canAutoResize: true,
         sortable: false,
         showInitially: true

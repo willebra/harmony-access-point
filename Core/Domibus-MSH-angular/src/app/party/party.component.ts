@@ -114,28 +114,33 @@ export class PartyComponent extends mix(BaseListComponent)
       {
         name: 'Party Name',
         prop: 'name',
-        width: 10
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'End Point',
         prop: 'endpoint',
-        width: 150
+        width: 450,
+        minWidth: 440,
       },
       {
         name: 'Party Id',
         prop: 'joinedIdentifiers',
-        width: 10
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Process (I=Initiator, R=Responder, IR=Both)',
         prop: 'joinedProcesses',
-        width: 200
+        width: 350,
+        minWidth: 340,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
         prop: 'actions',
-        width: 60,
+        width: 150,
+        minWidth: 140,
         canAutoResize: true,
         sortable: false
       }

@@ -68,36 +68,45 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     this.columnPicker.allColumns = [
       {
         name: 'Signal Message Id',
-        prop: 'errorSignalMessageId'
+        prop: 'errorSignalMessageId',
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'AP Role',
         prop: 'mshRole',
-        width: 50
+        width: 130,
+        minWidth: 120
       },
       {
         name: 'Message Id',
         cellTemplate: this.rawTextTpl,
         prop: 'messageInErrorId',
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Error Code',
-        // width: 50
+        width: 120,
+        minWidth: 120
       },
       {
         name: 'Error Detail',
         cellTemplate: this.rawTextTpl,
-        width: 350
+        width: 400,
+        minWidth: 390
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Timestamp',
-        // width: 180
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Notified',
-        width: 50
+        width: 200,
+        minWidth: 190
       }
 
     ];

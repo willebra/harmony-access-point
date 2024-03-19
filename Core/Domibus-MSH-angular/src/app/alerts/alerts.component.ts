@@ -126,19 +126,84 @@ export class AlertsComponent extends mix(BaseListComponent)
 
   ngAfterViewInit() {
     this.columnPicker.allColumns = [
-      {name: 'Alert Id', width: 20, prop: 'entityId'},
-      {name: 'Processed', cellTemplate: this.rowProcessed, width: 20},
-      {name: 'Alert Type'},
-      {name: 'Alert Level', width: 50},
-      {name: 'Alert Status', width: 50},
-      {name: 'Creation Time', cellTemplate: this.rowWithDateFormatTpl, width: 155},
-      {name: 'Reporting Time', cellTemplate: this.rowWithDateFormatTpl, width: 155},
-      {name: 'Parameters', cellTemplate: this.rowWithSpaceAfterCommaTpl, sortable: false},
-      {name: 'Sent Attempts', width: 50, prop: 'attempts',},
-      {name: 'Max Attempts', width: 50},
-      {name: 'Next Attempt', cellTemplate: this.rowWithFutureDateFormatTpl, width: 155},
-      {name: 'Reporting Time Failure', cellTemplate: this.rowWithDateFormatTpl, width: 155},
-      {name: 'Actions', cellTemplate: this.rowActions, width: 60, canAutoResize: true, sortable: false, showInitially: true}
+      {
+        name: 'Alert Id',
+        width: 200,
+        minWidth: 190,
+        prop: 'entityId'
+      },
+      {
+        name: 'Processed',
+        cellTemplate: this.rowProcessed,
+        width: 50,
+        minWidth: 40,
+      },
+      {
+        name: 'Alert Type',
+        width: 260,
+        minWidth: 250,
+      },
+      {
+        name: 'Alert Level',
+        width: 100,
+        minWidth: 90,
+      },
+      {
+        name: 'Alert Status',
+        width: 100,
+        minWidth: 90,
+      },
+      {
+        name: 'Creation Time',
+        cellTemplate: this.rowWithDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Reporting Time',
+        cellTemplate: this.rowWithDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Parameters',
+        cellTemplate: this.rowWithSpaceAfterCommaTpl,
+        sortable: false,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Sent Attempts',
+        prop: 'attempts',
+        width: 50,
+        minWidth: 40,
+      },
+      {
+        name: 'Max Attempts',
+        width: 50,
+        minWidth: 40,
+      },
+      {
+        name: 'Next Attempt',
+        cellTemplate: this.rowWithFutureDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Reporting Time Failure',
+        cellTemplate: this.rowWithDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Actions',
+        cellTemplate: this.rowActions,
+        width: 200,
+        minWidth: 190,
+        canAutoResize: true,
+        sortable: false,
+        showInitially: true
+      }
     ];
 
     this.columnPicker.selectedColumns = this.columnPicker.allColumns.filter(col => {

@@ -216,56 +216,75 @@ export class MessageLogComponent extends mix(BaseListComponent)
       {
         name: 'Message Id',
         cellTemplate: this.rawTextTpl,
-        width: 275
+        width: 300,
+        minWidth: 290
       },
       {
-        name: 'From Party Id'
+        name: 'From Party Id',
+        width: 200,
+        minWidth: 190
       },
       {
-        name: 'To Party Id'
+        name: 'To Party Id',
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Message Status',
-        width: 175
+        width: 120,
+        minWidth: 120
       },
       {
         name: 'Notification Status',
-        width: 175
+        width: 120,
+        minWidth: 120
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Received',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'AP Role',
-        prop: 'mshRole'
+        prop: 'mshRole',
+        width: 150,
+        minWidth: 140
       },
       {
         cellTemplate: this.nextAttemptInfoTpl,
-        name: 'Send Attempts'
+        name: 'Send Attempts',
+        width: 70,
+        minWidth: 70
       },
       {
         cellTemplate: this.nextAttemptInfoTpl,
-        name: 'Send Attempts Max'
+        name: 'Send Attempts Max',
+        width: 70,
+        minWidth: 70
       },
       {
         cellTemplate: this.nextAttemptInfoWithDateFormatTpl,
         name: 'Next Attempt',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Conversation Id',
         cellTemplate: this.rawTextTpl,
+        width: 300,
+        minWidth: 290
       },
       {
         name: 'Message Type',
-        width: 130
+        width: 170,
+        minWidth: 160
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Deleted',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
     ];
 
@@ -273,17 +292,23 @@ export class MessageLogComponent extends mix(BaseListComponent)
       {
         name: 'Action',
         prop: 'action',
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       },
       {
         name: 'Service Type',
         prop: 'serviceType',
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       },
       {
         name: 'Service Value',
         prop: 'serviceValue',
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       });
 
     this.columnPicker.allColumns.push(
@@ -291,39 +316,49 @@ export class MessageLogComponent extends mix(BaseListComponent)
         name: 'Original Sender',
         prop: 'originalSender',
         cellTemplate: this.rawTextTpl,
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       },
       {
         name: 'Final Recipient',
         prop: 'finalRecipient',
         cellTemplate: this.rawTextTpl,
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       });
 
     this.columnPicker.allColumns.push(
       {
         name: 'Ref To Message Id',
         cellTemplate: this.rawTextTpl,
+        width: 100,
+        minWidth: 90
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Failed',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Restored',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Archived',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 120,
+        width: 150,
+        minWidth: 140,
         sortable: false
       }
     );

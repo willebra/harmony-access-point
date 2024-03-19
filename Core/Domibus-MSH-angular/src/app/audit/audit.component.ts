@@ -135,33 +135,38 @@ export class AuditComponent extends mix(BaseListComponent)
       {
         name: 'Table',
         prop: 'auditTargetName',
-        width: 20,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         name: 'User',
         prop: 'user',
-        width: 20,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         name: 'Action',
         prop: 'action',
-        width: 20,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Changed',
         prop: 'changed',
-        width: 80,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         name: 'Id',
         prop: 'id',
         cellTemplate: this.rawTextTpl,
-        width: 300,
+        width: 200,
+        minWidth: 190,
         sortable: false
       }
     ];

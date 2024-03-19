@@ -4,7 +4,15 @@ export class ColumnPickerBase {
   selectedColumns = [];
 
   changeSelectedColumns(newSelectedColumns: Array<any>) {
-    this.selectedColumns = newSelectedColumns
+    newSelectedColumns.forEach(col => {
+      if (!col.width) {
+        col.width = 200;
+      }
+      if (!col.minWidth) {
+        col.minWidth = 190;
+      }
+    });
+    this.selectedColumns = newSelectedColumns;
   }
 
 }
