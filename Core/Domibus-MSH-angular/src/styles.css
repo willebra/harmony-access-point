@@ -567,6 +567,22 @@ html, body, app-root, ng-component {
   border-color: transparent !important;
 }
 
+.mat-mdc-select {
+  font-size: 14px !important;
+}
+
+.mat-mdc-option .mdc-list-item__primary-text {
+  font-size: 14px !important;
+}
+
+.mat-mdc-form-field-input-control.mat-mdc-form-field-input-control {
+  font-size: 14px !important;
+}
+
+.mdc-text-field--filled .mdc-floating-label {
+  font-size: 14px !important;
+}
+
 ::ng-deep ngx-datatable > div {
   display: block;
   height: 100%;
