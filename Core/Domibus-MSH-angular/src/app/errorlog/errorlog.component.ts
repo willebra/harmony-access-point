@@ -166,7 +166,7 @@ export class ErrorLogComponent extends mix(BaseListComponent)
   }
 
   showDetails(selectedRow: any) {
-    let dialogRef: MatDialogRef<ErrorlogDetailsComponent> = this.dialogService.open(ErrorlogDetailsComponent);
+    let dialogRef: MatDialogRef<ErrorlogDetailsComponent> = this.dialogService.open(ErrorlogDetailsComponent, {autoFocus: false});
     dialogRef.componentInstance.message = selectedRow;
   }
 
