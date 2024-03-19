@@ -100,9 +100,16 @@ export class JmsComponent extends mix(BaseListComponent)
     this.filteredQueues = [];
     this.originalQueues = [];
 
-    // set toDate equals to now
-    this.filter.toDate = new Date();
-    this.filter.toDate.setHours(23, 59, 59, 999);
+    // set toDate to now
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    this.filter.toDate = today;
+
+    this.timestampFromMaxDate = today;
+    this.timestampToMinDate = null;
+    this.timestampToMaxDate = today;
+
     this.originalQueueName = null;
 
     this.markedForDeletionMessages = [];
