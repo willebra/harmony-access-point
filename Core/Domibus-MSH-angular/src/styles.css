@@ -604,3 +604,7 @@ html, body, app-root, ng-component {
 .mat-mdc-card-content {
   padding: 0 !important;
 }
+
+.ngx-datatable.material .datatable-body .progress-linear {
+  position: absolute !important;
+}

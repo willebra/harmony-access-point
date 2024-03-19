@@ -93,12 +93,11 @@ export default class BaseListComponent<T> implements IBaseList<T>, OnInit {
     try {
       result = await this.getDataAndSetResults();
     } catch (error) {
-      this.isLoading = false;
       this.onLoadDataError(error);
       return Promise.reject(error);
+    } finally {
+      this.isLoading = false;
     }
-
-    this.isLoading = false;
 
     if (instanceOfModifiableList(this)) {
       this.isChanged = false;
