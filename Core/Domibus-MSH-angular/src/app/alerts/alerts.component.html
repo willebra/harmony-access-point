@@ -6,12 +6,6 @@
       <mat-card-content>
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
-            <ng-container *ngIf="displayDomainCheckBox">
-              <mat-checkbox name="showDomainAlerts" [(ngModel)]="filter.domainAlerts" id="showDomainAlerts_id"
-                            style="margin-right: 20px;">
-                Show domain alerts
-              </mat-checkbox>
-            </ng-container>
 
             <!-- Processed -->
             <mat-form-field>
@@ -93,6 +87,13 @@
               </ngx-mat-datetime-picker>
             </mat-form-field>
 
+            <ng-container *ngIf="displayDomainCheckBox">
+              <mat-checkbox name="showDomainAlerts" [(ngModel)]="filter.domainAlerts" id="showDomainAlerts_id"
+                            style="margin-right: 20px;">
+                Show domain alerts
+              </mat-checkbox>
+            </ng-container>
+            
             <mat-form-field *ngIf="advancedSearch">
               <mat-label>Reporting From</mat-label>
               <input matInput [ngxMatDatetimePicker]="reportingFrom" id="reportingfrom_id" name="reportingFrom"
