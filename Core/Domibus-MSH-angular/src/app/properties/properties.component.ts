@@ -62,15 +62,15 @@ export class PropertiesComponent extends mix(BaseListComponent)
         name: 'Property Name',
         prop: 'name',
         showInitially: true,
-        width: 300,
-        minWidth: 190
+        width: 350,
+        minWidth: 340
       },
       {
         name: 'Type',
         prop: 'type',
         showInitially: true,
-        width: 100,
-        minWidth: 90
+        width: 140,
+        minWidth: 130
       },
       // {
       //   name: 'Description',
@@ -96,8 +96,8 @@ export class PropertiesComponent extends mix(BaseListComponent)
         name: 'Usage',
         prop: 'usageText',
         showInitially: true,
-        width: 100,
-        minWidth: 90
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'With Fallback',
@@ -132,8 +132,8 @@ export class PropertiesComponent extends mix(BaseListComponent)
         name: 'Property Value',
         prop: 'value',
         showInitially: true,
-        width: 200,
-        minWidth: 100,
+        width: 350,
+        minWidth: 340,
         sortable: false
       },
 

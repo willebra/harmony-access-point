@@ -82,8 +82,8 @@ export class ErrorLogComponent extends mix(BaseListComponent)
         name: 'Message Id',
         cellTemplate: this.rawTextTpl,
         prop: 'messageInErrorId',
-        width: 200,
-        minWidth: 190
+        width: 350,
+        minWidth: 340
       },
       {
         name: 'Error Code',

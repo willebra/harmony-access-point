@@ -189,10 +189,9 @@ mat-sidenav[_ngcontent-c0] {
 ----------------------------------------------------*/
 
 page-header h1 {
-  /*font-size: 48px;*/
   margin-top: 0 !important;
-  margin-bottom: 15px !important;
-  font-size: xx-large !important;
+  margin-bottom: 0px !important;
+  font-size: x-large !important;
 }
 
 h2 {
@@ -233,7 +232,7 @@ mat-card {
 }
 
 .searchArea {
-  margin-top: 10px !important;
+  margin-top: 0px !important;
 }
 
 /* TODO(mdc-migration): The following rule targets internal classes of input that may no longer apply for the MDC version. */
@@ -264,7 +263,7 @@ mat-card {
 /* --- GROUP BUTTON FILTER ---*/
 .group-filter-button {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   margin-left: 10px;
   padding-top: 5px;
 }
@@ -568,3 +567,24 @@ html, body, app-root, ng-component {
   border-color: transparent !important;
 }
 
+::ng-deep ngx-datatable > div {
+  display: block;
+  height: 100%;
+}
+
+::ng-deep .ngx-datatable .datatable-body {
+  height: calc(100% - 100px) !important;
+  overflow: hidden auto;
+}
+
+.mat-mdc-card-content:last-child {
+  padding-bottom: 0px !important;
+}
+
+.mat-mdc-card-content:first-child {
+  padding-top: 0px !important;
+}
+
+.mat-mdc-card-content {
+  padding: 0 !important;
+}

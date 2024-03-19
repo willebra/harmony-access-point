@@ -28,6 +28,7 @@ import {ClientSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
 import {PluginUserValidatorService} from './support/pluginuservalidator.service';
+import {SelectionType} from '@swimlane/ngx-datatable';
 
 @Component({
   templateUrl: './pluginuser.component.html',
@@ -312,4 +313,5 @@ export class PluginUserComponent extends mix(BaseListComponent)
     return PluginUserService.CSV_URL + '?' + this.createAndSetParameters();
   }
 
+  protected readonly SelectionType = SelectionType;
 }

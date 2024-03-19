@@ -231,13 +231,13 @@ export class MessageLogComponent extends mix(BaseListComponent)
       },
       {
         name: 'Message Status',
-        width: 120,
-        minWidth: 120
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Notification Status',
-        width: 120,
-        minWidth: 120
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
@@ -357,8 +357,8 @@ export class MessageLogComponent extends mix(BaseListComponent)
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 150,
-        minWidth: 140,
+        width: 180,
+        minWidth: 180,
         sortable: false
       }
     );
