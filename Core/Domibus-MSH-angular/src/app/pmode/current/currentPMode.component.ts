@@ -43,7 +43,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    * @param {MatDialog} dialog Object used for opening dialogs
    */
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              public dialog: MatDialog, private dialogsService: DialogsService, private domainService: DomainService) {
+              private dialogsService: DialogsService, private domainService: DomainService) {
   }
 
   /**
@@ -95,7 +95,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    * Method called when Upload button is clicked
    */
   upload() {
-    this.dialog.open(PmodeUploadComponent)
+    this.dialogsService.open(PmodeUploadComponent)
       .afterClosed().subscribe(() => {
       this.getCurrentEntry();
     });
@@ -133,7 +133,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
       this.alertService.error('Cannot save an empty pMode!');
       return;
     }
-    this.dialog.open(PmodeUploadComponent, {
+    this.dialogsService.open(PmodeUploadComponent, {
       data: {pModeContents: this.pModeContents}
     }).afterClosed().subscribe(result => {
       if (result && result.done) {
