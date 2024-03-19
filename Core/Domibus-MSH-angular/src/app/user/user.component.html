@@ -8,7 +8,7 @@
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
 
             <mat-form-field>
-              <mat-label>User Role:</mat-label>
+              <mat-label>User Role</mat-label>
               <mat-select [(ngModel)]="filter.authRole" id="role_id" name="roleId">
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let t of userRoles" [value]="t">
@@ -18,7 +18,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>User Name:</mat-label>
+              <mat-label>User Name</mat-label>
               <input matInput [(ngModel)]="filter.userName" id="username_id" name="userName">
             </mat-form-field>
 

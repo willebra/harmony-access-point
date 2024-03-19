@@ -42,7 +42,7 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Received From:</mat-label>
+              <mat-label>Received From</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedFrom" name="receivedFrom"
                      [ngModel]="filter.receivedFrom" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="timestampFromMaxDate" advanced-filter-behaviour [parent]="this">
@@ -55,7 +55,7 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Received Up To:</mat-label>
+              <mat-label>Received Up To</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedTo" name="receivedTo" #receivedToField="ngModel"
                      [ngModel]="filter.receivedTo" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [min]="timestampToMinDate" [max]="timestampToMaxDate" advanced-filter-behaviour [parent]="this">

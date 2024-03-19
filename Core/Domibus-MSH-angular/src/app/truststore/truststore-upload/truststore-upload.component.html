@@ -13,7 +13,7 @@
         {{selectedFileName}}
 
         <mat-form-field class="password" style="margin-top: 20px;">
-          <mat-label>Password:</mat-label>
+          <mat-label>Password</mat-label>
           <input matInput id="password_id"  name="password" type="password" #passwordField
                  [formControl]="truststoreForm.controls['password']" required="true">
           <span class="help-block" *ngIf="shouldShowErrors(truststoreForm.controls['password'])">

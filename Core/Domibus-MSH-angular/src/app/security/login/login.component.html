@@ -3,13 +3,13 @@
     <form name="loginForm" #loginForm="ngForm" (ngSubmit)="login()">
       <mat-card appearance="outlined">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>User Name:</mat-label>
+          <mat-label>User Name</mat-label>
           <input matInput name="username" [(ngModel)]="model.username"
                  required id="username_id" autocomplete="username">
         </mat-form-field>
 
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Password:</mat-label>
+          <mat-label>Password</mat-label>
           <input type="password" matInput name="password" [(ngModel)]="model.password"
                  required id="password_id" autocomplete="current-password">
         </mat-form-field>

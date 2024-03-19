@@ -3,27 +3,27 @@
   <mat-card appearance="outlined">
     <mat-card-content>
       <mat-form-field style="width:100%">
-        <mat-label>Name:</mat-label>
+        <mat-label>Name</mat-label>
         <input matInput value="{{trustStoreEntry.name}}" readonly/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Subject:</mat-label>
+        <mat-label>Subject</mat-label>
         <input matInput value="{{trustStoreEntry.subject}}" readonly/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Issuer:</mat-label>
+        <mat-label>Issuer</mat-label>
         <input matInput value="{{trustStoreEntry.issuer}}" readonly/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Valid from:</mat-label>
+        <mat-label>Valid from</mat-label>
         <input matInput value="{{trustStoreEntry.validFrom| domibusDate}}" readonly/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Valid until:</mat-label>
+        <mat-label>Valid until</mat-label>
         <input matInput value="{{trustStoreEntry.validUntil| domibusDate}}" readonly/>
       </mat-form-field>
     </mat-card-content>
