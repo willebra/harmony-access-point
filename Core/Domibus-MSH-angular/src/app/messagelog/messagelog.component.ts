@@ -128,8 +128,10 @@ export class MessageLogComponent extends mix(BaseListComponent)
 
   private setDatesFromInterval() {
     if (this.messageInterval && this.messageInterval.value) {
-      this.filter.receivedTo = new Date();
-      this.filter.receivedFrom = new Date(this.filter.receivedTo - this.messageInterval.value * this.MS_PER_MINUTE);
+      let now = new Date();
+      this.timestampToMaxDate = new Date(now.getTime() + 60000);
+      this.filter.receivedTo = now;
+      this.filter.receivedFrom = new Date(now.getTime() - this.messageInterval.value * this.MS_PER_MINUTE);
     }
   }
 
@@ -141,8 +143,12 @@ export class MessageLogComponent extends mix(BaseListComponent)
     this.receivedToFieldSub = Observable.interval(2000)
       .subscribe((val) => {
         if (this.receivedToField && this.receivedToField.errors && this.receivedToField.errors['matDatetimePickerMax']) {
-          this.filterForm.controls['receivedTo'].setErrors(null);
-          this.timestampToMaxDate = new Date(this.filter.receivedTo + 60000);
+          const diff = this.filter.receivedTo.getTime() - this.timestampToMaxDate.getTime();
+          // console.log('fixing receivedToField=', diff)
+          if (diff < 100000) {
+            this.filterForm.controls['receivedTo'].setErrors(null);
+            this.timestampToMaxDate = new Date(this.filter.receivedTo.getTime() + 60000);
+          }
         }
       });
   }
