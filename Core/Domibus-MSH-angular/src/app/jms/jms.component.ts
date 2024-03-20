@@ -239,6 +239,9 @@ export class JmsComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.fromDate = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.fromDate = null;
     }
   }
 
@@ -246,6 +249,9 @@ export class JmsComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampFromMaxDate = param.toDate();
       this.filter.toDate = param.toDate();
+    } else {
+      this.timestampFromMaxDate = new Date();
+      this.filter.toDate = null;
     }
   }
 

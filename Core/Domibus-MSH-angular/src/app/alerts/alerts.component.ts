@@ -11,7 +11,6 @@ import {AlertsResult} from './support/alertsresult';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {AlertService} from '../common/alert/alert.service';
 import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
-import {MatDialog} from '@angular/material/dialog';
 import {SecurityService} from '../security/security.service';
 import mix from '../common/mixins/mixin.utils';
 import BaseListComponent from '../common/mixins/base-list.component';
@@ -25,6 +24,7 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {AlertsEntry} from './support/alertsentry';
 import {ComponentName} from '../common/component-name-decorator';
 import {Moment} from 'moment';
+
 @Component({
   templateUrl: 'alerts.component.html',
 })
@@ -318,6 +318,9 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.creationToMinDate = param.toDate();
       this.filter.creationFrom = param.toDate();
+    } else {
+      this.creationToMinDate = null;
+      this.filter.creationFrom = null;
     }
   }
 
@@ -325,6 +328,10 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.creationFromMaxDate = param.toDate();
       this.filter.creationTo = param.toDate();
+    } else {
+      this.creationFromMaxDate = new Date();
+      ;
+      this.filter.creationTo = null;
     }
   }
 
@@ -332,6 +339,9 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.reportingToMinDate = param.toDate();
       this.filter.reportingFrom = param.toDate();
+    } else {
+      this.reportingToMinDate = null;
+      this.filter.reportingFrom = null
     }
   }
 
@@ -339,6 +349,9 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.reportingFromMaxDate = param.toDate();
       this.filter.reportingTo = param.toDate();
+    } else {
+      this.reportingFromMaxDate = new Date();
+      this.filter.reportingTo = null;
     }
   }
 
@@ -346,6 +359,9 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.dynamicDataToMinDate = param.toDate();
       this.dynamicDatesFilter.from = param.toDate();
+    } else {
+      this.dynamicDataToMinDate = null;
+      this.dynamicDatesFilter.from = null;
     }
   }
 
@@ -353,6 +369,9 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.dynamicDataFromMaxDate = param.toDate();
       this.dynamicDatesFilter.to = param.toDate();
+    } else {
+      this.dynamicDataFromMaxDate = param.toDate();
+      this.dynamicDatesFilter.to = null;
     }
   }
 

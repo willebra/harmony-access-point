@@ -47,7 +47,7 @@
                      [ngModel]="filter.receivedFrom" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="timestampFromMaxDate" advanced-filter-behaviour [parent]="this">
               <span>
-                <div *ngIf="receivedFromField.errors?.matDatetimePickerMax" style="color:red; font-size: 70%">Value should not exceed Received Up To</div>
+                <div *ngIf="receivedFromField.errors?.matDatetimePickerMax" style="color:red; font-size: 70%">Value should not exceed Received Up To or current date</div>
               </span>
               <mat-datepicker-toggle matSuffix [for]="receivedFrom" ></mat-datepicker-toggle>
               <ngx-mat-datetime-picker #receivedFrom>

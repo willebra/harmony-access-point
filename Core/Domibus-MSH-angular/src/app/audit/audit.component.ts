@@ -178,6 +178,9 @@ export class AuditComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.from = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.from = null;
     }
   }
 
@@ -185,6 +188,9 @@ export class AuditComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampFromMaxDate = param.toDate();
       this.filter.to = param.toDate();
+    } else {
+      this.timestampFromMaxDate = new Date();
+      this.filter.to = null;
     }
   }
 

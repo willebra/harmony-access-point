@@ -150,6 +150,9 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.timestampFrom = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.timestampFrom = null;
     }
   }
 
@@ -157,6 +160,9 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampFromMaxDate = param.toDate();
       this.filter.timestampTo = param.toDate();
+    } else {
+      this.filter.timestampTo = null;
+      this.timestampFromMaxDate = new Date();
     }
   }
 
@@ -164,6 +170,9 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     if (param) {
       this.notifiedToMinDate = param.toDate();
       this.filter.notifiedFrom = param.toDate();
+    } else {
+      this.notifiedToMinDate = null;
+      this.filter.notifiedFrom = null;
     }
   }
 
@@ -171,6 +180,9 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     if (param) {
       this.notifiedFromMaxDate = param.toDate();
       this.filter.notifiedTo = param.toDate();
+    } else {
+      this.notifiedFromMaxDate = new Date();
+      this.filter.notifiedTo = null;
     }
   }
 

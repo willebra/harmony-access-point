@@ -130,8 +130,11 @@ export class MessageLogComponent extends mix(BaseListComponent)
     if (this.messageInterval && this.messageInterval.value) {
       let now = new Date();
       this.timestampToMaxDate = new Date(now.getTime() + 60000);
+      this.timestampFromMaxDate = now;
       this.filter.receivedTo = now;
-      this.filter.receivedFrom = new Date(now.getTime() - this.messageInterval.value * this.MS_PER_MINUTE);
+      let receivedFrom = new Date(now.getTime() - this.messageInterval.value * this.MS_PER_MINUTE);
+      this.filter.receivedFrom = receivedFrom;
+      this.timestampToMinDate = receivedFrom;
     }
   }
 
@@ -663,16 +666,22 @@ export class MessageLogComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.receivedFrom = param.toDate();
-      this.setCustomMessageInterval();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.receivedFrom = null;
     }
+    this.setCustomMessageInterval();
   }
 
   onTimestampToChange(param: Moment) {
     if (param) {
       this.timestampFromMaxDate = param.toDate();
       this.filter.receivedTo = param.toDate();
-      this.setCustomMessageInterval();
+    } else {
+      this.filter.receivedTo = null;
+      this.timestampFromMaxDate = new Date();
     }
+    this.setCustomMessageInterval();
   }
 
   private setCustomMessageInterval() {
