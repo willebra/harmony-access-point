@@ -8,7 +8,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Certificate Id *</mat-label>
+          <mat-label>Certificate Id</mat-label>
           <input #certificate_id matInput name="certificateId" id="username_id" [(ngModel)]="user.certificateId" [disabled]="editMode"
                  input-debounce #certificateId="ngModel" [pattern]="certificateIdPattern" maxlength="255" required>
           <span class="help-block" *ngIf="shouldShowErrors(certificateId)">
@@ -20,7 +20,7 @@
 
       <div style="margin-top:0;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Original User *</mat-label>
+          <mat-label>Original User</mat-label>
           <input matInput name="originalUser" id="originalUser_id" [(ngModel)]="user.originalUser" input-debounce
                  #originalUser="ngModel" [required]="isRoleUserSelected(role)" maxlength="255">
           <span class="help-block" *ngIf="shouldShowErrors(originalUser)">
@@ -31,7 +31,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field>
-          <mat-label>Role *</mat-label>
+          <mat-label>Role</mat-label>
           <mat-select matInput name="role" id="role_id" [(ngModel)]="user.authRoles"
                       #role="ngModel" required [style.width]="'100%'">
             <mat-option *ngFor="let item of existingRoles" [value]="item">{{item}}</mat-option>
