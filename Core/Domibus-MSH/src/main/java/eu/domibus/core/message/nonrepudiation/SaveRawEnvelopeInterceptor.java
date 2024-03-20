@@ -55,7 +55,7 @@ public class SaveRawEnvelopeInterceptor extends AbstractSoapInterceptor {
             try {
                 nonRepudiationService.saveResponse(jaxwsMessage, userMessageEntityId);
                 LOG.debug("Saved the signal message envelope for user message id [{}], entity id [{}]", userMessageId, userMessageEntityIdValue);
-            } catch (Exception e) {
+            } catch (Exception e) {//saving the signal message raw envelope should not prevent the successful exchange of messages
                 LOG.error("Could not save Signal message raw envelope", e);
             }
         }
