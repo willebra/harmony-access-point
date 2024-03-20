@@ -31,7 +31,7 @@ public class SignalMessageRawService {
             throw new DomibusCoreException("signal message not found for ID: [" + signalMessageId + "]");
         }
 
-        LOG.debug("SignalMessageRaw not found: [{}] - creation", signalMessageId);
+        LOG.debug("Creating SignalMessageRaw for signal with id [{}]", signalMessageId);
         SignalMessageRaw signalMessageRaw = new SignalMessageRaw();
         signalMessageRaw.setRawXML(rawXml);
         signalMessageRaw.setSignalMessage(signalMessage);

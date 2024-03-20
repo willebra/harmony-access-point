@@ -14,8 +14,8 @@ import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.util.SoapUtil;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.xml.soap.SOAPMessage;
@@ -112,13 +112,23 @@ public class NonRepudiationDefaultService implements NonRepudiationService {
             return;
         }
 
+        String rawXMLMessage = null;
         try {
-            String rawXMLMessage = soapUtil.getRawXMLMessage(response);
+            rawXMLMessage = soapUtil.getRawXMLMessage(response);
+        } catch (TransformerException e) {
+            LOG.warn("Unable to get the raw message XML", e);
+        }
+
+        if (StringUtils.isBlank(rawXMLMessage)) {
+            LOG.warn("Could not save the Signal raw envelope for signal message with entity id [{}]: raw envelope is null", signalMessageEntityId);
+            return;
+        }
+
+        try {
             LOG.debug(PERSIST_RAW_XML_ENVELOPE, rawXMLMessage);
             signalMessageRawService.saveSignalMessageRawService(rawXMLMessage, signalMessageEntityId);
-        } catch (TransformerException e) {
-            LOG.warn("Unable to log the raw message XML due to: ", e);
-        } catch (DataIntegrityViolationException e) {
+        } catch (Exception e) {//a typical error is DataIntegrityViolationException see EDELIVERY-12914
+            LOG.error("Could not persist Signal raw envelope for signal message with id [{}]: [{}]", signalMessageEntityId, rawXMLMessage);
             throw new DomibusCoreException(DomibusCoreErrorCode.DOM_001, "Error saving the signal raw message with id [" + signalMessageEntityId + "]", e);
         }
     }
