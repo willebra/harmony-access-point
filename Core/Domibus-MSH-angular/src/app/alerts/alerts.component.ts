@@ -24,6 +24,7 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {AlertsEntry} from './support/alertsentry';
 import {ComponentName} from '../common/component-name-decorator';
 import {Moment} from 'moment';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
   templateUrl: 'alerts.component.html',
@@ -82,7 +83,7 @@ export class AlertsComponent extends mix(BaseListComponent)
   matcher: ErrorStateMatcher = new ShowOnDirtyErrorStateMatcher;
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private dialogsService: DialogsService,
+              private dialogsService: DialogsService, private dateService: DateService,
               private securityService: SecurityService, private changeDetector: ChangeDetectorRef) {
     super();
 
@@ -99,29 +100,37 @@ export class AlertsComponent extends mix(BaseListComponent)
     this.nonDateParameters = [];
     this.alertTypeWithDate = false;
 
-    this.creationFromMaxDate = new Date();
-    this.creationToMinDate = null;
-    this.creationToMaxDate = new Date();
-
-    this.reportingFromMaxDate = new Date();
-    this.reportingToMinDate = null;
-    this.reportingToMaxDate = new Date();
-
-    this.dynamicDataFromMaxDate = new Date();
-    this.dynamicDataToMinDate = null;
-    this.dynamicDataToMaxDate = new Date();
-
     this.dateFromName = '';
     this.dateToName = '';
     this.displayDomainCheckBox = this.securityService.isCurrentUserSuperAdmin();
 
     super.filter = {processed: 'UNPROCESSED', domainAlerts: false};
 
+    this.setDateParams();
+
     super.orderBy = 'creationTime';
     super.asc = false;
     this.areRowsDeleted = false;
     this.areRowsEdited = false;
     this.filterData();
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.filter.creationTo = todayEndDay;
+    console.log('this.filter.creationTo =', this.filter.creationTo)
+    this.creationFromMaxDate = todayEndDay;
+    this.creationToMinDate = null;
+    this.creationToMaxDate = todayEndDay
+
+    this.reportingFromMaxDate = todayEndDay
+    this.reportingToMinDate = null;
+    this.reportingToMaxDate = todayEndDay
+
+    this.dynamicDataFromMaxDate = todayEndDay
+    this.dynamicDataToMinDate = null;
+    this.dynamicDataToMaxDate = todayEndDay
   }
 
   ngAfterViewInit() {
@@ -307,7 +316,7 @@ export class AlertsComponent extends mix(BaseListComponent)
   }
 
   private getDynamicDataToMaxDate(alertType: string) {
-    return this.isFutureAlert(alertType) ? null : new Date();
+    return this.isFutureAlert(alertType) ? null : this.dateService.todayEndDay();
   }
 
   isFutureAlert(alertType: string): boolean {
@@ -326,11 +335,12 @@ export class AlertsComponent extends mix(BaseListComponent)
 
   onTimestampCreationToChange(param: Moment) {
     if (param) {
-      this.creationFromMaxDate = param.toDate();
-      this.filter.creationTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.creationFromMaxDate = date;
+      this.filter.creationTo = date;
     } else {
-      this.creationFromMaxDate = new Date();
-      ;
+      this.creationFromMaxDate = this.dateService.todayEndDay();
       this.filter.creationTo = null;
     }
   }
@@ -347,10 +357,12 @@ export class AlertsComponent extends mix(BaseListComponent)
 
   onTimestampReportingToChange(param: Moment) {
     if (param) {
-      this.reportingFromMaxDate = param.toDate();
-      this.filter.reportingTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.reportingFromMaxDate = date;
+      this.filter.reportingTo = date;
     } else {
-      this.reportingFromMaxDate = new Date();
+      this.reportingFromMaxDate = this.dateService.todayEndDay();
       this.filter.reportingTo = null;
     }
   }
@@ -367,8 +379,10 @@ export class AlertsComponent extends mix(BaseListComponent)
 
   onDynamicDataToChange(param: Moment) {
     if (param) {
-      this.dynamicDataFromMaxDate = param.toDate();
-      this.dynamicDatesFilter.to = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.dynamicDataFromMaxDate = date;
+      this.dynamicDatesFilter.to = date;
     } else {
       this.dynamicDataFromMaxDate = param.toDate();
       this.dynamicDatesFilter.to = null;

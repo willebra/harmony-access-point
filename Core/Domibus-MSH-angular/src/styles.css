@@ -608,3 +608,28 @@ html, body, app-root, ng-component {
 .ngx-datatable.material .datatable-body .progress-linear {
   position: absolute !important;
 }
+
+ngx-mat-timepicker .mat-mdc-form-field-subscript-wrapper {
+  height: 0px !important;
+}
+
+ngx-mat-timepicker .mat-mdc-form-field {
+  margin-top: -15px !important;
+}
+
+.ngx-mat-timepicker form .ngx-mat-timepicker-table .ngx-mat-timepicker-tbody tr td .mat-mdc-icon-button .mat-icon {
+  height: 18px !important;
+}
+
+.mat-datepicker-actions .mat-mdc-icon-button.mat-mdc-button-base {
+  padding-top: 0 !important;
+  height: 38px;
+  margin-right: 10px;
+}
+
+.mat-datepicker-actions {
+  margin-top: -10px;
+}
+.mat-calendar-header {
+  padding-top: 0 !important;
+}

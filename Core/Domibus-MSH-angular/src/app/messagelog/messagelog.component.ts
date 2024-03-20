@@ -36,6 +36,7 @@ import {FormControl, NgForm} from '@angular/forms';
 import 'rxjs/add/observable/interval';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
   templateUrl: 'messagelog.component.html',
@@ -108,38 +109,8 @@ export class MessageLogComponent extends mix(BaseListComponent)
   sortedColumns: [{ prop: string; dir: string }];
   receivedToFieldSub: Subscription;
 
-  get messageInterval(): DateInterval {
-    return this._messageInterval;
-  }
-
-  set messageInterval(dateInterval: DateInterval) {
-    if (this._messageInterval == dateInterval) {
-      return;
-    }
-    this._messageInterval = dateInterval;
-    if (dateInterval.value) {
-      this.setDatesFromInterval();
-    } else {
-      this.filter.receivedFrom = null;
-      this.filter.receivedTo = null;
-      super.advancedSearch = true;
-    }
-  }
-
-  private setDatesFromInterval() {
-    if (this.messageInterval && this.messageInterval.value) {
-      let now = new Date();
-      this.timestampToMaxDate = new Date(now.getTime() + 60000);
-      this.timestampFromMaxDate = now;
-      this.filter.receivedTo = now;
-      let receivedFrom = new Date(now.getTime() - this.messageInterval.value * this.MS_PER_MINUTE);
-      this.filter.receivedFrom = receivedFrom;
-      this.timestampToMinDate = receivedFrom;
-    }
-  }
-
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private domibusInfoService: DomibusInfoService, public dialogsService: DialogsService,
+              private domibusInfoService: DomibusInfoService, public dialogsService: DialogsService, private dateService: DateService,
               private elementRef: ElementRef, private changeDetector: ChangeDetectorRef, private propertiesService: PropertiesService,
               private securityService: SecurityService) {
     super();
@@ -183,6 +154,38 @@ export class MessageLogComponent extends mix(BaseListComponent)
     this.applyDetailSearchLogic();
 
     this.filterData();
+  }
+
+  get messageInterval(): DateInterval {
+    return this._messageInterval;
+  }
+
+  set messageInterval(dateInterval: DateInterval) {
+    if (this._messageInterval == dateInterval) {
+      return;
+    }
+    this._messageInterval = dateInterval;
+    if (dateInterval.value) {
+      this.setDatesFromInterval();
+    } else {
+      this.filter.receivedFrom = null;
+      this.filter.receivedTo = null;
+      super.advancedSearch = true;
+    }
+  }
+
+  private setDatesFromInterval() {
+    if (this.messageInterval && this.messageInterval.value) {
+      this.timestampToMaxDate = this.dateService.todayEndDay();
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
+
+      let now = new Date();
+      this.filter.receivedTo = now;
+
+      let receivedFrom = new Date(now.getTime() - this.messageInterval.value * this.MS_PER_MINUTE);
+      this.filter.receivedFrom = receivedFrom;
+      this.timestampToMinDate = receivedFrom;
+    }
   }
 
   private async getMessageLogInitialInterval(): Promise<DateInterval> {
@@ -675,11 +678,13 @@ export class MessageLogComponent extends mix(BaseListComponent)
 
   onTimestampToChange(param: Moment) {
     if (param) {
-      this.timestampFromMaxDate = param.toDate();
-      this.filter.receivedTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.receivedTo = date;
     } else {
       this.filter.receivedTo = null;
-      this.timestampFromMaxDate = new Date();
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
     }
     this.setCustomMessageInterval();
   }

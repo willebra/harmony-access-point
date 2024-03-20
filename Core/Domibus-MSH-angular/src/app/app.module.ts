@@ -125,6 +125,7 @@ import {
 import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {ManageBackendsComponent} from './messagefilter/manageBackends-form/manageBackends-form.component';
+import {DateService} from './common/customDate/date.service';
 
 const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
   parse: {
@@ -271,6 +272,7 @@ const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
     ApplicationContextService,
     DatePipe,
     DecimalPipe,
+    DateService,
     {provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS}
   ],
   bootstrap: [AppComponent]

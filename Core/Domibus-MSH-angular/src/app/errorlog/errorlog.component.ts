@@ -22,6 +22,7 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
 import {Moment} from 'moment';
 import {DialogsService} from '../common/dialogs/dialogs.service';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
   templateUrl: 'errorlog.component.html',
@@ -39,19 +40,20 @@ export class ErrorLogComponent extends mix(BaseListComponent)
   @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<any>;
   @ViewChild('rawTextTpl') public rawTextTpl: TemplateRef<any>;
 
-  timestampFromMaxDate: Date = new Date();
-  timestampToMinDate: Date = null;
-  timestampToMaxDate: Date = new Date();
+  timestampFromMaxDate: Date;
+  timestampToMinDate: Date;
+  timestampToMaxDate: Date;
 
-  notifiedFromMaxDate: Date = new Date();
-  notifiedToMinDate: Date = null;
-  notifiedToMaxDate: Date = new Date();
+  notifiedFromMaxDate: Date;
+  notifiedToMinDate: Date;
+  notifiedToMaxDate: Date;
 
   mshRoles: string[];
   errorCodes: string[];
 
   constructor(private applicationService: ApplicationContextService, private elementRef: ElementRef, private http: HttpClient,
-              private alertService: AlertService, public dialogService: DialogsService, private changeDetector: ChangeDetectorRef) {
+              private alertService: AlertService, public dialogService: DialogsService, private changeDetector: ChangeDetectorRef,
+              private dateService: DateService) {
     super();
   }
 
@@ -61,7 +63,23 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     super.orderBy = 'timestamp';
     super.asc = false;
 
+    this.setDateParams();
+
     this.filterData();
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.timestampFromMaxDate = todayEndDay;
+    this.timestampToMaxDate = todayEndDay;
+    this.filter.timestampTo = todayEndDay;
+
+    this.notifiedFromMaxDate = todayEndDay;
+    this.notifiedToMaxDate = todayEndDay;
+
+    this.timestampToMinDate = null;
+    this.notifiedToMinDate = null;
   }
 
   ngAfterViewInit() {
@@ -158,11 +176,13 @@ export class ErrorLogComponent extends mix(BaseListComponent)
 
   onTimestampToChange(param: Moment) {
     if (param) {
-      this.timestampFromMaxDate = param.toDate();
-      this.filter.timestampTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.timestampTo = date;
     } else {
       this.filter.timestampTo = null;
-      this.timestampFromMaxDate = new Date();
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
     }
   }
 
@@ -178,10 +198,12 @@ export class ErrorLogComponent extends mix(BaseListComponent)
 
   onNotifiedToChange(param: Moment) {
     if (param) {
-      this.notifiedFromMaxDate = param.toDate();
-      this.filter.notifiedTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.notifiedFromMaxDate = date;
+      this.filter.notifiedTo = date;
     } else {
-      this.notifiedFromMaxDate = new Date();
+      this.notifiedFromMaxDate = this.dateService.todayEndDay();
       this.filter.notifiedTo = null;
     }
   }

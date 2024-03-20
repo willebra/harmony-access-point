@@ -21,6 +21,7 @@ import {ComponentName} from '../common/component-name-decorator';
 import {DomibusInfoService} from '../common/appinfo/domibusinfo.service';
 import {SecurityService} from '../security/security.service';
 import {Moment} from 'moment';
+import {DateService} from '../common/customDate/date.service';
 
 /**
  * @author Thomas Dussart
@@ -51,12 +52,13 @@ export class AuditComponent extends mix(BaseListComponent)
   timestampFromMaxDate: Date;
   timestampToMinDate: Date;
   timestampToMaxDate: Date;
+
   extAuthProviderEnabled = false;
   displayDomainCheckBox: boolean;
 
   constructor(private applicationService: ApplicationContextService, private auditService: AuditService, private userService: UserService,
               private alertService: AlertService, private changeDetector: ChangeDetectorRef, private http: HttpClient,
-              private domibusInfoService: DomibusInfoService, private securityService: SecurityService,) {
+              private domibusInfoService: DomibusInfoService, private securityService: SecurityService, private dateService: DateService) {
     super();
   }
 
@@ -79,15 +81,22 @@ export class AuditComponent extends mix(BaseListComponent)
     const existingTargets = this.auditService.listTargetTypes();
     existingTargets.subscribe((targets: string[]) => this.existingAuditTargets.push(...targets));
 
-    this.timestampFromMaxDate = new Date();
-    this.timestampToMinDate = null;
-    this.timestampToMaxDate = new Date();
-
     this.displayDomainCheckBox = this.securityService.isCurrentUserSuperAdmin();
     super.filter = {domain: true};
 
-// --- lets count the records and fill the table.---
+    this.setDateParams();
+
     this.filterData();
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.timestampFromMaxDate = todayEndDay;
+    this.timestampToMaxDate = todayEndDay;
+    this.filter.to = todayEndDay;
+
+    this.timestampToMinDate = null;
   }
 
   filterData() {
@@ -186,10 +195,12 @@ export class AuditComponent extends mix(BaseListComponent)
 
   onTimestampToChange(param: Moment) {
     if (param) {
-      this.timestampFromMaxDate = param.toDate();
-      this.filter.to = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.to = date;
     } else {
-      this.timestampFromMaxDate = new Date();
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
       this.filter.to = null;
     }
   }
