@@ -1,5 +1,7 @@
 # Domibus upgrade information
 ## Domibus 5.1.3 (from 5.1.2)
+    - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0 
+    
     ### Tomcat only
     - add values for quartz data source properties if defaults are not good
       #the name of the DataSource class provided by the JDBC driver
