@@ -78,6 +78,9 @@ public class ECASUserDetailsServiceTest {
         final String username = "super";
 
         new Expectations(ecasUserDetailsService) {{
+            domibusUserDetails.getAvailableDomainCodes();
+            result = new HashSet<>(Arrays.asList("domain1", "domain2"));
+
             ecasUserDetailsService.isWeblogicSecurity();
             result = true;
 
