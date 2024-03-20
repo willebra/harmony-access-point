@@ -4,38 +4,38 @@
   <mat-card appearance="outlined">
     <mat-card-content>
       <mat-form-field style="width:100%">
-        <mat-label>Signal Message Id:</mat-label>
-        <input matInput value="{{message.errorSignalMessageId}}" readonly/>
+        <mat-label>Signal Message Id</mat-label>
+        <input matInput value="{{message.errorSignalMessageId}}" disabled="disabled"/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>AP Role:</mat-label>
-        <input matInput value="{{message.mshRole}}" readonly/>
+        <mat-label>AP Role</mat-label>
+        <input matInput value="{{message.mshRole}}" disabled="disabled"/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Message Id:</mat-label>
-        <input matInput value="{{message.messageInErrorId}}" readonly/>
+        <mat-label>Message Id</mat-label>
+        <input matInput value="{{message.messageInErrorId}}" disabled="disabled"/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Error Code:</mat-label>
-        <input matInput value="{{message.errorCode}}" readonly/>
+        <mat-label>Error Code</mat-label>
+        <input matInput value="{{message.errorCode}}" disabled="disabled"/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Error Detail:</mat-label>
-        <input matInput value="{{message.errorDetail}}" readonly/>
+        <mat-label>Error Detail</mat-label>
+        <input matInput value="{{message.errorDetail}}" disabled="disabled"/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Timestamp:</mat-label>
-        <input matInput value="{{message.timestamp | domibusDate}}" readonly/>
+        <mat-label>Timestamp</mat-label>
+        <input matInput value="{{message.timestamp | domibusDate}}" disabled="disabled"/>
       </mat-form-field>
 
       <mat-form-field style="width:100%">
-        <mat-label>Notified:</mat-label>
-        <input matInput value="{{message.notified | domibusDate}}" readonly/>
+        <mat-label>Notified</mat-label>
+        <input matInput value="{{message.notified | domibusDate}}" disabled="disabled"/>
       </mat-form-field>
 
     </mat-card-content>

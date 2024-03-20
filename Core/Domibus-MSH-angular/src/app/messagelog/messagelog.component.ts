@@ -36,6 +36,7 @@ import {FormControl, NgForm} from '@angular/forms';
 import 'rxjs/add/observable/interval';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
   templateUrl: 'messagelog.component.html',
@@ -108,41 +109,20 @@ export class MessageLogComponent extends mix(BaseListComponent)
   sortedColumns: [{ prop: string; dir: string }];
   receivedToFieldSub: Subscription;
 
-  get messageInterval(): DateInterval {
-    return this._messageInterval;
-  }
-
-  set messageInterval(dateInterval: DateInterval) {
-    if (this._messageInterval == dateInterval) {
-      return;
-    }
-    this._messageInterval = dateInterval;
-    if (dateInterval.value) {
-      this.setDatesFromInterval();
-    } else {
-      this.filter.receivedFrom = null;
-      this.filter.receivedTo = null;
-      super.advancedSearch = true;
-    }
-  }
-
-  private setDatesFromInterval() {
-    if (this.messageInterval && this.messageInterval.value) {
-      this.filter.receivedTo = new Date();
-      this.filter.receivedFrom = new Date(this.filter.receivedTo - this.messageInterval.value * this.MS_PER_MINUTE);
-    }
-  }
-
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private domibusInfoService: DomibusInfoService, public dialogsService: DialogsService,
+              private domibusInfoService: DomibusInfoService, public dialogsService: DialogsService, private dateService: DateService,
               private elementRef: ElementRef, private changeDetector: ChangeDetectorRef, private propertiesService: PropertiesService,
               private securityService: SecurityService) {
     super();
     this.receivedToFieldSub = Observable.interval(2000)
       .subscribe((val) => {
         if (this.receivedToField && this.receivedToField.errors && this.receivedToField.errors['matDatetimePickerMax']) {
-          this.filterForm.controls['receivedTo'].setErrors(null);
-          this.timestampToMaxDate = new Date(this.filter.receivedTo + 60000);
+          const diff = this.filter.receivedTo.getTime() - this.timestampToMaxDate.getTime();
+          // console.log('fixing receivedToField=', diff)
+          if (diff < 100000) {
+            this.filterForm.controls['receivedTo'].setErrors(null);
+            this.timestampToMaxDate = new Date(this.filter.receivedTo.getTime() + 60000);
+          }
         }
       });
   }
@@ -174,6 +154,38 @@ export class MessageLogComponent extends mix(BaseListComponent)
     this.applyDetailSearchLogic();
 
     this.filterData();
+  }
+
+  get messageInterval(): DateInterval {
+    return this._messageInterval;
+  }
+
+  set messageInterval(dateInterval: DateInterval) {
+    if (this._messageInterval == dateInterval) {
+      return;
+    }
+    this._messageInterval = dateInterval;
+    if (dateInterval.value) {
+      this.setDatesFromInterval();
+    } else {
+      this.filter.receivedFrom = null;
+      this.filter.receivedTo = null;
+      super.advancedSearch = true;
+    }
+  }
+
+  private setDatesFromInterval() {
+    if (this.messageInterval && this.messageInterval.value) {
+      this.timestampToMaxDate = this.dateService.todayEndDay();
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
+
+      let now = new Date();
+      this.filter.receivedTo = now;
+
+      let receivedFrom = new Date(now.getTime() - this.messageInterval.value * this.MS_PER_MINUTE);
+      this.filter.receivedFrom = receivedFrom;
+      this.timestampToMinDate = receivedFrom;
+    }
   }
 
   private async getMessageLogInitialInterval(): Promise<DateInterval> {
@@ -216,56 +228,75 @@ export class MessageLogComponent extends mix(BaseListComponent)
       {
         name: 'Message Id',
         cellTemplate: this.rawTextTpl,
-        width: 275
+        width: 300,
+        minWidth: 290
       },
       {
-        name: 'From Party Id'
+        name: 'From Party Id',
+        width: 200,
+        minWidth: 190
       },
       {
-        name: 'To Party Id'
+        name: 'To Party Id',
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Message Status',
-        width: 175
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Notification Status',
-        width: 175
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Received',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'AP Role',
-        prop: 'mshRole'
+        prop: 'mshRole',
+        width: 150,
+        minWidth: 140
       },
       {
         cellTemplate: this.nextAttemptInfoTpl,
-        name: 'Send Attempts'
+        name: 'Send Attempts',
+        width: 70,
+        minWidth: 70
       },
       {
         cellTemplate: this.nextAttemptInfoTpl,
-        name: 'Send Attempts Max'
+        name: 'Send Attempts Max',
+        width: 70,
+        minWidth: 70
       },
       {
         cellTemplate: this.nextAttemptInfoWithDateFormatTpl,
         name: 'Next Attempt',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'Conversation Id',
         cellTemplate: this.rawTextTpl,
+        width: 300,
+        minWidth: 290
       },
       {
         name: 'Message Type',
-        width: 130
+        width: 170,
+        minWidth: 160
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Deleted',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
     ];
 
@@ -273,17 +304,23 @@ export class MessageLogComponent extends mix(BaseListComponent)
       {
         name: 'Action',
         prop: 'action',
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       },
       {
         name: 'Service Type',
         prop: 'serviceType',
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       },
       {
         name: 'Service Value',
         prop: 'serviceValue',
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       });
 
     this.columnPicker.allColumns.push(
@@ -291,39 +328,49 @@ export class MessageLogComponent extends mix(BaseListComponent)
         name: 'Original Sender',
         prop: 'originalSender',
         cellTemplate: this.rawTextTpl,
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       },
       {
         name: 'Final Recipient',
         prop: 'finalRecipient',
         cellTemplate: this.rawTextTpl,
-        disabled: () => !this.detailedSearch
+        disabled: () => !this.detailedSearch,
+        width: 100,
+        minWidth: 90
       });
 
     this.columnPicker.allColumns.push(
       {
         name: 'Ref To Message Id',
         cellTemplate: this.rawTextTpl,
+        width: 100,
+        minWidth: 90
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Failed',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Restored',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Archived',
-        width: 155
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 120,
+        width: 180,
+        minWidth: 180,
         sortable: false
       }
     );
@@ -622,16 +669,24 @@ export class MessageLogComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.receivedFrom = param.toDate();
-      this.setCustomMessageInterval();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.receivedFrom = null;
     }
+    this.setCustomMessageInterval();
   }
 
   onTimestampToChange(param: Moment) {
     if (param) {
-      this.timestampFromMaxDate = param.toDate();
-      this.filter.receivedTo = param.toDate();
-      this.setCustomMessageInterval();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.receivedTo = date;
+    } else {
+      this.filter.receivedTo = null;
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
     }
+    this.setCustomMessageInterval();
   }
 
   private setCustomMessageInterval() {

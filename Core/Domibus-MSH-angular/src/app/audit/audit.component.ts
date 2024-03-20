@@ -21,6 +21,7 @@ import {ComponentName} from '../common/component-name-decorator';
 import {DomibusInfoService} from '../common/appinfo/domibusinfo.service';
 import {SecurityService} from '../security/security.service';
 import {Moment} from 'moment';
+import {DateService} from '../common/customDate/date.service';
 
 /**
  * @author Thomas Dussart
@@ -51,12 +52,13 @@ export class AuditComponent extends mix(BaseListComponent)
   timestampFromMaxDate: Date;
   timestampToMinDate: Date;
   timestampToMaxDate: Date;
+
   extAuthProviderEnabled = false;
   displayDomainCheckBox: boolean;
 
   constructor(private applicationService: ApplicationContextService, private auditService: AuditService, private userService: UserService,
               private alertService: AlertService, private changeDetector: ChangeDetectorRef, private http: HttpClient,
-              private domibusInfoService: DomibusInfoService, private securityService: SecurityService,) {
+              private domibusInfoService: DomibusInfoService, private securityService: SecurityService, private dateService: DateService) {
     super();
   }
 
@@ -65,7 +67,6 @@ export class AuditComponent extends mix(BaseListComponent)
 
     this.extAuthProviderEnabled = await this.domibusInfoService.isExtAuthProviderEnabled();
 
-// --- lets init the component's data ---
     this.existingUsers = [];
     if (!this.extAuthProviderEnabled) {
       const userObservable = this.userService.getUserNames();
@@ -80,15 +81,22 @@ export class AuditComponent extends mix(BaseListComponent)
     const existingTargets = this.auditService.listTargetTypes();
     existingTargets.subscribe((targets: string[]) => this.existingAuditTargets.push(...targets));
 
-    this.timestampFromMaxDate = new Date();
-    this.timestampToMinDate = null;
-    this.timestampToMaxDate = new Date();
-
     this.displayDomainCheckBox = this.securityService.isCurrentUserSuperAdmin();
     super.filter = {domain: true};
 
-// --- lets count the records and fill the table.---
+    this.setDateParams();
+
     this.filterData();
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.timestampFromMaxDate = todayEndDay;
+    this.timestampToMaxDate = todayEndDay;
+    this.filter.to = todayEndDay;
+
+    this.timestampToMinDate = null;
   }
 
   filterData() {
@@ -135,33 +143,38 @@ export class AuditComponent extends mix(BaseListComponent)
       {
         name: 'Table',
         prop: 'auditTargetName',
-        width: 20,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         name: 'User',
         prop: 'user',
-        width: 20,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         name: 'Action',
         prop: 'action',
-        width: 20,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Changed',
         prop: 'changed',
-        width: 80,
+        width: 200,
+        minWidth: 190,
         sortable: false
       },
       {
         name: 'Id',
         prop: 'id',
         cellTemplate: this.rawTextTpl,
-        width: 300,
+        width: 200,
+        minWidth: 190,
         sortable: false
       }
     ];
@@ -174,13 +187,21 @@ export class AuditComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.from = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.from = null;
     }
   }
 
   onTimestampToChange(param: Moment) {
     if (param) {
-      this.timestampFromMaxDate = param.toDate();
-      this.filter.to = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.to = date;
+    } else {
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
+      this.filter.to = null;
     }
   }
 

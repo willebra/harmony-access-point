@@ -8,7 +8,7 @@
           <div class="panel">
 
             <mat-form-field style="width:100%">
-              <mat-label>Party Id:</mat-label>
+              <mat-label>Party Id</mat-label>
               <input matInput name="partyId" id="partyId_id" [(ngModel)]="partyIdentifier.partyId" input-debounce
                      #partyId="ngModel" required [maxlength]="255">
               <span class="help-block" *ngIf="shouldShowErrors(partyId)">
@@ -17,19 +17,19 @@
             </mat-form-field>
 
             <mat-form-field style="width:100%">
-              <mat-label>Party Id Type:</mat-label>
+              <mat-label>Party Id Type</mat-label>
               <input matInput name="partyIdType_name" id="partyIdType_id"
                      [(ngModel)]="partyIdTypeName" input-debounce
                      #partyIdType_name="ngModel" [maxlength]="255">
             </mat-form-field>
 
             <mat-form-field style="width:100%">
-              <mat-label>Party Id Value:</mat-label>
+              <mat-label>Party Id Value</mat-label>
               <input matInput name="partyIdType_value" id="partyIdValue_id"
                      [(ngModel)]="partyIdTypeValue" input-debounce
                      #partyIdType_value="ngModel" [maxlength]="255" [pattern]="partyIdTypePattern">
               <span class="help-block" *ngIf="shouldShowErrors(partyIdType_value)">
-                <div *ngIf="partyIdType_value.errors.pattern">{{partyIdTypeMessage}}</div>
+                <div *ngIf="partyIdType_value.errors.pattern" style="color:red; font-size: 70%">{{partyIdTypeMessage}}</div>
               </span>
             </mat-form-field>
           </div>

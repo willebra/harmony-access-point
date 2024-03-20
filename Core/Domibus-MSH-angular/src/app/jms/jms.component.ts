@@ -26,6 +26,7 @@ import {ClientSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
 import {Moment} from 'moment/moment';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
   selector: 'app-jms',
@@ -80,7 +81,7 @@ export class JmsComponent extends mix(BaseListComponent)
   }
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private dialogsService: DialogsService, private changeDetector: ChangeDetectorRef) {
+              private dialogsService: DialogsService, private changeDetector: ChangeDetectorRef, private dateService: DateService) {
     super();
   }
 
@@ -100,12 +101,11 @@ export class JmsComponent extends mix(BaseListComponent)
     this.filteredQueues = [];
     this.originalQueues = [];
 
-    // set toDate equals to now
-    this.filter.toDate = new Date();
-    this.filter.toDate.setHours(23, 59, 59, 999);
     this.originalQueueName = null;
 
     this.markedForDeletionMessages = [];
+
+    this.setDateParams();
 
     this.loadDestinations();
 
@@ -121,6 +121,17 @@ export class JmsComponent extends mix(BaseListComponent)
         }
       });
     });
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.filter.toDate = todayEndDay;
+
+    this.timestampFromMaxDate = todayEndDay;
+    this.timestampToMaxDate = todayEndDay;
+
+    this.timestampToMinDate = null;
   }
 
   public async tryFilter(userInitiated = true): Promise<boolean> {
@@ -232,13 +243,21 @@ export class JmsComponent extends mix(BaseListComponent)
     if (param) {
       this.timestampToMinDate = param.toDate();
       this.filter.fromDate = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.fromDate = null;
     }
   }
 
   onTimestampToChange(param: Moment) {
     if (param) {
-      this.timestampFromMaxDate = param.toDate();
-      this.filter.toDate = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.toDate = date;
+    } else {
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
+      this.filter.toDate = null;
     }
   }
 

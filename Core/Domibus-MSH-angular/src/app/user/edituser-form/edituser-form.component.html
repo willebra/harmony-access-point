@@ -10,7 +10,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>User Name *</mat-label>
+          <mat-label>User Name</mat-label>
           <input #user_name matInput id="username_id" name="userName" formControlName="userName" input-debounce>
           <span class="help-block" *ngIf="shouldShowErrorsForFieldNamed('userName')">
             <div *ngIf="userForm.get('userName').errors?.required" style="color:red; font-size: 70%">{{userNameRequiredMessage}}</div>
@@ -22,7 +22,7 @@
 
       <div style="margin-top:-5px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Email:</mat-label>
+          <mat-label>Email</mat-label>
           <input matInput id="email_id" name="email" formControlName="email" input-debounce>
           <span class="help-block" *ngIf="shouldShowErrorsForFieldNamed('email')">
             <div *ngIf="userForm.get('email').errors?.pattern" style="color:red; font-size: 70%">You should type a valid email</div>
@@ -32,7 +32,7 @@
 
       <div style="margin-top:10px;">
         <mat-form-field>
-          <mat-label>Role *</mat-label>
+          <mat-label>Role</mat-label>
           <mat-select matInput id="role_id" name="roles" formControlName="roles" (selectionChange)="onRoleChange($event)" [style.width]="'100%'" placeholder="">
             <mat-option *ngFor="let item of existingRoles" [value]="item">{{item}}</mat-option>
           </mat-select>
@@ -44,7 +44,7 @@
 
       <div style="margin-top:30px;" [hidden]="!isDomainVisible">
         <mat-form-field>
-          <mat-label>Domain *</mat-label>
+          <mat-label>Domain</mat-label>
           <mat-select matInput id="domain_id" name="domain" formControlName="domain" [style.width]="'100%'">
             <mat-option *ngFor="let item of existingDomains" [value]="item.code">{{item.name}}</mat-option>
           </mat-select>
@@ -56,7 +56,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Password *</mat-label>
+          <mat-label>Password</mat-label>
           <input matInput type="password" id="password_id" name="password" formControlName="password" input-debounce>
           <span class="help-block" *ngIf="shouldShowErrorsForFieldNamed('password')">
             <div *ngIf="userForm.get('password').errors?.required" style="color:red; font-size: 70%">You should type a password</div>
@@ -69,7 +69,7 @@
 
       <div>
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Confirmation *</mat-label>
+          <mat-label>Confirmation</mat-label>
           <input matInput type="password" id="confirmation_id" name="confirmation" formControlName="confirmation" input-debounce>
           <span class="help-block" *ngIf="shouldShowErrorsForFieldNamed('confirmation')">
             <div *ngIf="userForm.get('confirmation').errors?.required" style="color:red; font-size: 70%">You should type a password</div>

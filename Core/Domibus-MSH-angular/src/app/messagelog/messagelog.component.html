@@ -42,10 +42,13 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Received From:</mat-label>
-              <input matInput [ngxMatDatetimePicker]="receivedFrom" name="receivedFrom"
+              <mat-label>Received From</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedFrom" name="receivedFrom" #receivedFromField="ngModel"
                      [ngModel]="filter.receivedFrom" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="timestampFromMaxDate" advanced-filter-behaviour [parent]="this">
+              <span>
+                <div *ngIf="receivedFromField.errors?.matDatetimePickerMax" style="color:red; font-size: 70%">Value should not exceed Received Up To or current date</div>
+              </span>
               <mat-datepicker-toggle matSuffix [for]="receivedFrom" ></mat-datepicker-toggle>
               <ngx-mat-datetime-picker #receivedFrom>
                 <ngx-mat-datepicker-actions>
@@ -55,10 +58,14 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Received Up To:</mat-label>
+              <mat-label>Received Up To</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedTo" name="receivedTo" #receivedToField="ngModel"
                      [ngModel]="filter.receivedTo" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [min]="timestampToMinDate" [max]="timestampToMaxDate" advanced-filter-behaviour [parent]="this">
+              <span>
+                <div *ngIf="receivedToField.errors?.matDatetimePickerMin" style="color:red; font-size: 70%">Value should be greater than Received From</div>
+                <div *ngIf="receivedToField.errors?.matDatetimePickerMax" style="color:red; font-size: 70%">Value should not exceed the current date</div>
+              </span>
               <mat-datepicker-toggle matSuffix [for]="receivedTo" ></mat-datepicker-toggle>
               <ngx-mat-datetime-picker #receivedTo>
                 <ngx-mat-datepicker-actions>
@@ -188,20 +195,22 @@
   </ng-template>
 
   <ng-template #rowActions let-row="row" let-value="value" ngx-datatable-cell-template>
-    <button mat-icon-button color="primary" [disabled]="!row.canDownloadMessage" button-click-behaviour
-            (click)="downloadAction(row)" id="downloadButtonRow{{rows.indexOf(row)}}_id" matTooltip="Download">
-      <mat-icon>file_download</mat-icon>
-    </button>
-    <button mat-icon-button color="primary"  [disabled]="!row.canDownloadEnvelope" button-click-behaviour
-            (click)="downloadEnvelopeAction(row)" id="downloadEnvelopesButtonRow{{rows.indexOf(row)}}_id"
-            matTooltip="Download Envelopes">
-      <mat-icon>local_post_office</mat-icon>
-    </button>
-    <button mat-icon-button color="primary" *ngIf="isCurrentUserAdmin()"
-            [disabled]="!isResendButtonEnabledAction(row)" (click)="resendDialog()"
-            id="resendButtonRow{{rows.indexOf(row)}}_id" matTooltip="Resend" button-click-behaviour>
-      <mat-icon>send</mat-icon>
-    </button>
+    <div style="width: 200px;">
+      <button mat-icon-button color="primary" [disabled]="!row.canDownloadMessage" button-click-behaviour
+              (click)="downloadAction(row)" id="downloadButtonRow{{rows.indexOf(row)}}_id" matTooltip="Download">
+        <mat-icon>file_download</mat-icon>
+      </button>
+      <button mat-icon-button color="primary"  [disabled]="!row.canDownloadEnvelope" button-click-behaviour
+              (click)="downloadEnvelopeAction(row)" id="downloadEnvelopesButtonRow{{rows.indexOf(row)}}_id"
+              matTooltip="Download Envelopes">
+        <mat-icon>local_post_office</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" *ngIf="isCurrentUserAdmin()"
+              [disabled]="!isResendButtonEnabledAction(row)" (click)="resendDialog()"
+              id="resendButtonRow{{rows.indexOf(row)}}_id" matTooltip="Resend" button-click-behaviour>
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
   </ng-template>
 
   <div class="group-action-button">

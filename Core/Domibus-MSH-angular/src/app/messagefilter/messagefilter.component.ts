@@ -13,6 +13,7 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
 import {ManageBackendsComponent} from './manageBackends-form/manageBackends-form.component';
 import {DialogsService} from '../common/dialogs/dialogs.service';
+import {SelectionType} from '@swimlane/ngx-datatable';
 
 @Component({
   templateUrl: 'messagefilter.component.html',
@@ -285,4 +286,6 @@ export class MessageFilterComponent extends mix(BaseListComponent).with(Modifiab
     });
     this.loadServerData();
   }
+
+  protected readonly SelectionType = SelectionType;
 }

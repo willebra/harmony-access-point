@@ -18,4 +18,8 @@ export class GridHeaderComponent implements OnInit {
   ngOnInit() {
   }
 
+  onSelectedColumnsChanged($event: Array<any>) {
+    this.parent.columnPicker.changeSelectedColumns($event);
+  }
+
 }

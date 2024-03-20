@@ -62,58 +62,69 @@ export class PropertiesComponent extends mix(BaseListComponent)
         name: 'Property Name',
         prop: 'name',
         showInitially: true,
+        width: 350,
+        minWidth: 340
       },
       {
         name: 'Type',
         prop: 'type',
         showInitially: true,
-        width: 25
+        width: 140,
+        minWidth: 130
       },
-      {
-        name: 'Description',
-        prop: 'description',
-        width: 25,
-        sortable: false
-      },
+      // {
+      //   name: 'Description',
+      //   prop: 'description',
+      //   width: 100,
+      //   minWidth: 100,
+      //   sortable: false
+      // },
       {
         name: 'Module',
         prop: 'module',
-        width: 25
+        width: 100,
+        minWidth: 90,
       },
-      {
-        name: 'Section',
-        prop: 'section',
-        width: 25,
-        sortable: false
-      },
+      // {
+      //   name: 'Section',
+      //   prop: 'section',
+      //   width: 100,
+      //   minWidth: 90,
+      //   sortable: false
+      // },
       {
         name: 'Usage',
         prop: 'usageText',
         showInitially: true,
-        width: 25
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'With Fallback',
         prop: 'withFallback',
-        width: 25,
+        width: 80,
+        minWidth: 70,
         sortable: false
       },
       {
         name: 'Is Writable',
         prop: 'writable',
-        width: 25,
+        width: 80,
+        minWidth: 70,
         sortable: false
       },
       {
         name: 'Is Encrypted',
         prop: 'encrypted',
-        width: 25,
+        width: 80,
+        minWidth: 70,
         sortable: false
       },
       {
         name: 'Is Composable',
         prop: 'composable',
-        width: 25,
+        width: 80,
+        minWidth: 70,
         sortable: false
       },
       {
@@ -121,7 +132,8 @@ export class PropertiesComponent extends mix(BaseListComponent)
         name: 'Property Value',
         prop: 'value',
         showInitially: true,
-        width: 250,
+        width: 350,
+        minWidth: 340,
         sortable: false
       },
 

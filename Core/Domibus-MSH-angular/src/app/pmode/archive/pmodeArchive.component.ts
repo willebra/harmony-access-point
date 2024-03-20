@@ -13,7 +13,7 @@ import {PmodeUploadComponent} from '../upload/pmode-upload.component';
 import * as FileSaver from 'file-saver';
 import {ActionDirtyDialogComponent} from 'app/pmode/action-dirty-dialog/action-dirty-dialog.component';
 import {Observable} from 'rxjs/Observable';
-import {DateFormatService} from 'app/common/customDate/dateformat.service';
+import {DateService} from 'app/common/customDate/date.service';
 import {PmodeViewComponent} from './pmode-view/pmode-view.component';
 import {CurrentPModeComponent} from '../current/currentPMode.component';
 import {DomainService} from '../../security/domain.service';
@@ -49,7 +49,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
   currentPMode: any;
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private dialogsService: DialogsService,
+              private dialogsService: DialogsService, private dateService: DateService,
               private domainService: DomainService, private changeDetector: ChangeDetectorRef) {
     super();
   }
@@ -72,24 +72,28 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Configuration Date',
-        width: 50,
-        sortable: false
+        sortable: false,
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Username',
-        width: 50,
-        sortable: false
+        sortable: false,
+        width: 150,
+        minWidth: 140,
       },
       {
         cellTemplate: this.descriptionTpl,
         name: 'Description',
-        width: 100,
-        sortable: false
+        sortable: false,
+        width: 500,
+        minWidth: 490,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 20,
+        width: 150,
+        minWidth: 140,
         sortable: false
       }
     ];
@@ -256,7 +260,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
       observe: 'response',
       responseType: 'text'
     }).subscribe(res => {
-      const uploadDateStr = DateFormatService.format(new Date(row.configurationDate));
+      const uploadDateStr = this.dateService.format(new Date(row.configurationDate));
       this.downloadFile(res.body, this.currentDomain.name, uploadDateStr);
     }, err => {
       this.alertService.exception('Error downloading pMode from archive:', err);

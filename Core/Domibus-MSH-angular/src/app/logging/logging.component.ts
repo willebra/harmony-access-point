@@ -82,7 +82,7 @@ export class LoggingComponent extends mix(BaseListComponent)
         level: newLevel,
       }, {headers: this.headers}).subscribe(
         () => {
-          this.page();
+          this.tryFilter();
         },
         error => {
           this.alertService.exception('An error occurred while setting logging level: ', error);

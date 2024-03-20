@@ -11,7 +11,6 @@ import {AlertsResult} from './support/alertsresult';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {AlertService} from '../common/alert/alert.service';
 import {ErrorStateMatcher, ShowOnDirtyErrorStateMatcher} from '@angular/material/core';
-import {MatDialog} from '@angular/material/dialog';
 import {SecurityService} from '../security/security.service';
 import mix from '../common/mixins/mixin.utils';
 import BaseListComponent from '../common/mixins/base-list.component';
@@ -25,6 +24,8 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {AlertsEntry} from './support/alertsentry';
 import {ComponentName} from '../common/component-name-decorator';
 import {Moment} from 'moment';
+import {DateService} from '../common/customDate/date.service';
+
 @Component({
   templateUrl: 'alerts.component.html',
 })
@@ -82,7 +83,7 @@ export class AlertsComponent extends mix(BaseListComponent)
   matcher: ErrorStateMatcher = new ShowOnDirtyErrorStateMatcher;
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              private dialogsService: DialogsService,
+              private dialogsService: DialogsService, private dateService: DateService,
               private securityService: SecurityService, private changeDetector: ChangeDetectorRef) {
     super();
 
@@ -99,23 +100,13 @@ export class AlertsComponent extends mix(BaseListComponent)
     this.nonDateParameters = [];
     this.alertTypeWithDate = false;
 
-    this.creationFromMaxDate = new Date();
-    this.creationToMinDate = null;
-    this.creationToMaxDate = new Date();
-
-    this.reportingFromMaxDate = new Date();
-    this.reportingToMinDate = null;
-    this.reportingToMaxDate = new Date();
-
-    this.dynamicDataFromMaxDate = new Date();
-    this.dynamicDataToMinDate = null;
-    this.dynamicDataToMaxDate = new Date();
-
     this.dateFromName = '';
     this.dateToName = '';
     this.displayDomainCheckBox = this.securityService.isCurrentUserSuperAdmin();
 
     super.filter = {processed: 'UNPROCESSED', domainAlerts: false};
+
+    this.setDateParams();
 
     super.orderBy = 'creationTime';
     super.asc = false;
@@ -124,21 +115,104 @@ export class AlertsComponent extends mix(BaseListComponent)
     this.filterData();
   }
 
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.filter.creationTo = todayEndDay;
+    console.log('this.filter.creationTo =', this.filter.creationTo)
+    this.creationFromMaxDate = todayEndDay;
+    this.creationToMinDate = null;
+    this.creationToMaxDate = todayEndDay
+
+    this.reportingFromMaxDate = todayEndDay
+    this.reportingToMinDate = null;
+    this.reportingToMaxDate = todayEndDay
+
+    this.dynamicDataFromMaxDate = todayEndDay
+    this.dynamicDataToMinDate = null;
+    this.dynamicDataToMaxDate = todayEndDay
+  }
+
   ngAfterViewInit() {
     this.columnPicker.allColumns = [
-      {name: 'Alert Id', width: 20, prop: 'entityId'},
-      {name: 'Processed', cellTemplate: this.rowProcessed, width: 20},
-      {name: 'Alert Type'},
-      {name: 'Alert Level', width: 50},
-      {name: 'Alert Status', width: 50},
-      {name: 'Creation Time', cellTemplate: this.rowWithDateFormatTpl, width: 155},
-      {name: 'Reporting Time', cellTemplate: this.rowWithDateFormatTpl, width: 155},
-      {name: 'Parameters', cellTemplate: this.rowWithSpaceAfterCommaTpl, sortable: false},
-      {name: 'Sent Attempts', width: 50, prop: 'attempts',},
-      {name: 'Max Attempts', width: 50},
-      {name: 'Next Attempt', cellTemplate: this.rowWithFutureDateFormatTpl, width: 155},
-      {name: 'Reporting Time Failure', cellTemplate: this.rowWithDateFormatTpl, width: 155},
-      {name: 'Actions', cellTemplate: this.rowActions, width: 60, canAutoResize: true, sortable: false, showInitially: true}
+      {
+        name: 'Alert Id',
+        width: 200,
+        minWidth: 190,
+        prop: 'entityId'
+      },
+      {
+        name: 'Processed',
+        cellTemplate: this.rowProcessed,
+        width: 50,
+        minWidth: 40,
+      },
+      {
+        name: 'Alert Type',
+        width: 260,
+        minWidth: 250,
+      },
+      {
+        name: 'Alert Level',
+        width: 100,
+        minWidth: 90,
+      },
+      {
+        name: 'Alert Status',
+        width: 100,
+        minWidth: 90,
+      },
+      {
+        name: 'Creation Time',
+        cellTemplate: this.rowWithDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Reporting Time',
+        cellTemplate: this.rowWithDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Parameters',
+        cellTemplate: this.rowWithSpaceAfterCommaTpl,
+        sortable: false,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Sent Attempts',
+        prop: 'attempts',
+        width: 50,
+        minWidth: 40,
+      },
+      {
+        name: 'Max Attempts',
+        width: 50,
+        minWidth: 40,
+      },
+      {
+        name: 'Next Attempt',
+        cellTemplate: this.rowWithFutureDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Reporting Time Failure',
+        cellTemplate: this.rowWithDateFormatTpl,
+        width: 200,
+        minWidth: 190,
+      },
+      {
+        name: 'Actions',
+        cellTemplate: this.rowActions,
+        width: 200,
+        minWidth: 190,
+        canAutoResize: true,
+        sortable: false,
+        showInitially: true
+      }
     ];
 
     this.columnPicker.selectedColumns = this.columnPicker.allColumns.filter(col => {
@@ -242,7 +316,7 @@ export class AlertsComponent extends mix(BaseListComponent)
   }
 
   private getDynamicDataToMaxDate(alertType: string) {
-    return this.isFutureAlert(alertType) ? null : new Date();
+    return this.isFutureAlert(alertType) ? null : this.dateService.todayEndDay();
   }
 
   isFutureAlert(alertType: string): boolean {
@@ -253,13 +327,21 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.creationToMinDate = param.toDate();
       this.filter.creationFrom = param.toDate();
+    } else {
+      this.creationToMinDate = null;
+      this.filter.creationFrom = null;
     }
   }
 
   onTimestampCreationToChange(param: Moment) {
     if (param) {
-      this.creationFromMaxDate = param.toDate();
-      this.filter.creationTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.creationFromMaxDate = date;
+      this.filter.creationTo = date;
+    } else {
+      this.creationFromMaxDate = this.dateService.todayEndDay();
+      this.filter.creationTo = null;
     }
   }
 
@@ -267,13 +349,21 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.reportingToMinDate = param.toDate();
       this.filter.reportingFrom = param.toDate();
+    } else {
+      this.reportingToMinDate = null;
+      this.filter.reportingFrom = null
     }
   }
 
   onTimestampReportingToChange(param: Moment) {
     if (param) {
-      this.reportingFromMaxDate = param.toDate();
-      this.filter.reportingTo = param.toDate();
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.reportingFromMaxDate = date;
+      this.filter.reportingTo = date;
+    } else {
+      this.reportingFromMaxDate = this.dateService.todayEndDay();
+      this.filter.reportingTo = null;
     }
   }
 
@@ -281,13 +371,21 @@ export class AlertsComponent extends mix(BaseListComponent)
     if (param) {
       this.dynamicDataToMinDate = param.toDate();
       this.dynamicDatesFilter.from = param.toDate();
+    } else {
+      this.dynamicDataToMinDate = null;
+      this.dynamicDatesFilter.from = null;
     }
   }
 
   onDynamicDataToChange(param: Moment) {
     if (param) {
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.dynamicDataFromMaxDate = date;
+      this.dynamicDatesFilter.to = date;
+    } else {
       this.dynamicDataFromMaxDate = param.toDate();
-      this.dynamicDatesFilter.to = param.toDate();
+      this.dynamicDatesFilter.to = null;
     }
   }
 
