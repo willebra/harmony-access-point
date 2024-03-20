@@ -69,7 +69,7 @@ public class FaultOutHandler extends AbstractFaultHandler {
         final SOAPMessage soapMessage = context.getMessage();
         final Ebms3Messaging ebms3Messaging = this.extractMessaging(soapMessage);
         if (ebms3Messaging == null) {
-            LOG.trace("Messaging header is null, error log not created");
+            LOG.info("Messaging header is null, error log not created");
             return true;
         }
         SignalMessageResult signalMessageResult = ebms3Converter.convertFromEbms3(ebms3Messaging);

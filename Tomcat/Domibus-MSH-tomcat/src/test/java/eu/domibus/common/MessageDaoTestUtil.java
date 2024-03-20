@@ -89,11 +89,13 @@ public class MessageDaoTestUtil {
     final static String RESPONDER_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
 
 
-    public void createSignalMessageLog(String msgId, Date received) {
-        createSignalMessageLog(msgId, received, MSHRole.RECEIVING, MessageStatus.RECEIVED);
+    @Transactional
+    public SignalMessage createSignalMessageLog(String msgId, Date received) {
+        return createSignalMessageLog(msgId, received, MSHRole.RECEIVING, MessageStatus.RECEIVED);
     }
 
-    public void createSignalMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus) {
+    @Transactional
+    public SignalMessage createSignalMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus) {
         UserMessage userMessage = new UserMessage();
         userMessage.setMessageId(msgId);
         userMessage.setMshRole(mshRoleDao.findOrCreate(mshRole == MSHRole.RECEIVING ? MSHRole.SENDING : MSHRole.RECEIVING));
@@ -116,6 +118,8 @@ public class MessageDaoTestUtil {
 
         signalMessageLog.setSignalMessage(signal);
         signalMessageLogDao.create(signalMessageLog);
+
+        return signal;
     }
 
     public UserMessageLog createUserMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus, boolean isTestMessage, boolean properties, String mpc, Date archivedAndExported, boolean fragment) {

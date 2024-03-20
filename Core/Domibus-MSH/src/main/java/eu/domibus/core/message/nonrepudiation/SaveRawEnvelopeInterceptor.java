@@ -52,8 +52,12 @@ public class SaveRawEnvelopeInterceptor extends AbstractSoapInterceptor {
 
         if (userMessageEntityIdValue != null && !duplicateMessage) {
             Long userMessageEntityId = Long.valueOf(userMessageEntityIdValue);
-            nonRepudiationService.saveResponse(jaxwsMessage, userMessageEntityId);
-            LOG.debug("Saved the signal message envelope for user message id [{}], entity id [{}]", userMessageId, userMessageEntityIdValue);
+            try {
+                nonRepudiationService.saveResponse(jaxwsMessage, userMessageEntityId);
+                LOG.debug("Saved the signal message envelope for user message id [{}], entity id [{}]", userMessageId, userMessageEntityIdValue);
+            } catch (Exception e) {//saving the signal message raw envelope should not prevent the successful exchange of messages
+                LOG.error("Could not save Signal message raw envelope", e);
+            }
         }
     }
 

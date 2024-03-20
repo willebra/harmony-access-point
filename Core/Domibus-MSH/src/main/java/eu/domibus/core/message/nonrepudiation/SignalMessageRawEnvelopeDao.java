@@ -40,6 +40,12 @@ public class SignalMessageRawEnvelopeDao extends BasicDao<SignalMessageRaw> {
         return DataAccessUtils.singleResult(namedQuery.getResultList());
     }
 
+    public RawEnvelopeDto findBySignalMessageEntityId(final Long signalMessageEntityId) {
+        TypedQuery<RawEnvelopeDto> namedQuery = em.createNamedQuery("SignalMessageRaw.findBySignalMessageEntityId", RawEnvelopeDto.class);
+        namedQuery.setParameter("ENTITY_ID", signalMessageEntityId);
+        return DataAccessUtils.singleResult(namedQuery.getResultList());
+    }
+
     @Timer(clazz = SignalMessageRawEnvelopeDao.class, value = "deleteMessages")
     @Counter(clazz = SignalMessageRawEnvelopeDao.class, value = "deleteMessages")
     public int deleteMessages(List<Long> ids) {
