@@ -1,12 +1,13 @@
 package eu.domibus.web.security;
 
-import eu.domibus.api.multitenancy.Domain;
 import eu.domibus.api.security.DomibusUserDetails;
+import eu.domibus.api.user.AtLeastOneDomainException;
 import eu.domibus.core.user.UserLoginErrorReason;
 import eu.domibus.core.user.UserService;
 import eu.domibus.core.user.ui.UserManagementServiceImpl;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.*;
@@ -41,6 +42,9 @@ public class AuthenticationServiceImpl extends AuthenticationServiceBase impleme
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(authenticationToken);
+
+            validateDomains(authentication);
+
             //expired case doesn't get handled by the handleWrongAuthentication method.
             userService.validateExpiredPassword(username);
         } catch (CredentialsExpiredException ex) {
@@ -62,6 +66,16 @@ public class AuthenticationServiceImpl extends AuthenticationServiceBase impleme
         authUtils.executeOnLoggedUser(userDetails -> userDetails.setDomain(domain), authentication);
 
         return (DomibusUserDetailsImpl) authentication.getPrincipal();
+    }
+
+    private void validateDomains(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof DomibusUserDetails) {
+            DomibusUserDetails userDetails = (DomibusUserDetails) principal;
+            if (CollectionUtils.isEmpty(userDetails.getAvailableDomainCodes())) {
+                throw new AtLeastOneDomainException();
+            }
+        }
     }
 
 }
