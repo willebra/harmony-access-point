@@ -7,6 +7,7 @@ import eu.domibus.api.property.DomibusConfigurationService;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.api.security.AuthRole;
 import eu.domibus.api.security.DomibusUserDetails;
+import eu.domibus.api.user.AtLeastOneDomainException;
 import mockit.*;
 import mockit.integration.junit4.JMockit;
 import org.junit.Assert;
@@ -93,6 +94,25 @@ public class ECASUserDetailsServiceTest {
             times = 1;
             assertEquals(username, actualUsername);
         }};
+    }
+
+    @Test(expected = AtLeastOneDomainException.class)
+    public void loadUserByUsernameNoDomains(@Mocked final DomibusUserDetails domibusUserDetails) throws Exception {
+        final String username = "super";
+
+        new Expectations(ecasUserDetailsService) {{
+            domibusUserDetails.getAvailableDomainCodes();
+            result = new HashSet<String>();
+
+            ecasUserDetailsService.isWeblogicSecurity();
+            result = true;
+
+            ecasUserDetailsService.createUserDetails(username);
+            result = domibusUserDetails;
+        }};
+
+        // WHEN
+        ecasUserDetailsService.loadUserByUsername(username);
     }
 
     @Test

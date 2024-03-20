@@ -8,6 +8,6 @@ package eu.domibus.api.user;
  */
 public class AtLeastOneDomainException extends UserManagementException {
     public AtLeastOneDomainException() {
-        super("The user does not have any associated domain.");
+        super("The user does not have any associated domains. Please check the configuration.");
     }
 }

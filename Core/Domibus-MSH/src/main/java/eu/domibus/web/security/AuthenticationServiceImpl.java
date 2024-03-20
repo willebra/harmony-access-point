@@ -42,9 +42,6 @@ public class AuthenticationServiceImpl extends AuthenticationServiceBase impleme
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(authenticationToken);
-
-            validateDomains(authentication);
-
             //expired case doesn't get handled by the handleWrongAuthentication method.
             userService.validateExpiredPassword(username);
         } catch (CredentialsExpiredException ex) {
@@ -66,16 +63,6 @@ public class AuthenticationServiceImpl extends AuthenticationServiceBase impleme
         authUtils.executeOnLoggedUser(userDetails -> userDetails.setDomain(domain), authentication);
 
         return (DomibusUserDetailsImpl) authentication.getPrincipal();
-    }
-
-    private void validateDomains(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof DomibusUserDetails) {
-            DomibusUserDetails userDetails = (DomibusUserDetails) principal;
-            if (CollectionUtils.isEmpty(userDetails.getAvailableDomainCodes())) {
-                throw new AtLeastOneDomainException();
-            }
-        }
     }
 
 }
