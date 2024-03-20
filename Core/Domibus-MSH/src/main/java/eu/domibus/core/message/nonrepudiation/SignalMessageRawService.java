@@ -26,6 +26,7 @@ public class SignalMessageRawService {
     public void saveSignalMessageRawService(String rawXml, Long signalMessageId) {
         LOG.debug("saveSignalMessageRawService: [{}]", signalMessageId);
 
+        //findByReference does not verify if the signal message id is saved in the database; it just returns a proxy that is used for saving the SignalMessageRaw
         final SignalMessage signalMessage = signalMessageDao.findByReference(signalMessageId);
         if (signalMessage == null) {
             throw new DomibusCoreException("signal message not found for ID: [" + signalMessageId + "]");
