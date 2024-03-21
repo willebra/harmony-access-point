@@ -5,6 +5,9 @@ import eu.domibus.api.datasource.DataSourceConstants;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +49,17 @@ public class DomibusTestDatasourceConfiguration {
     @Bean(name = {DataSourceConstants.DOMIBUS_JDBC_DATA_SOURCE, DataSourceConstants.DOMIBUS_JDBC_QUARTZ_DATA_SOURCE}, destroyMethod = "close")
     public DataSource domibusDatasource() {
         HikariDataSource dataSource = createDataSource();
-        return dataSource;
+
+        SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
+        loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
+        return ProxyDataSourceBuilder
+                .create(dataSource)
+                .countQuery()
+                .logQueryBySlf4j(SLF4JLogLevel.INFO)
+                .name("domibusDatasourceProxy")
+                .listener(loggingListener)
+                .build();
+
     }
 
     private HikariDataSource createDataSource() {
