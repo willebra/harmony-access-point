@@ -1,5 +1,5 @@
 # Domibus upgrade information
-## Domibus 5.1.3 (from 5.1.2)
+## Domibus 5.1.4 (from 5.1.3)
     - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0 
     
     ### Tomcat only
@@ -47,6 +47,8 @@
             .............................
 
     - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+## Domibus 5.1.3 (from 5.1.2)
+                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
 ## Domibus 5.1.2 (from 5.1.1)
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
                 - Replace the default dss extension jar into "/domibus/conf/domibus/extensions/lib"

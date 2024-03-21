@@ -1,4 +1,4 @@
-Domibus 5.1.3
+Domibus 5.1.4
 - Added endpoint for refreshing DSS Trusted lists. Can be accessed with POST /ext/trustedlists/refreshoperation
 - Added domibus properties for quartz data source in Tomcat
 - Renamed edeliveryNonXA datasources to eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS in wildfly standalone-full.xml file
@@ -10,6 +10,7 @@ Domibus 5.1.3
 - Improved the handling/persistence of digital certificates
 - Handle receipts with the same message id
 - Upgraded Tomcat 9 to the latest version 9.0.85
+Domibus 5.1.3
 Domibus 5.1.2
 - Optimise HQL queries by eliminating unnecessary cross joins, resulting in enhanced overall performance.
 - Users can now update the truststore with varying types and passwords, increasing adaptability.
