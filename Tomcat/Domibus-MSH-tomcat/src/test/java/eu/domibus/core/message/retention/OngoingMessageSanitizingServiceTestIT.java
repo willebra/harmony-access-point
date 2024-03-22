@@ -25,6 +25,10 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Cosmin Baciu
+ * @since 5.1.4
+ */
 public class OngoingMessageSanitizingServiceTestIT extends AbstractIT {
 
     @Autowired

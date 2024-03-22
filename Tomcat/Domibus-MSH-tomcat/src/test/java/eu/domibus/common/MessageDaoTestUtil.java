@@ -327,8 +327,8 @@ public class MessageDaoTestUtil {
 
     @Transactional
     public void updateUserMessageAndUserMessageLogPrimaryKey(Long oldIdPk, Long newIdPk) {
-        Query userMessageLogQuery1 = em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0;");
-        userMessageLogQuery1.executeUpdate();
+        Query disableForeignChecksQuery = em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0;");
+        disableForeignChecksQuery.executeUpdate();
 
         Query userMessageLogQuery = em.createNativeQuery("update TB_USER_MESSAGE_LOG set ID_PK = :NEW_ID_PK where ID_PK = :OLD_ID_PK");
         userMessageLogQuery.setParameter("OLD_ID_PK", oldIdPk);

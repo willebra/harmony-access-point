@@ -6,6 +6,10 @@ import net.ttddyy.dsproxy.listener.logging.DefaultQueryLogEntryCreator;
 
 import java.util.*;
 
+/**
+ * @author Cosmin Baciu
+ * @since 5.1.4
+ */
 public class InlineQueryLogEntryCreator extends DefaultQueryLogEntryCreator {
 
     @Override

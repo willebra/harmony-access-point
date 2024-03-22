@@ -11,6 +11,10 @@ import java.util.List;
 
 import static eu.domibus.api.model.DomibusDatePrefixedSequenceIdGeneratorGenerator.MIN;
 
+/**
+ * @author Cosmin Baciu
+ * @since 5.1.4
+ */
 @Service
 public class OngoingMessageSanitizingService {
 

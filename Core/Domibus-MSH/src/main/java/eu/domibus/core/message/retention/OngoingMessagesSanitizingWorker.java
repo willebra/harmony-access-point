@@ -85,6 +85,8 @@ public class OngoingMessagesSanitizingWorker  extends DomibusQuartzJobBean {
         alertEvent.setName(subject);
         //alertEvent.setEventType(EventType.OLD_ONGOING_MESSAGES); // TODO Francois GAUTIER 21/06/2023 EDELIVERY-11342
 
+        LOG.info("Sending ongoing message alert [{}]", alertEvent);
+
         pluginEventService.enqueueMessageEvent(alertEvent);
     }
 }
