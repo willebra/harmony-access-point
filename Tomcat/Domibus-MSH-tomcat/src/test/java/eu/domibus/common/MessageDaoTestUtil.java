@@ -91,8 +91,8 @@ public class MessageDaoTestUtil {
 
 
     @Transactional
-    public void createSignalMessageLog(String msgId, Date received) {
-        createSignalMessageLog(msgId, received, MSHRole.RECEIVING, MessageStatus.RECEIVED);
+    public SignalMessage createSignalMessageLog(String msgId, Date received) {
+        return createSignalMessageLog(msgId, received, MSHRole.RECEIVING, MessageStatus.RECEIVED);
     }
 
     @Transactional
