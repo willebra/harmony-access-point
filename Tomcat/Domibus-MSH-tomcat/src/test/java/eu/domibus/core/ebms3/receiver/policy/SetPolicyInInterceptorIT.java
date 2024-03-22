@@ -43,6 +43,7 @@ public class SetPolicyInInterceptorIT extends AbstractIT {
 
     @Autowired
     SoapSampleUtil soapSampleUtil;
+
     @Autowired
     SetPolicyInServerInterceptor setPolicyInInterceptorServer;
 
@@ -61,7 +62,7 @@ public class SetPolicyInInterceptorIT extends AbstractIT {
 
         String filename = "SOAPMessage2.xml";
 
-        SoapMessage sm = createSoapMessage(filename, UUID.randomUUID() + "@domibus.eu");
+        SoapMessage sm = soapSampleUtil.createSoapMessage(filename, UUID.randomUUID() + "@domibus.eu");
 
         setPolicyInInterceptorServer.handleMessage(sm);
 
@@ -73,7 +74,7 @@ public class SetPolicyInInterceptorIT extends AbstractIT {
     public void testHandleMessageNull() throws IOException {
 
         String filename = "SOAPMessageNoMessaging.xml";
-        SoapMessage sm = createSoapMessage(filename, UUID.randomUUID() + "@domibus.eu");
+        SoapMessage sm = soapSampleUtil.createSoapMessage(filename, UUID.randomUUID() + "@domibus.eu");
 
         // handle message without adding any content
         setPolicyInInterceptorServer.handleMessage(sm);
@@ -85,7 +86,7 @@ public class SetPolicyInInterceptorIT extends AbstractIT {
     public void testHandleGetVerb() throws IOException {
         HttpServletResponse response = new MockHttpServletResponse();
         String filename = "SOAPMessageNoMessaging.xml";
-        SoapMessage sm = createSoapMessage(filename, UUID.randomUUID() + "@domibus.eu");
+        SoapMessage sm = soapSampleUtil.createSoapMessage(filename, UUID.randomUUID() + "@domibus.eu");
         sm.put("org.apache.cxf.request.method", "GET");
         sm.put(AbstractHTTPDestination.HTTP_RESPONSE, response);
 
@@ -102,22 +103,4 @@ public class SetPolicyInInterceptorIT extends AbstractIT {
         }
     }
 
-    public SoapMessage createSoapMessage(String filename, String messageId) throws IOException {
-        String datasetString = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("dataset/as4/" + filename), StandardCharsets.UTF_8);
-        datasetString = StringUtils.replace(datasetString, "MESSAGE_ID", messageId);
-        Reader reader = new StringReader(datasetString);
-        XMLStreamReader xmlReader = null;
-        XMLInputFactory factory = XMLInputFactory.newInstance(); // Or newFactory()
-        try {
-            xmlReader = factory.createXMLStreamReader(reader);
-        } catch (XMLStreamException e) {
-            throw new IllegalArgumentException("Could not create XML", e);
-        }
-
-        SoapMessage soapMessage = new SoapMessage(Soap11.getInstance());
-        soapMessage.setContent(XMLStreamReader.class, xmlReader);
-        soapMessage.setInterceptorChain(new PhaseInterceptorChain(new TreeSet<>()));
-        soapMessage.setExchange(new ExchangeImpl());
-        return soapMessage;
-    }
 }

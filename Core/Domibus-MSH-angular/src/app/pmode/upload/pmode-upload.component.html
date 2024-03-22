@@ -16,7 +16,7 @@
         </div>
         <div>
           <mat-form-field class="form-field">
-            <mat-label>Description:</mat-label>
+            <mat-label>Description</mat-label>
             <textarea matInput name="desc" #desc="ngModel" rows="5" [(ngModel)]="description" id="description_id"
                       maxlength="254" required class="custom-text-area"></textarea>
             <span class="help-block" *ngIf="shouldShowErrors(desc)">

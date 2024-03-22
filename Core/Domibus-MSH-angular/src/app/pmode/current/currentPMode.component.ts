@@ -5,7 +5,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {PmodeUploadComponent} from '../upload/pmode-upload.component';
 import * as FileSaver from 'file-saver';
 import {DirtyOperations} from 'app/common/dirty-operations';
-import {DateFormatService} from 'app/common/customDate/dateformat.service';
+import {DateService} from 'app/common/customDate/date.service';
 import {DialogsService} from '../../common/dialogs/dialogs.service';
 import {ApplicationContextService} from '../../common/application-context.service';
 import {DomainService} from '../../security/domain.service';
@@ -43,7 +43,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    * @param {MatDialog} dialog Object used for opening dialogs
    */
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              public dialog: MatDialog, private dialogsService: DialogsService, private domainService: DomainService) {
+              private dialogsService: DialogsService, private domainService: DomainService, private dateService: DateService) {
   }
 
   /**
@@ -95,7 +95,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    * Method called when Upload button is clicked
    */
   upload() {
-    this.dialog.open(PmodeUploadComponent)
+    this.dialogsService.open(PmodeUploadComponent)
       .afterClosed().subscribe(() => {
       this.getCurrentEntry();
     });
@@ -111,7 +111,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
         observe: 'response',
         responseType: 'text'
       }).subscribe(res => {
-        const uploadDateStr = DateFormatService.format(new Date(pmode.configurationDate));
+        const uploadDateStr = this.dateService.format(new Date(pmode.configurationDate));
         CurrentPModeComponent.downloadFile(res.body, uploadDateStr, this.currentDomain.name);
       }, err => {
         this.alertService.exception('Error downloading PMode:', err);
@@ -133,7 +133,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
       this.alertService.error('Cannot save an empty pMode!');
       return;
     }
-    this.dialog.open(PmodeUploadComponent, {
+    this.dialogsService.open(PmodeUploadComponent, {
       data: {pModeContents: this.pModeContents}
     }).afterClosed().subscribe(result => {
       if (result && result.done) {

@@ -5,6 +5,7 @@ import {Domain} from '../../security/domain';
 import {AlertService} from '../alert/alert.service';
 import {ActivatedRoute, ActivatedRouteSnapshot, Router, RoutesRecognized} from '@angular/router';
 import {DomibusInfoService} from '../appinfo/domibusinfo.service';
+import {Server} from '../../security/Server';
 
 @Component({
   selector: 'domain-selector',
@@ -105,7 +106,10 @@ export class DomainSelectorComponent implements OnInit {
 
     } catch (ex) { // domain not changed -> reset the combo value
       this.domainCode = this.currentDomainCode;
-      if (ex.status <= 0) {
+      if (ex.status == Server.HTTP_FORBIDDEN) {
+        console.log('received 403; let infrastructure handle it.')
+        return;
+      } else if (ex.status <= 0) {
         this.alertService.exception('The server didn\'t respond, please try again later', ex);
       } else {
         this.alertService.exception('Error trying to change the domain.', ex);

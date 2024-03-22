@@ -6,16 +6,10 @@
       <mat-card-content>
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
-            <ng-container *ngIf="displayDomainCheckBox">
-              <mat-checkbox name="showDomainAlerts" [(ngModel)]="filter.domainAlerts" id="showDomainAlerts_id"
-                            style="margin-right: 20px;">
-                Show domain alerts
-              </mat-checkbox>
-            </ng-container>
 
             <!-- Processed -->
             <mat-form-field>
-              <mat-label>Processing Type:</mat-label>
+              <mat-label>Processing Type</mat-label>
               <mat-select [(ngModel)]="filter.processed" name="processed" id="processed_id">
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let aprocessed of aProcessedValues" [value]="aprocessed">
@@ -26,7 +20,7 @@
 
             <!-- Alert Type (Basic) -->
             <mat-form-field>
-              <mat-label>Alert Type:</mat-label>
+              <mat-label>Alert Type</mat-label>
               <mat-select [(ngModel)]="filter.alertType" name="alertType" id="alerttype_id" (selectionChange)="onAlertTypeChanged(filter.alertType)">
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let atype of aTypes" [value]="atype">
@@ -36,7 +30,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Alert Status:</mat-label>
+              <mat-label>Alert Status</mat-label>
               <mat-select [(ngModel)]="filter.alertStatus" name="alertStatus" id="alertstatus_id">
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let aStatus of aStatuses" [value]="aStatus">
@@ -47,7 +41,7 @@
 
             <!-- Alert Id (Advanced) -->
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Alert Id:</mat-label>
+              <mat-label>Alert Id</mat-label>
               <input matInput name="alertId" [(ngModel)]="filter.alertId"
                      #alertId="ngModel" id="alertid_id" pattern="[1-9]{1}[0-9]{0,18}" [errorStateMatcher]="matcher"
                      advanced-filter-behaviour [parent]="this">
@@ -58,7 +52,7 @@
 
             <!-- Alert Level (Basic) -->
             <mat-form-field>
-              <mat-label>Alert Level:</mat-label>
+              <mat-label>Alert Level</mat-label>
               <mat-select [(ngModel)]="filter.alertLevel" name="alertLevel" id="alertlevel_id">
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let alevel of aLevels" [value]="alevel">
@@ -68,7 +62,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Creation From:</mat-label>
+              <mat-label>Creation From</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedFrom" id="creationfrom_id" name="creationFrom"
                      [ngModel]="filter.creationFrom" (ngModelChange)='onTimestampCreationFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="creationFromMaxDate">
@@ -81,7 +75,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Creation To:</mat-label>
+              <mat-label>Creation To</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedTo" id="creationto_id" name="creationTo"
                      [ngModel]="filter.creationTo" (ngModelChange)='onTimestampCreationToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [min]="creationToMinDate" [max]="creationToMaxDate">
@@ -93,8 +87,15 @@
               </ngx-mat-datetime-picker>
             </mat-form-field>
 
+            <ng-container *ngIf="displayDomainCheckBox">
+              <mat-checkbox name="showDomainAlerts" [(ngModel)]="filter.domainAlerts" id="showDomainAlerts_id"
+                            style="margin-right: 20px;">
+                Show domain alerts
+              </mat-checkbox>
+            </ng-container>
+            
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Reporting From:</mat-label>
+              <mat-label>Reporting From</mat-label>
               <input matInput [ngxMatDatetimePicker]="reportingFrom" id="reportingfrom_id" name="reportingFrom"
                      [ngModel]="filter.reportingFrom" (ngModelChange)='onTimestampReportingFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="reportingFromMaxDate" advanced-filter-behaviour [parent]="this">
@@ -107,7 +108,7 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Reporting To:</mat-label>
+              <mat-label>Reporting To</mat-label>
               <input matInput [ngxMatDatetimePicker]="reportingTo" id="reportingto_id" name="reportingTo"
                      [ngModel]="filter.reportingTo" (ngModelChange)='onTimestampReportingToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [min]="reportingToMinDate" [max]="reportingToMaxDate" advanced-filter-behaviour [parent]="this">
@@ -129,12 +130,12 @@
                 </div>
                 <mat-card-content>
                   <mat-form-field *ngFor="let item of nonDateParameters; let i = index">
-                    <mat-label>{{item}}:</mat-label>
+                    <mat-label>{{item}}</mat-label>
                     <input matInput name={{item}} [(ngModel)]="dynamicFilters[i]" #{{item}}="ngModel" id={{item}}_id>
                   </mat-form-field>
                   <span *ngIf="alertTypeWithDate">
                                 <mat-form-field>
-                                  <mat-label>{{dateFromName}} :</mat-label>
+                                  <mat-label>{{dateFromName}} </mat-label>
                                   <input matInput [ngxMatDatetimePicker]="dynamicDatesFilterFrom" id={{dateFromName}}_id name="from"
                                          [ngModel]="dynamicDatesFilter.from" (ngModelChange)='onDynamicDataFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                                          [max]="dynamicDataFromMaxDate">
@@ -147,7 +148,7 @@
                                 </mat-form-field>
 
                                 <mat-form-field>
-                                  <mat-label>{{dateToName}}:</mat-label>
+                                  <mat-label>{{dateToName}}</mat-label>
                                   <input matInput [ngxMatDatetimePicker]="dynamicDatesFilterTo" id={{dateToName}}_id name="To"
                                          [ngModel]="dynamicDatesFilter.to" (ngModelChange)='onDynamicDataToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                                          [min]="dynamicDataToMinDate" [max]="dynamicDataToMaxDate">

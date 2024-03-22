@@ -7,7 +7,7 @@
 
   <div style="width:100%;margin-bottom: 15px;">
     <mat-form-field>
-      <mat-label>Destination:</mat-label>
+      <mat-label>Destination</mat-label>
       <mat-select [(ngModel)]="selectedSource" name="jmsQueueSelector" id="jmsqueuedestination_id"
                   style="width:100%" disabled={{destinationsChoiceDisabled}}>
         <mat-option *ngFor="let queue of queues" [value]="queue" style="width:95%">

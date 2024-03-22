@@ -67,26 +67,35 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
     this.columnPicker.allColumns = [
       {
         name: 'Name',
-        prop: 'name'
+        prop: 'name',
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Subject',
         prop: 'subject',
+        width: 400,
+        minWidth: 390,
       },
       {
         name: 'Issuer',
         prop: 'issuer',
+        width: 400,
+        minWidth: 390,
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Valid from',
-        prop: 'validFrom'
-
+        prop: 'validFrom',
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Valid until',
         prop: 'validUntil',
+        width: 200,
+        minWidth: 190,
       }
 
     ];

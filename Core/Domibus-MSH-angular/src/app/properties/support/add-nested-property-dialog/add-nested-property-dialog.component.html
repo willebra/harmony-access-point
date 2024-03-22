@@ -8,7 +8,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Property Suffix:</mat-label>
+          <mat-label>Property Suffix</mat-label>
           <input matInput name="suffix" id="suffix_id" [(ngModel)]="propertySuffix"
                  input-debounce #suffix="ngModel" maxlength="255" required>
           <span class="help-block" *ngIf="shouldShowErrors(suffix)">
@@ -19,7 +19,7 @@
 
       <div style="margin-top:5px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Property Value:</mat-label>
+          <mat-label>Property Value</mat-label>
           <input matInput name="value" id="value_id" [(ngModel)]="propertyValue"
                  input-debounce #value="ngModel" maxlength="255" required>
           <span class="help-block" *ngIf="shouldShowErrors(value)">

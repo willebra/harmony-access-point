@@ -7,27 +7,27 @@
         <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
           <div class="panel">
             <mat-form-field>
-              <mat-label>Name:</mat-label>
+              <mat-label>Name</mat-label>
               <input matInput [(ngModel)]="filter.name" name="name" id="name_id">
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>End Point:</mat-label>
+              <mat-label>End Point</mat-label>
               <input matInput [(ngModel)]="filter.endPoint" name="endPoint" id="endPoint_id">
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Party Id:</mat-label>
+              <mat-label>Party Id</mat-label>
               <input matInput [(ngModel)]="filter.partyID" name="partyID" id="partyID_id">
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Process:</mat-label>
+              <mat-label>Process</mat-label>
               <input matInput [(ngModel)]="filter.process" name="process" id="process_id">
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Process Role:</mat-label>
+              <mat-label>Process Role</mat-label>
               <mat-select [(ngModel)]="filter.process_role" name="process_role"
                           id="process_role_id" style="margin-right: 0;">
                 <mat-option [value]=""></mat-option>

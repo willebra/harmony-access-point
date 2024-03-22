@@ -8,7 +8,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>User Name *</mat-label>
+          <mat-label>User Name</mat-label>
           <input #user_name matInput name="userName" id="username_id" [(ngModel)]="user.userName" [disabled]="editMode"
                  input-debounce #userName="ngModel" minlength="4" maxlength="255" required [pattern]="userNamePattern">
           <span class="help-block" *ngIf="shouldShowErrors(userName)">
@@ -21,7 +21,7 @@
 
       <div style="margin-top:5px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Original User *</mat-label>
+          <mat-label>Original User</mat-label>
           <input matInput name="originalUser" id="originalUser_id" [(ngModel)]="user.originalUser" input-debounce
                  #originalUser="ngModel" [required]="isRoleUserSelected(role)" maxlength="255">
           <span class="help-block" *ngIf="shouldShowErrors(originalUser)">
@@ -32,7 +32,7 @@
 
       <div style="margin-top:10px;">
         <mat-form-field>
-          <mat-label>Role *</mat-label>
+          <mat-label>Role</mat-label>
           <mat-select matInput name="role" id="role.id" [(ngModel)]="user.authRoles" #role="ngModel"
                       required [style.width]="'100%'">
             <mat-option *ngFor="let item of existingRoles" [value]="item">{{item}}</mat-option>
@@ -45,7 +45,7 @@
 
       <div style="margin-top:15px;">
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Password *</mat-label>
+          <mat-label>Password</mat-label>
           <input matInput type="password" name="password" id="password_id" [(ngModel)]="user.password" input-debounce
                  #password="ngModel" [pattern]="passwordPattern" [required]="!editMode">
           <span class="help-block" *ngIf="shouldShowErrors(password)">
@@ -60,7 +60,7 @@
 
       <div>
         <mat-form-field [style.width]="'100%'">
-          <mat-label>Confirmation *</mat-label>
+          <mat-label>Confirmation</mat-label>
           <input matInput type="password" name="confirmation" id="confirmation_id" [(ngModel)]="passwordConfirmation" input-debounce
                  #confirmation="ngModel" [required]="!editMode">
           <span class="help-block" *ngIf="shouldShowErrors(confirmation) || shouldShowErrors(editForm)">

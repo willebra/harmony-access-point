@@ -9,7 +9,7 @@
           <form name="filterForm" #filterForm="ngForm" (ngSubmit)="tryFilter()">
 
             <mat-form-field style="width: 50%;">
-              <mat-label>Package or class name:</mat-label>
+              <mat-label>Package or class name</mat-label>
               <input matInput name="packageClassName" [(ngModel)]="filter.loggerName" #loggerName="ngModel" id="loggerName_id"
                      matTooltip="Enter here the package name e.g. 'eu.domibus' or 'ROOT' or part of the name" >
             </mat-form-field>
@@ -45,7 +45,7 @@
   </div>
 
   <div class="domibus-grid-container">
-    <page-grid [parent]="this" [selectionType]="'multi'"></page-grid>
+    <page-grid [parent]="this" [selectionType]="null"></page-grid>
   </div>
 
   <ng-template #rowWithToggleTpl let-row="row" let-value="value" ngx-datatable-cell-template>

@@ -96,7 +96,7 @@ public class MessageDaoTestUtil {
     }
 
     @Transactional
-    public void createSignalMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus) {
+    public SignalMessage createSignalMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus) {
         UserMessage userMessage = new UserMessage();
         userMessage.setMessageId(msgId);
         userMessage.setMshRole(mshRoleDao.findOrCreate(mshRole == MSHRole.RECEIVING ? MSHRole.SENDING : MSHRole.RECEIVING));
@@ -119,6 +119,8 @@ public class MessageDaoTestUtil {
 
         signalMessageLog.setSignalMessage(signal);
         signalMessageLogDao.create(signalMessageLog);
+
+        return signal;
     }
 
     @Transactional

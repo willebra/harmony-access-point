@@ -3,7 +3,7 @@
   <form #editForm="ngForm" (submit)="submitForm()">
     <mat-card appearance="outlined">
       <mat-form-field>
-        <mat-label>Plugin:</mat-label>
+        <mat-label>Plugin</mat-label>
         <mat-select matInput id="backendfilter_id" name="plugin" [(ngModel)]="entity.backendName"
                     [style.width]="'100%'">
           <mat-option *ngFor="let bConn of backendConnectors" [value]="bConn.name">
@@ -13,7 +13,7 @@
       </mat-form-field>
 
       <mat-form-field [style.width]="'100%'">
-        <mat-label>From:</mat-label>
+        <mat-label>From</mat-label>
         <input matInput name="from" id="from_id" [(ngModel)]="criteria.from" input-debounce #from="ngModel"
                [pattern]="partyPattern" [maxLength]="textMaxLength">
         <span class="help-block" *ngIf="shouldShowErrors(from)">
@@ -22,7 +22,7 @@
       </mat-form-field>
 
       <mat-form-field [style.width]="'100%'">
-        <mat-label>To:</mat-label>
+        <mat-label>To</mat-label>
         <input matInput name="to" id="to_id" [(ngModel)]="criteria.to" input-debounce #to="ngModel"
                [pattern]="partyPattern" [maxLength]="textMaxLength">
         <span class="help-block" *ngIf="shouldShowErrors(to)">
@@ -31,7 +31,7 @@
       </mat-form-field>
 
       <mat-form-field [style.width]="'100%'">
-        <mat-label>Action:</mat-label>
+        <mat-label>Action</mat-label>
         <input matInput name="action" id="action_id" [(ngModel)]="criteria.action" input-debounce #action="ngModel"
                [pattern]="actionPattern" [maxLength]="textMaxLength">
         <span class="help-block" *ngIf="shouldShowErrors(action)">
@@ -40,7 +40,7 @@
       </mat-form-field>
 
       <mat-form-field [style.width]="'100%'">
-        <mat-label>Service:</mat-label>
+        <mat-label>Service</mat-label>
         <input matInput name="service" id="service_id" [(ngModel)]="criteria.service" input-debounce #service="ngModel"
                [pattern]="servicePattern" [maxLength]="textMaxLength">
         <span class="help-block" *ngIf="shouldShowErrors(service)">

@@ -18,15 +18,17 @@
     <ngx-datatable
       class="material striped"
       [columnMode]="'force'"
+      [scrollbarH]="true"
+      [virtualization]="false"
       [headerHeight]="50"
       [footerHeight]="50"
       [rowHeight]="'auto'"
       [rows]="rows"
       [selected]="selected"
-      [selectionType]="'multi'"
+      [selectionType]="SelectionType.multi"
       (select)='onSelect($event)'
       (activate)="onActivate($event)"
-      id="pageGridId">
+      id="pageGridId" style="width: 100%; height: 100%;">
       <ngx-datatable-column name="Plugin" prop="backendName" [sortable]="false">
         <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
               <span class="justified, clickable" style="word-wrap: break-word" id="pluginRow{{rows.indexOf(row)}}_id">

@@ -17,7 +17,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Error From:</mat-label>
+              <mat-label>Error From</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedFrom" id="fromtimestamp_id" name="fromTimestmap"
                      [ngModel]="filter.timestampFrom" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="timestampFromMaxDate">
@@ -30,7 +30,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Error To:</mat-label>
+              <mat-label>Error To</mat-label>
               <input matInput [ngxMatDatetimePicker]="receivedTo" id="totimestamp_id" name="toTimestmap"
                      [ngModel]="filter.timestampTo" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [min]="timestampToMinDate" [max]="timestampToMaxDate">
@@ -68,7 +68,7 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Notified From:</mat-label>
+              <mat-label>Notified From</mat-label>
               <input matInput [ngxMatDatetimePicker]="notifiedFrom" id="notifiedfrom_id" name="notifiedFrom"
                      [ngModel]="filter.notifiedFrom" (ngModelChange)='onNotifiedFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [max]="notifiedFromMaxDate" advanced-filter-behaviour [parent]="this">
@@ -81,7 +81,7 @@
             </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <mat-label>Notified To:</mat-label>
+              <mat-label>Notified To</mat-label>
               <input matInput [ngxMatDatetimePicker]="notifiedTo" id="notifiedto_id" name="notifiedTo"
                      [ngModel]="filter.notifiedTo" (ngModelChange)='onNotifiedToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
                      [min]="notifiedToMinDate" [max]="notifiedToMaxDate" advanced-filter-behaviour [parent]="this">

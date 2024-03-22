@@ -84,34 +84,42 @@ export class UserComponent extends mix(BaseListComponent)
         name: 'User Name',
         prop: 'userName',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.editableTpl,
         name: 'Role',
         prop: 'roles',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 150,
+        minWidth: 140,
       },
       {
         cellTemplate: this.editableTpl,
         name: 'Email',
         prop: 'email',
         canAutoResize: true,
-        showInitially: false
+        showInitially: false,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.checkBoxTpl,
         name: 'Active',
         canAutoResize: true,
-        width: 25,
+        width: 100,
+        minWidth: 90,
         showInitially: true
       },
       {
         cellTemplate: this.deletedTpl,
         name: 'Deleted',
         canAutoResize: true,
-        width: 25,
+        width: 70,
+        minWidth: 60,
         showInitially: false
       },
       {
@@ -119,12 +127,15 @@ export class UserComponent extends mix(BaseListComponent)
         name: 'Expiration Date',
         prop: 'expirationDate',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 60,
+        width: 100,
+        minWidth: 90,
         canAutoResize: true,
         sortable: false,
         showInitially: true
@@ -140,6 +151,8 @@ export class UserComponent extends mix(BaseListComponent)
           cellTemplate: this.editableTpl,
           name: 'Domain',
           prop: 'domainName',
+          width: 120,
+          minWidth: 110,
           canAutoResize: true,
           showInitially: true
         });

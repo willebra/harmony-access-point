@@ -1,6 +1,5 @@
 package eu.domibus.web.security;
 
-import eu.domibus.api.multitenancy.Domain;
 import eu.domibus.api.security.DomibusUserDetails;
 import eu.domibus.core.user.UserLoginErrorReason;
 import eu.domibus.core.user.UserService;
