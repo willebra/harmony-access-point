@@ -281,6 +281,7 @@ public class ECASUserDetailsService implements AuthenticationUserDetailsService<
         if (StringUtils.isEmpty(userRoleMappings)) {
             throw new IllegalArgumentException("Domibus user role mappings to LDAP groups could not be empty");
         }
+        LOG.debug("reading user role mappings property [{}] = [{}]", ECAS_DOMIBUS_USER_ROLE_MAPPINGS_KEY, userRoleMappings);
 
         return Stream.of(userRoleMappings.split(ECAS_DOMIBUS_MAPPING_PAIR_SEPARATOR))
                 .map(str -> str.split(ECAS_DOMIBUS_MAPPING_VALUE_SEPARATOR))
@@ -295,6 +296,7 @@ public class ECASUserDetailsService implements AuthenticationUserDetailsService<
         if (StringUtils.isEmpty(domainMappings)) {
             throw new IllegalArgumentException("Domibus domain mappings to LDAP groups could not be empty");
         }
+        LOG.debug("reading domain mappings property [{}] = [{}]", ECAS_DOMIBUS_DOMAIN_MAPPINGS_KEY, domainMappings);
 
         return Stream.of(domainMappings.split(ECAS_DOMIBUS_MAPPING_PAIR_SEPARATOR))
                 .map(str -> str.split(ECAS_DOMIBUS_MAPPING_VALUE_SEPARATOR))
