@@ -1,6 +1,8 @@
 package eu.domibus.test;
 
 import eu.domibus.api.model.*;
+import eu.domibus.common.model.configuration.Mpc;
+import eu.domibus.common.model.configuration.ReceptionAwareness;
 import eu.domibus.core.ebms3.receiver.MSHWebservice;
 import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageDefaultService;
@@ -8,6 +10,8 @@ import eu.domibus.core.message.UserMessageDefaultServiceHelper;
 import eu.domibus.core.message.UserMessageLogDao;
 import eu.domibus.core.message.dictionary.*;
 import eu.domibus.core.plugin.handler.MessageSubmitterImpl;
+import eu.domibus.core.pmode.multitenancy.MultiDomainPModeProvider;
+import eu.domibus.core.pmode.provider.CachingPModeProvider;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.MessagingProcessingException;
@@ -81,6 +85,9 @@ public class ITTestsService {
 
     @Autowired
     MSHWebservice mshWebserviceTest;
+
+    @Autowired
+    MultiDomainPModeProvider pModeProvider;
 
     @Transactional
     public String sendMessageWithStatus(MessageStatus endStatus) throws MessagingProcessingException {
@@ -166,5 +173,21 @@ public class ITTestsService {
         if (allMessages.size() > 0) {
             userMessageDefaultService.deleteMessages(allMessages);
         }
+    }
+
+    public void modifyPmodeRetryParameters(int retryTimeout, int retryCount) {
+        //we modify the retry policy so that the message fails immediately and not goes in WAITING_FOR_RETRY
+        final CachingPModeProvider currentPModeProvider = (CachingPModeProvider) pModeProvider.getCurrentPModeProvider();
+        final ReceptionAwareness receptionAwareness = currentPModeProvider.getConfiguration().getBusinessProcesses().getAs4ConfigReceptionAwareness().stream().findFirst().orElse(null);
+        receptionAwareness.setRetryCount(retryTimeout);
+        receptionAwareness.setRetryTimeout(retryCount);
+    }
+
+    public void modifyPmodeRetentionParameters(Integer retentionDownloaded, Integer retentionUnDownloaded) {
+        //we modify the retry policy so that the message fails immediately and not goes in WAITING_FOR_RETRY
+        final CachingPModeProvider currentPModeProvider = (CachingPModeProvider) pModeProvider.getCurrentPModeProvider();
+        final Mpc mpc = currentPModeProvider.getConfiguration().getMpcs().iterator().next();
+        mpc.setRetentionUndownloaded(retentionUnDownloaded);
+        mpc.setRetentionDownloaded(retentionDownloaded);
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -122,6 +123,7 @@ public class MessageDaoTestUtil {
         return signal;
     }
 
+    @Transactional
     public UserMessageLog createUserMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus, boolean isTestMessage, boolean properties, String mpc, Date archivedAndExported, boolean fragment) {
         String originalSender = null, finalRecipient = null;
         if (properties) {
@@ -131,6 +133,7 @@ public class MessageDaoTestUtil {
         return createUserMessageLog(msgId, received, mshRole, messageStatus, isTestMessage, mpc, archivedAndExported, originalSender, finalRecipient, fragment);
     }
 
+    @Transactional
     public UserMessageLog createUserMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus, boolean isTestMessage, String mpc, Date archivedAndExported,
                                                String originalSender, String finalRecipient, boolean fragment) {
         UserMessage userMessage = new UserMessage();
@@ -178,6 +181,9 @@ public class MessageDaoTestUtil {
         userMessageLog.setArchived(archivedAndExported);
         userMessageLog.setReceived(received);
         switch (userMessageLog.getMessageStatus()) {
+            case SEND_ENQUEUED:
+                userMessageLog.setReceived(received);
+                break;
             case DELETED:
                 userMessageLog.setDeleted(received);
                 break;
@@ -317,5 +323,21 @@ public class MessageDaoTestUtil {
         userMessageLogDao.deleteMessageLogs(ids);
         signalMessageLogDao.deleteMessageLogs(ids);
         signalMessageDao.deleteMessages(ids);
+    }
+
+    @Transactional
+    public void updateUserMessageAndUserMessageLogPrimaryKey(Long oldIdPk, Long newIdPk) {
+        Query disableForeignChecksQuery = em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0;");
+        disableForeignChecksQuery.executeUpdate();
+
+        Query userMessageLogQuery = em.createNativeQuery("update TB_USER_MESSAGE_LOG set ID_PK = :NEW_ID_PK where ID_PK = :OLD_ID_PK");
+        userMessageLogQuery.setParameter("OLD_ID_PK", oldIdPk);
+        userMessageLogQuery.setParameter("NEW_ID_PK", newIdPk);
+        userMessageLogQuery.executeUpdate();
+
+        Query userMessageQuery = em.createNativeQuery("update TB_USER_MESSAGE set ID_PK = :NEW_ID_PK where ID_PK = :OLD_ID_PK");
+        userMessageQuery.setParameter("OLD_ID_PK", oldIdPk);
+        userMessageQuery.setParameter("NEW_ID_PK", newIdPk);
+        userMessageQuery.executeUpdate();
     }
 }

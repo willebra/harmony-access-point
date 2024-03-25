@@ -1,5 +1,7 @@
 package eu.domibus.api.alerts;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,4 +61,14 @@ public class AlertEvent {
         this.properties.put(key, value);
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("alertLevel", alertLevel)
+                .append("name", name)
+                .append("emailSubject", emailSubject)
+                .append("emailBody", emailBody)
+                .append("properties", properties)
+                .toString();
+    }
 }

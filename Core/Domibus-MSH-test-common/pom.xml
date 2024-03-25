@@ -61,6 +61,12 @@
         </dependency>
         <!-- End Domibus modules -->
 
+        <dependency>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>1.7</version>
+        </dependency>
+
         <!-- BouncyCastle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
