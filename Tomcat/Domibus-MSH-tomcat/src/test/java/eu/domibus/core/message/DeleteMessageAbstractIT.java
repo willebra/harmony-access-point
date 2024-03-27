@@ -59,12 +59,6 @@ public abstract class DeleteMessageAbstractIT extends AbstractIT {
         ));
     }
 
-    @Transactional
-    @Before
-    public void before() throws XmlProcessingException, IOException {
-        payloadFileStorageProvider.initialize();
-    }
-
     protected String receiveMessageToDelete() throws SOAPException, IOException, ParserConfigurationException, SAXException {
         String filename = "SOAPMessage4.xml";
         String messageId = "43bb6883-77d2-4a41-bac4-52a485d50084@domibus.eu";

@@ -1,8 +1,9 @@
 package eu.domibus.core.message.retention;
 
 import eu.domibus.api.model.MessageStatus;
-import eu.domibus.api.model.PartInfo;
+import eu.domibus.api.model.MessageStatusEntity;
 import eu.domibus.api.model.UserMessageLog;
+import eu.domibus.common.MessageDaoTestUtil;
 import eu.domibus.common.MessageStatusChangeEvent;
 import eu.domibus.common.NotificationType;
 import eu.domibus.core.message.DeleteMessageAbstractIT;
@@ -10,22 +11,16 @@ import eu.domibus.core.message.MessageStatusDao;
 import eu.domibus.core.message.PartInfoDao;
 import eu.domibus.core.message.UserMessageLogDao;
 import eu.domibus.core.plugin.BackendConnectorHelper;
-import eu.domibus.core.plugin.notification.AsyncNotificationConfigurationService;
 import eu.domibus.messaging.XmlProcessingException;
 import eu.domibus.plugin.BackendConnector;
-import eu.domibus.plugin.notification.AsyncNotificationConfiguration;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
-import javax.annotation.PostConstruct;
-import javax.jms.Queue;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPException;
 import java.io.IOException;
@@ -35,7 +30,6 @@ import java.util.stream.Collectors;
 import static java.lang.Integer.MAX_VALUE;
 import static org.junit.Assert.*;
 
-@Transactional
 public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
 
     public static final String MPC_URI = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
@@ -50,6 +44,12 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
     private MessageStatusDao messageStatusDao;
 
     @Autowired
+    MessageRetentionDefaultServiceTestHelper messageRetentionDefaultServiceTestHelper;
+
+    @Autowired
+    MessageDaoTestUtil messageDaoTestUtil;
+
+    @Autowired
     private MessageRetentionDefaultService service;
 
     @Autowired
@@ -59,11 +59,15 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
 
     BackendConnector backendConnector = Mockito.mock(BackendConnector.class);
 
-    @PostConstruct
+    @Before
     public void setupInfrastructure() {
         Mockito.when(backendConnectorProvider.getBackendConnector(Mockito.any(String.class))).thenReturn(backendConnector);
     }
 
+    @After
+    public void clean() {
+        deleteAllMessages();
+    }
 
     @Test
     public void deleteExpiredNotDownloaded_deletesAll_ifIsDeleteMessageMetadataAndZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
@@ -71,7 +75,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         uploadPmodeWithCustomMpc(true, 0, 2, MAX_VALUE, MAX_VALUE);
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
-        makeMessageFieldOlder(messageId, "received", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "received", 10);
         //when
         service.deleteExpiredNotDownloadedMessages(MPC_URI, 100, false);
         //then
@@ -85,7 +89,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         uploadPmodeWithCustomMpc(true, MAX_VALUE, 2, MAX_VALUE, MAX_VALUE);
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
-        makeMessageFieldOlder(messageId, "received", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "received", 10);
         //when
         service.deleteExpiredNotDownloadedMessages(MPC_URI, 100, false);
         //then
@@ -93,7 +97,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         assertFalse("Expecting the metadata to not be deleted but instead all data has been removed",
                 CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
         assertMedatadaNotDeleted(initialMap, finalMap);
-        assertPayloadDeleted(messageId);
+        messageRetentionDefaultServiceTestHelper.assertPayloadDeleted(messageId);
     }
 
     private static void assertMedatadaNotDeleted(Map<String, Integer> initialMap, Map<String, Integer> finalMap) {
@@ -108,17 +112,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         assertDataNotDeletedInTable("tb_receipt", 1, initialMap, finalMap);
     }
 
-    private void assertPayloadDeleted(String messageId) {
-        UserMessageLog userMessageLog = userMessageLogDao.findByMessageId(messageId);
-        em.refresh(userMessageLog);
-        assertEquals("Expecting change of status of message", MessageStatus.DELETED, userMessageLog.getMessageStatus());
-        long entityId = userMessageLog.getEntityId();
-        List<PartInfo> partInfoList = partInfoDao.findPartInfoByUserMessageEntityId(entityId);
-        partInfoList.forEach(partInfo -> {
-            em.refresh(partInfo);
-            assertNull("Expecting payload to be deleted", partInfo.getBinaryData());
-        });
-    }
+
 
     private static void assertDataNotDeletedInTable(String table, int expectedRecordCount, Map<String, Integer> initialMap, Map<String, Integer> finalMap) {
         assertEquals("Expecting data to not be deleted from " + table,
@@ -132,7 +126,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.DOWNLOADED);
-        makeMessageFieldOlder(messageId, "downloaded", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "downloaded", 10);
         //when
         service.deleteExpiredDownloadedMessages(MPC_URI, 100, false);
         //then
@@ -149,7 +143,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.DOWNLOADED);
-        makeMessageFieldOlder(messageId, "downloaded", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "downloaded", 10);
 
         Mockito.when(backendConnectorHelper.getRequiredNotificationTypeList(backendConnector)).thenReturn(Arrays.asList(NotificationType.MESSAGE_STATUS_CHANGE));
 
@@ -160,7 +154,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         assertFalse("Expecting the metadata to not be deleted but instead all data has been removed",
                 CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
         assertMedatadaNotDeleted(initialMap, finalMap);
-        assertPayloadDeleted(messageId);
+        messageRetentionDefaultServiceTestHelper.assertPayloadDeleted(messageId);
 
         Mockito.verify(backendConnector, Mockito.times(1)).messageStatusChanged(argCaptor.capture());
         MessageStatusChangeEvent event = argCaptor.getValue();
@@ -177,7 +171,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.ACKNOWLEDGED);
-        makeMessageFieldOlder(messageId, "modificationTime", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "modificationTime", 10);
         //when
         service.deleteExpiredSentMessages(MPC_URI, 100, false);
         //then
@@ -193,7 +187,10 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.ACKNOWLEDGED);
-        makeMessageFieldOlderAndDeletedForSentMessage(messageId, "modificationTime", "deleted", 10);
+
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "modificationTime", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "deleted", 10);
+
         //when
         service.deleteExpiredSentMessages(MPC_URI, 100, false);
         //then
@@ -209,7 +206,10 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.SEND_FAILURE);
-        makeMessageFieldOlderAndDeletedForSentMessage(messageId, "modificationTime", "deleted", 10);
+
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "modificationTime", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "deleted", 10);
+
         //when
         service.deleteExpiredSentMessages(MPC_URI, 100, false);
         //then
@@ -220,12 +220,15 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
 
     @Test
     public void deleteExpiredSent_deletesOnlyPayload_ifIsDeleteMessageMetadataAndNotZeroOffset() throws XmlProcessingException, IOException, SOAPException, ParserConfigurationException, SAXException {
+        MessageStatusEntity deletedStatus = messageStatusDao.findMessageStatus(MessageStatus.DELETED);
+        Assert.assertNotNull(deletedStatus);
+
         //given
         uploadPmodeWithCustomMpc(true, MAX_VALUE, MAX_VALUE, MAX_VALUE, 2);
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.ACKNOWLEDGED);
-        makeMessageFieldOlder(messageId, "modificationTime", 10);
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "modificationTime", 10);
         //when
         service.deleteExpiredSentMessages(MPC_URI, 100, false);
         //then
@@ -233,7 +236,7 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         assertFalse("Expecting the metadata to not be deleted but instead all data has been removed",
                 CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
         assertMedatadaNotDeleted(initialMap, finalMap);
-        assertPayloadDeleted(messageId);
+        messageRetentionDefaultServiceTestHelper.assertPayloadDeleted(messageId);
     }
 
     @Test
@@ -243,13 +246,18 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
         Map<String, Integer> initialMap = messageDBUtil.getTableCounts(tablesToExclude);
         String messageId = receiveMessageToDelete();
         setMessageStatus(messageId, MessageStatus.DELETED);
-        makeMessageFieldOlder(messageId, "deleted", 10);
+
+        messageDaoTestUtil.makeMessageFieldOlder(messageId, "deleted", 10);
+
         //when
         service.deleteExpiredPayloadDeletedMessages(MPC_URI, 100, false);
         //then
         Map<String, Integer> finalMap = messageDBUtil.getTableCounts(tablesToExclude);
         assertTrue("Expecting all data to be deleted but instead we have:\n" + getMessageDetails(initialMap, finalMap),
                 CollectionUtils.isEqualCollection(initialMap.entrySet(), finalMap.entrySet()));
+
+        MessageStatusEntity deletedStatus = messageStatusDao.findMessageStatus(MessageStatus.DELETED);
+        Assert.assertNotNull(deletedStatus);
     }
 
     private static String getMessageDetails(Map<String, Integer> initialMap, Map<String, Integer> finalMap) {
@@ -257,14 +265,6 @@ public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
                 .filter(mapEntry -> !Objects.equals(mapEntry.getValue(), finalMap.get(mapEntry.getKey())))
                 .map(mapEntry -> String.format("table '%s' had %d rows and now it has %d", mapEntry.getKey(), mapEntry.getValue(), finalMap.get(mapEntry.getKey())))
                 .collect(Collectors.joining("\n"));
-    }
-
-    private void makeMessageFieldOlder(String messageId, String field, int nrMinutesBack) {
-        Date date = DateUtils.addMinutes(new Date(), nrMinutesBack * -1);
-        em.createQuery("update UserMessageLog set " + field + "=:DATE where userMessage.entityId in (select entityId from UserMessage where messageId=:MESSAGE_ID)")
-                .setParameter("MESSAGE_ID", messageId)
-                .setParameter("DATE", date)
-                .executeUpdate();
     }
 
     private void makeMessageFieldOlderAndDeletedForSentMessage(String messageId, String field1, String field2, int nrMinutesBack) {

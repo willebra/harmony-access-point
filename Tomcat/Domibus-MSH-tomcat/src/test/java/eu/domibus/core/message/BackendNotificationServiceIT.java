@@ -126,7 +126,6 @@ public class BackendNotificationServiceIT extends DeleteMessageAbstractIT {
     @Transactional
     @Before
     public void before() throws XmlProcessingException, IOException {
-        super.before();
         messageId = BackendConnectorMock.MESSAGE_ID;
         filename = "SOAPMessage2.xml";
 
