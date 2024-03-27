@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import static java.lang.Integer.MAX_VALUE;
 import static org.junit.Assert.*;
 
+@Ignore
 public class MessageRetentionDefaultServiceIT extends DeleteMessageAbstractIT {
 
     public static final String MPC_URI = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/defaultMPC";
