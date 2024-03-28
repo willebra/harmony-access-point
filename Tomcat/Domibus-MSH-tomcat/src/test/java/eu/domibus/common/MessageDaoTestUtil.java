@@ -14,6 +14,7 @@ import eu.domibus.core.message.signal.SignalMessageDao;
 import eu.domibus.core.message.signal.SignalMessageLogDao;
 import eu.domibus.core.util.DateUtilImpl;
 import joptsimple.internal.Strings;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -339,5 +340,15 @@ public class MessageDaoTestUtil {
         userMessageQuery.setParameter("OLD_ID_PK", oldIdPk);
         userMessageQuery.setParameter("NEW_ID_PK", newIdPk);
         userMessageQuery.executeUpdate();
+    }
+
+    @Transactional
+    public void makeMessageFieldOlder(String messageId, String field, int nrMinutesBack) {
+        Date date = DateUtils.addMinutes(new Date(), nrMinutesBack * -1);
+
+        em.createQuery("update UserMessageLog set " + field + "=:DATE where userMessage.entityId in (select entityId from UserMessage where messageId=:MESSAGE_ID)")
+                .setParameter("MESSAGE_ID", messageId)
+                .setParameter("DATE", date)
+                .executeUpdate();
     }
 }
