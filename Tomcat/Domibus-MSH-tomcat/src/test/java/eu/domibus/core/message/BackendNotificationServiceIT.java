@@ -1,6 +1,5 @@
 package eu.domibus.core.message;
 
-import eu.domibus.test.ITTestsService;
 import eu.domibus.api.ebms3.model.Ebms3Messaging;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
@@ -89,9 +88,6 @@ public class BackendNotificationServiceIT extends DeleteMessageAbstractIT {
 
     @Autowired
     MessagesLogServiceImpl messagesLogService;
-
-    @Autowired
-    private ITTestsService itTestsService;
 
     @Autowired
     private UserMessageDao userMessageDao;

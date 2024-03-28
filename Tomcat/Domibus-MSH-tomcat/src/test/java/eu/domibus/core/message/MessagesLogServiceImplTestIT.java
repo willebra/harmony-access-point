@@ -1,7 +1,6 @@
 package eu.domibus.core.message;
 
 import eu.domibus.test.AbstractIT;
-import eu.domibus.test.ITTestsService;
 import eu.domibus.api.model.*;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.common.MessageDaoTestUtil;
@@ -38,9 +37,6 @@ public class MessagesLogServiceImplTestIT extends AbstractIT {
 
     @Autowired
     MessageDaoTestUtil messageDaoTestUtil;
-
-    @Autowired
-    ITTestsService itTestsService;
 
     @Autowired
     protected RoutingService routingService;

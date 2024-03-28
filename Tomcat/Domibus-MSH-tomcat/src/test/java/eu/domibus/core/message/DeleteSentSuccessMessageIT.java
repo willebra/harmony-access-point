@@ -1,7 +1,6 @@
 package eu.domibus.core.message;
 
 
-import eu.domibus.test.ITTestsService;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessage;
@@ -29,9 +28,6 @@ import java.util.Map;
 public class DeleteSentSuccessMessageIT extends DeleteMessageAbstractIT {
 
     private static final DomibusLogger LOG = DomibusLoggerFactory.getLogger(DeleteSentSuccessMessageIT.class);
-
-    @Autowired
-    private ITTestsService itTestsService;
 
     @Autowired
     private UserMessageDao userMessageDao;
