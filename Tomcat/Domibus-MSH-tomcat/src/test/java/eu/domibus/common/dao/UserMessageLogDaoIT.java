@@ -1,7 +1,6 @@
 package eu.domibus.common.dao;
 
 import eu.domibus.test.AbstractIT;
-import eu.domibus.test.ITTestsService;
 import eu.domibus.api.model.*;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.common.MessageDaoTestUtil;
@@ -62,9 +61,6 @@ public class UserMessageLogDaoIT extends AbstractIT {
 
     @Autowired
     MessageDaoTestUtil messageDaoTestUtil;
-
-    @Autowired
-    private ITTestsService itTestsService;
 
     @Autowired
     private BackendConnectorProvider backendConnectorProvider;
