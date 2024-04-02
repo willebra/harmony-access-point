@@ -83,7 +83,7 @@ public class PartInfoDao extends BasicDao<PartInfo> {
             return;
         }
         final List<Long> entityIDs = partInfo.getPartPropertyRefs().stream().map(PartPropertyRef::getPropertyId).collect(Collectors.toList());
-        LOG.debug("Getting PartProperty collection for entity ids: [{}]", entityIDs);
+        LOG.debug("Getting PartProperty collection for entity IDs: [{}]", entityIDs);
         List<PartProperty> partProperties = partPropertyDao.findByEntityIDs(entityIDs);
         partInfo.setPartProperties(new HashSet<>(partProperties));
     }
