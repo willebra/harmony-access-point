@@ -21,9 +21,9 @@ import java.util.Set;
  * @since 5.0
  */
 @NamedQueries({
-        @NamedQuery(name = "PartInfo.findPartInfos", query = "select distinct pi from PartInfo pi left join fetch pi.partProperties where pi.userMessage.entityId=:ENTITY_ID order by pi.partOrder"),
-        @NamedQuery(name = "PartInfo.findPartInfoByUserMessageEntityIdAndCid", query = "select distinct pi from PartInfo pi left join fetch pi.partProperties where pi.userMessage.entityId=:ENTITY_ID and pi.href=:CID"),
-        @NamedQuery(name = "PartInfo.findPartInfoByUserMessageIdAndCid", query = "select distinct pi from PartInfo pi left join fetch pi.partProperties where pi.userMessage.messageId=:MESSAGE_ID and pi.href=:CID"),
+        @NamedQuery(name = "PartInfo.findPartInfos", query = "select distinct pi from PartInfo pi left join fetch pi.partPropertyRefs where pi.userMessage.entityId=:ENTITY_ID order by pi.partOrder"),
+        @NamedQuery(name = "PartInfo.findPartInfoByUserMessageEntityIdAndCid", query = "select distinct pi from PartInfo pi left join fetch pi.partPropertyRefs where pi.userMessage.entityId=:ENTITY_ID and pi.href=:CID"),
+        @NamedQuery(name = "PartInfo.findPartInfoByUserMessageIdAndCid", query = "select distinct pi from PartInfo pi left join fetch pi.partPropertyRefs where pi.userMessage.messageId=:MESSAGE_ID and pi.href=:CID"),
         @NamedQuery(name = "PartInfo.findFilenames", query = "select pi.fileName from PartInfo pi where pi.userMessage.entityId IN :MESSAGEIDS and pi.fileName is not null"),
         @NamedQuery(name = "PartInfo.emptyPayloads", query = "update PartInfo p set p.binaryData = null where p in :PARTINFOS"),
         @NamedQuery(name = "PartInfo.findPartInfosLength", query = "select pi.length from PartInfo pi where pi.userMessage.entityId=:ENTITY_ID"),
@@ -38,12 +38,12 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
     @JoinColumn(name = "USER_MESSAGE_ID_FK")
     protected UserMessage userMessage;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "TB_PART_PROPERTIES",
-            joinColumns = @JoinColumn(name = "PART_INFO_ID_FK"),
-            inverseJoinColumns = @JoinColumn(name = "PART_INFO_PROPERTY_FK")
-    )
-    protected Set<PartProperty> partProperties; //NOSONAR
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "PART_INFO_ID_FK")
+    private Set<PartPropertyRef> partPropertyRefs;
+
+    @Transient
+    private Set<PartProperty> partProperties; //NOSONAR
 
     @Embedded
     protected Description description; //NOSONAR
@@ -154,6 +154,16 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
 
     public void setUserMessage(UserMessage userMessage) {
         this.userMessage = userMessage;
+    }
+
+    @Transient
+    public Set<PartPropertyRef> getPartPropertyRefs() {
+        return partPropertyRefs;
+    }
+
+    @Transient
+    public void setPartPropertyRefs(Set<PartPropertyRef> partPropertyRefs) {
+        this.partPropertyRefs = partPropertyRefs;
     }
 
     @Transient

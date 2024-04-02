@@ -70,4 +70,10 @@ public class PartPropertyDao extends BasicDao<PartProperty> {
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
+    public List<PartProperty> findByEntityIDs(final List<Long> entityIDs) {
+        final Query query = this.em.createNamedQuery("PartProperty.findByIDs");
+        query.setParameter("IDS", entityIDs);
+        List<PartProperty> partInfos = query.getResultList();
+        return partInfos;
+    }
 }
