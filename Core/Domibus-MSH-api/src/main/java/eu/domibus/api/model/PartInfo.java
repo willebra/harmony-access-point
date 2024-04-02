@@ -14,10 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.activation.DataHandler;
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -178,18 +175,60 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
     public void setPartProperties(Set<PartProperty> partProperties) {
         this.partProperties = partProperties;
 
-        if (propertiesAlreadySet(partProperties)) {
+        if (propertiesExist(partProperties)) {
+            LOG.debug("partProperties already set");
             return;
         }
 
         this.partPropertyRefs = new HashSet<>();
-        if (CollectionUtils.isNotEmpty(partProperties)) {
-            partProperties.forEach(partProperty -> {
-                PartPropertyRef partPropertyRef = new PartPropertyRef();
-                partPropertyRef.setPropertyId(partProperty.getEntityId());
-                partPropertyRef.setPartInfo(this);
-                this.partPropertyRefs.add(partPropertyRef);
-            });
+        if (CollectionUtils.isEmpty(partProperties)) {
+            LOG.debug("partProperties is empty");
+            return;
+        }
+
+        partProperties.forEach(this::doAddPropertyRef);
+    }
+
+    @Transient
+    public void addProperty(PartProperty partProperty) {
+        if (partProperty == null) {
+            LOG.debug("partProperty is null");
+            return;
+        }
+
+        if (!propertyExists(partProperty)) {
+            if (this.partProperties == null) {
+                this.partProperties = new HashSet<>();
+            }
+            this.partProperties.add(partProperty);
+        } else {
+            LOG.debug("partProperty already present in partProperties");
+        }
+
+        if (!propertyRefExists(partProperty)) {
+            doAddPropertyRef(partProperty);
+        } else {
+            LOG.debug("partProperty already present in property refs");
+        }
+    }
+
+    @Transient
+    public void removeProperty(PartProperty partProperty) {
+        if (partProperty == null) {
+            LOG.debug("partProperty is null");
+            return;
+        }
+
+        PartProperty existing = getPropertyByName(partProperty);
+        if (existing != null) {
+            this.partProperties.remove(existing);
+            if (propertyRefExists(existing)) {
+                doRemovePropertyRef(existing);
+            } else {
+                LOG.debug("partProperty [{}] does not exist in ref collection.", partProperty);
+            }
+        } else {
+            LOG.debug("partProperty not present in partProperties");
         }
     }
 
@@ -278,18 +317,62 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
         return this.hashCode() - o.hashCode();
     }
 
-    private boolean propertiesAlreadySet(Set<PartProperty> partProperties) {
+    private boolean propertiesExist(Set<PartProperty> partProperties) {
         if (this.partPropertyRefs == null && partProperties == null) {
+            LOG.debug("partProperties and partPropertyRefs are null->true");
             return true;
         }
         if (this.partPropertyRefs == null || partProperties == null) {
+            LOG.debug("partProperties or partPropertyRefs are null->false");
             return false;
         }
         if (this.partPropertyRefs.size() != partProperties.size()) {
+            LOG.debug("partProperties size different than partPropertyRefs size->false");
             return false;
         }
         List<Long> l1 = partProperties.stream().map(prop -> prop.getEntityId()).collect(Collectors.toList());
         List<Long> l2 = this.partPropertyRefs.stream().map(ref -> ref.propertyId).collect(Collectors.toList());
         return CollectionUtils.isEqualCollection(l1, l2);
+    }
+
+    private boolean propertyRefExists(PartProperty partProperty) {
+        if (this.partPropertyRefs == null) {
+            return false;
+        }
+        return this.partPropertyRefs.stream().anyMatch(ref -> ref.propertyId == partProperty.getEntityId());
+    }
+
+    private void doAddPropertyRef(PartProperty partProperty) {
+        PartPropertyRef partPropertyRef = new PartPropertyRef();
+        partPropertyRef.setPropertyId(partProperty.getEntityId());
+        partPropertyRef.setPartInfo(this);
+        if (partPropertyRefs == null) {
+            this.partPropertyRefs = new HashSet<>();
+        }
+        this.partPropertyRefs.add(partPropertyRef);
+    }
+
+    private void doRemovePropertyRef(PartProperty partProperty) {
+        Optional<PartPropertyRef> propertyRef = this.partPropertyRefs.stream()
+                .filter(ref -> ref.propertyId == partProperty.getEntityId())
+                .findFirst();
+        if (propertyRef.isPresent()) {
+            this.partPropertyRefs.remove(propertyRef.get());
+        }
+    }
+
+    private boolean propertyExists(PartProperty partProperty) {
+        return getPropertyByName(partProperty) != null;
+    }
+
+    private PartProperty getPropertyByName(PartProperty partProperty) {
+        if (this.partProperties == null)
+            return null;
+
+        Optional<PartProperty> propRef = this.partProperties.stream().filter(prop -> Objects.equals(prop.getName(), partProperty.getName())).findFirst();
+        if (!propRef.isPresent()) {
+            return null;
+        }
+        return propRef.get();
     }
 }
