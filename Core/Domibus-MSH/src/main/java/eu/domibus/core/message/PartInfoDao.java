@@ -38,7 +38,7 @@ public class PartInfoDao extends BasicDao<PartInfo> {
         query.setParameter("ENTITY_ID", userMessageEntityId);
         query.setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false);
         List<PartInfo> partInfos = query.getResultList();
-        partInfos.forEach(partInfo -> {
+        partInfos.forEach(this::setPartProperties)
             setPartProperties(partInfo);
         });
         return partInfos;
