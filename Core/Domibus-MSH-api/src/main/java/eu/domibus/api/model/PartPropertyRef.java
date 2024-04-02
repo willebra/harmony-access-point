@@ -71,6 +71,5 @@ public class PartPropertyRef implements Serializable {
                 .append(propertyId)
                 .toHashCode();
     }
-
-
+    
 }

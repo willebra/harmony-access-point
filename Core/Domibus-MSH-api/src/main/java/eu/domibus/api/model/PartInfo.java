@@ -5,6 +5,7 @@ import eu.domibus.api.payload.PartInfoService;
 import eu.domibus.api.spring.SpringContextProvider;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,8 +14,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.activation.DataHandler;
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author Cosmin Baciu
@@ -38,8 +42,7 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
     @JoinColumn(name = "USER_MESSAGE_ID_FK")
     protected UserMessage userMessage;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "PART_INFO_ID_FK")
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "partInfo")
     private Set<PartPropertyRef> partPropertyRefs;
 
     @Transient
@@ -174,6 +177,20 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
     @Transient
     public void setPartProperties(Set<PartProperty> partProperties) {
         this.partProperties = partProperties;
+
+        if (propertiesAlreadySet(partProperties)) {
+            return;
+        }
+
+        this.partPropertyRefs = new HashSet<>();
+        if (CollectionUtils.isNotEmpty(partProperties)) {
+            partProperties.forEach(partProperty -> {
+                PartPropertyRef partPropertyRef = new PartPropertyRef();
+                partPropertyRef.setPropertyId(partProperty.getEntityId());
+                partPropertyRef.setPartInfo(this);
+                this.partPropertyRefs.add(partPropertyRef);
+            });
+        }
     }
 
     @PostLoad
@@ -259,5 +276,20 @@ public class PartInfo extends AbstractBaseEntity implements Comparable<PartInfo>
     @Override
     public int compareTo(final PartInfo o) {
         return this.hashCode() - o.hashCode();
+    }
+
+    private boolean propertiesAlreadySet(Set<PartProperty> partProperties) {
+        if (this.partPropertyRefs == null && partProperties == null) {
+            return true;
+        }
+        if (this.partPropertyRefs == null || partProperties == null) {
+            return false;
+        }
+        if (this.partPropertyRefs.size() != partProperties.size()) {
+            return false;
+        }
+        List<Long> l1 = partProperties.stream().map(prop -> prop.getEntityId()).collect(Collectors.toList());
+        List<Long> l2 = this.partPropertyRefs.stream().map(ref -> ref.propertyId).collect(Collectors.toList());
+        return CollectionUtils.isEqualCollection(l1, l2);
     }
 }
