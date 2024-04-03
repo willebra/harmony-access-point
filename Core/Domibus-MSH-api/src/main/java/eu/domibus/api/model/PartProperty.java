@@ -12,6 +12,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "TB_D_PART_PROPERTY")
 @NamedQueries({
+        @NamedQuery(name = "PartProperty.findByIDs", hints = {
+                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES), @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                query = "select prop from PartProperty prop where prop.entityId IN :IDS"),
         @NamedQuery(name = "PartProperty.findByNameValueAndType",
                 hints = {
                         @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
