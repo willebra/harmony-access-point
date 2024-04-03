@@ -60,7 +60,7 @@
         <hibernate.validator.version>6.2.5.Final</hibernate.validator.version>
         <glassfish.javax.el.version>3.0.1-b12</glassfish.javax.el.version>
         <mockito.version>4.11.0</mockito.version>
-        <h2.version>2.1.214</h2.version>
+        <h2.version>2.2.224</h2.version>
         <liquibase.version>4.17.0</liquibase.version>
         <mysql.connector.java.version>8.0.32</mysql.connector.java.version>
         <wiremock.version>2.27.2</wiremock.version>
