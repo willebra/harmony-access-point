@@ -1147,7 +1147,7 @@
             <column name="PROPERTY_NAME" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PROPERTY_VALUE" type="VARCHAR(255)"/>
+            <column name="PROPERTY_VALUE" type="VARCHAR(2048)"/>
             <column name="FK_COMMAND" type="BIGINT" remarks="Reference to the parent command">
                 <constraints nullable="false"/>
             </column>
