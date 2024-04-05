@@ -128,6 +128,7 @@ public class DomibusApplicationInitializerTest {
             result = domibusConfigLocation;
 
             domibusApplicationInitializer.configureLogging(Paths.get(domibusConfigLocation).normalize().toString());
+            domibusConfigLocationProvider.getDomibusExtensionsLocation(servletContext);
 
             new AnnotationConfigWebApplicationContext();
             result = annotationConfigWebApplicationContext;

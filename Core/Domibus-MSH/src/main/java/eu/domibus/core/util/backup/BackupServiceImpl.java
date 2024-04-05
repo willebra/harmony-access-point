@@ -138,7 +138,11 @@ public class BackupServiceImpl implements BackupService {
     protected void copyBackUpFile(File originalFile, File backupFile) throws IOException {
         LOG.debug("Backing up file [{}] to file [{}]", originalFile, backupFile);
         try {
-            FileUtils.copyFile(originalFile, backupFile, preserveFileDate);
+            if (originalFile.exists()) {
+                FileUtils.copyFile(originalFile, backupFile, preserveFileDate);
+            } else {
+                FileUtils.copyFile(originalFile, backupFile);
+            }
         } catch (IOException e) {
             throw new IOException(String.format("Could not back up file [%s] to [%s]", originalFile, backupFile), e);
         }
