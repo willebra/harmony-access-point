@@ -74,8 +74,13 @@ public class DomibusApplicationInitializer implements WebApplicationInitializer 
 
         configureLogging(normalizedDomibusConfigLocation);
 
-        PluginClassLoader pluginClassLoader =
-                createPluginClassLoader(domibusConfigLocationProvider.getDomibusExtensionsLocation(servletContext));
+        String extensionsLocation = domibusConfigLocationProvider.getDomibusExtensionsLocation(servletContext);
+        if (extensionsLocation == null) {
+            LOG.debug("No extensions location configured, using the Domibus config location [{}]", normalizedDomibusConfigLocation);
+            extensionsLocation = normalizedDomibusConfigLocation;
+        }
+
+        PluginClassLoader pluginClassLoader = createPluginClassLoader(extensionsLocation);
         Thread.currentThread().setContextClassLoader(pluginClassLoader);
 
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
