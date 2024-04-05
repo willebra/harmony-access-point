@@ -13,6 +13,7 @@ import eu.domibus.plugin.ws.backend.rules.WSPluginDispatchRule;
 import eu.domibus.plugin.ws.backend.rules.WSPluginDispatchRulesService;
 import eu.domibus.plugin.ws.connector.WSPluginImpl;
 import eu.domibus.plugin.ws.exception.WSPluginException;
+import eu.domibus.plugin.ws.message.WSMessageLogService;
 import org.springframework.stereotype.Service;
 
 import static eu.domibus.plugin.ws.property.WSPluginPropertyManager.PUSH_MARK_AS_DOWNLOADED;
@@ -39,18 +40,21 @@ public class WSPluginMessageSender {
     protected final WSPluginImpl wsPlugin;
 
     private final DomibusPropertyExtService domibusPropertyExtService;
+    private WSMessageLogService wsMessageLogService;
 
     public WSPluginMessageSender(WSPluginBackendReliabilityService reliabilityService,
                                  WSPluginDispatchRulesService rulesService,
                                  WSPluginMessageBuilder messageBuilder,
                                  WSPluginDispatcher dispatcher,
-                                 WSPluginImpl wsPlugin, DomibusPropertyExtService domibusPropertyExtService) {
+                                 WSPluginImpl wsPlugin, DomibusPropertyExtService domibusPropertyExtService,
+                                 WSMessageLogService wsMessageLogService) {
         this.reliabilityService = reliabilityService;
         this.rulesService = rulesService;
         this.messageBuilder = messageBuilder;
         this.dispatcher = dispatcher;
         this.wsPlugin = wsPlugin;
         this.domibusPropertyExtService = domibusPropertyExtService;
+        this.wsMessageLogService = wsMessageLogService;
     }
 
     /**
@@ -82,13 +86,15 @@ public class WSPluginMessageSender {
                 boolean markAsDownloaded = domibusPropertyExtService.getBooleanProperty(PUSH_MARK_AS_DOWNLOADED);
                 LOG.debug("Found the property [{}] set to [{}]", PUSH_MARK_AS_DOWNLOADED, markAsDownloaded);
                 wsPlugin.downloadMessage(messageId, null, markAsDownloaded);
+
+                wsMessageLogService.deleteByMessageId(messageId);
             }
         } catch (Throwable t) {//NOSONAR: Catching Throwable is done on purpose in order to even catch out of memory exceptions.
+            LOG.error("Error occurred when sending backend message with ID [{}]", backendMessage.getEntityId(), t);
             if (dispatchRule == null) {
                 throw new WSPluginException("No dispatch rule found for backend message id [" + backendMessage.getEntityId() + "]");
             }
             reliabilityService.handleReliability(backendMessage, dispatchRule);
-            LOG.error("Error occurred when sending backend message with ID [{}]", backendMessage.getEntityId(), t);
         }
     }
 
