@@ -13,7 +13,7 @@
     <includeSiteDirectory>false</includeSiteDirectory>
     <fileSets>
         <fileSet>
-            <directory>${project.build.directory}/cargo/installs/tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}</directory>
+            <directory>${project.basedir}/cargo/installs/tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}</directory>
             <outputDirectory>domibus</outputDirectory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <filtered>false</filtered>
