@@ -344,9 +344,6 @@ public class WebServicePluginImpl implements BackendInterface {
             //if an error occurs related to the message acknowledgement do not block the download message operation
             LOG.error("Error acknowledging message [" + retrieveMessageRequest.getMessageID() + "]", e);
         }
-
-        // remove downloaded message from the plugin table containing the pending messages
-        wsMessageLogDao.delete(wsMessageLogEntity);
     }
 
     private eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage getUserMessage(RetrieveMessageRequest retrieveMessageRequest, String trimmedMessageId) throws RetrieveMessageFault {

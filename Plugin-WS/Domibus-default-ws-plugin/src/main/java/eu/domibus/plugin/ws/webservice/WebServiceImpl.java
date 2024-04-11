@@ -561,10 +561,6 @@ public class WebServiceImpl implements WebServicePluginInterface {
             //if an error occurs related to the message acknowledgement do not block the download message operation
             LOG.error("Error acknowledging message [" + retrieveMessageRequest.getMessageID() + "]", e);
         }
-        if (markAsDownloaded) {
-            // remove downloaded message from the plugin table containing the pending messages
-            wsMessageLogService.delete(wsMessageLogEntity);
-        }
     }
 
     private UserMessage downloadUserMessage(String trimmedMessageId, boolean markAsAcknowledged) throws

@@ -7,10 +7,7 @@ import eu.domibus.ext.services.DomibusPropertyManagerExt;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.logging.DomibusMessageCode;
-import eu.domibus.messaging.MessageConstants;
-import eu.domibus.messaging.MessagingProcessingException;
-import eu.domibus.messaging.PModeMismatchException;
-import eu.domibus.messaging.PluginMessageListenerContainer;
+import eu.domibus.messaging.*;
 import eu.domibus.plugin.AbstractBackendConnector;
 import eu.domibus.plugin.Submission;
 import eu.domibus.plugin.exception.TransformationException;
@@ -239,4 +236,16 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
         setRequiredNotifications(messageNotifications);
     }
 
+    @Override
+    public UserMessage downloadMessage(String messageId, UserMessage target, boolean markAsDownloaded) throws MessageNotFoundException {
+        UserMessage userMessage = super.downloadMessage(messageId, target, markAsDownloaded);
+        if (markAsDownloaded) {
+            WSMessageLogEntity wsMessageLogEntity = wsMessageLogService.findByMessageId(messageId);
+            if(wsMessageLogEntity != null) {
+                LOG.debug("Remove downloaded message from the plugin table containing the pending messages (WSMessageLog entityId [{}])", wsMessageLogEntity.getEntityId());
+                wsMessageLogService.delete(wsMessageLogEntity);
+            }
+        }
+        return userMessage;
+    }
 }

@@ -86,8 +86,6 @@ public class WSPluginMessageSender {
                 boolean markAsDownloaded = domibusPropertyExtService.getBooleanProperty(PUSH_MARK_AS_DOWNLOADED);
                 LOG.debug("Found the property [{}] set to [{}]", PUSH_MARK_AS_DOWNLOADED, markAsDownloaded);
                 wsPlugin.downloadMessage(messageId, null, markAsDownloaded);
-
-                wsMessageLogService.deleteByMessageId(messageId);
             }
         } catch (Throwable t) {//NOSONAR: Catching Throwable is done on purpose in order to even catch out of memory exceptions.
             LOG.error("Error occurred when sending backend message with ID [{}]", backendMessage.getEntityId(), t);
