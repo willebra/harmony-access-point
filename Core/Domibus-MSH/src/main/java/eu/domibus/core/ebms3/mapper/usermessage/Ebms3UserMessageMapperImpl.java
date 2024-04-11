@@ -208,9 +208,10 @@ public class Ebms3UserMessageMapperImpl implements Ebms3UserMessageMapper {
 
         final Ebms3PartProperties ebms3PartProperties = partInfo.getPartProperties();
         if (ebms3PartProperties != null) {
-            result.setPartProperties(new HashSet<>());
+            HashSet<PartProperty> partProperties = new HashSet<>();
             final Set<Ebms3Property> properties = ebms3PartProperties.getProperties();
-            properties.stream().forEach(partProperty -> result.getPartProperties().add(convertToPartProperty(partProperty)));
+            properties.stream().forEach(partProperty -> partProperties.add(convertToPartProperty(partProperty)));
+            result.setPartProperties(partProperties);
         }
 
         return result;

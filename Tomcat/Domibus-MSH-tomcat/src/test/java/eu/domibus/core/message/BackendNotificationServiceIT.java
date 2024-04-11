@@ -1,6 +1,5 @@
 package eu.domibus.core.message;
 
-import eu.domibus.test.ITTestsService;
 import eu.domibus.api.ebms3.model.Ebms3Messaging;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
@@ -91,9 +90,6 @@ public class BackendNotificationServiceIT extends DeleteMessageAbstractIT {
     MessagesLogServiceImpl messagesLogService;
 
     @Autowired
-    private ITTestsService itTestsService;
-
-    @Autowired
     private UserMessageDao userMessageDao;
 
     @Autowired
@@ -126,7 +122,6 @@ public class BackendNotificationServiceIT extends DeleteMessageAbstractIT {
     @Transactional
     @Before
     public void before() throws XmlProcessingException, IOException {
-        super.before();
         messageId = BackendConnectorMock.MESSAGE_ID;
         filename = "SOAPMessage2.xml";
 

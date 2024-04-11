@@ -91,10 +91,6 @@
     <logger name="domain_name.eu.domibus" level="INFO">
         <appender-ref ref="domain_name-security-file"/>
         <appender-ref ref="domain_name-business-file"/>
-    </logger>
-
-    <root level="WARN">
         <appender-ref ref="domain_name-file"/>
-    </root>
-
+    </logger>
 </included>
