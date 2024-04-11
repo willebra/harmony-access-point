@@ -17,6 +17,7 @@ import eu.domibus.plugin.transformer.MessageRetrievalTransformer;
 import eu.domibus.plugin.transformer.MessageSubmissionTransformer;
 import eu.domibus.plugin.ws.backend.dispatch.WSPluginBackendService;
 import eu.domibus.plugin.ws.backend.reliability.queue.WSSendMessageListenerContainer;
+import eu.domibus.plugin.ws.exception.WSMessageLogNotFoundException;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import eu.domibus.plugin.ws.initialize.WSPluginInitializer;
@@ -236,15 +237,23 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
         setRequiredNotifications(messageNotifications);
     }
 
+    /**
+     * @param messageId        the messageId of the message to retrieve
+     * @param target           the target object to be filled.
+     * @param markAsDownloaded if true then we persist the message state as downloaded, and we only download messages that were not already downloaded
+     * @return downloaded UserMessage
+     * @throws WSMessageLogNotFoundException if UserMessage is found for given messageId but markAsDownloaded is true and WSMessageLog not found for messageId
+     * @throws MessageNotFoundException if UserMessage not found for given messageId
+     */
     @Override
     public UserMessage downloadMessage(String messageId, UserMessage target, boolean markAsDownloaded) throws MessageNotFoundException {
         UserMessage userMessage = super.downloadMessage(messageId, target, markAsDownloaded);
         if (markAsDownloaded) {
-            WSMessageLogEntity wsMessageLogEntity = wsMessageLogService.findByMessageId(messageId);
-            if(wsMessageLogEntity != null) {
-                LOG.debug("Remove downloaded message from the plugin table containing the pending messages (WSMessageLog entityId [{}])", wsMessageLogEntity.getEntityId());
-                wsMessageLogService.delete(wsMessageLogEntity);
+            int deletedMessageCount = wsMessageLogService.deleteByMessageId(messageId);
+            if(deletedMessageCount == 0) {
+                throw new WSMessageLogNotFoundException();
             }
+            LOG.debug("Removed downloaded message from the plugin table containing the pending messages (WSMessageLog messageId [{}])", messageId);
         }
         return userMessage;
     }

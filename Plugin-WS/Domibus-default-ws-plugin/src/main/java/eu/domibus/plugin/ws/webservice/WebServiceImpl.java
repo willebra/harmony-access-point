@@ -15,6 +15,7 @@ import eu.domibus.messaging.MessagingProcessingException;
 import eu.domibus.plugin.ws.backend.WSBackendMessageLogEntity;
 import eu.domibus.plugin.ws.backend.WSBackendMessageLogService;
 import eu.domibus.plugin.ws.connector.WSPluginImpl;
+import eu.domibus.plugin.ws.exception.WSMessageLogNotFoundException;
 import eu.domibus.plugin.ws.exception.WSPluginException;
 import eu.domibus.plugin.ws.generated.*;
 import eu.domibus.plugin.ws.generated.body.*;
@@ -160,9 +161,11 @@ public class WebServiceImpl implements WebServicePluginInterface {
     }
 
     public UserMessage downloadUserMessage(String messageId) {
-        UserMessage userMessage;
+        UserMessage userMessage = null;
         try {
             userMessage = wsPlugin.downloadMessage(messageId, null);
+        } catch (final WSMessageLogNotFoundException wsmlnfEx) {
+            LOG.warn("WSMessageLog not found for messageId [{}]", messageId);
         } catch (final MessageNotFoundException mnfEx) {
             throw new WSPluginException(MESSAGE_NOT_FOUND_ID + messageId + "]");
         }
@@ -536,12 +539,6 @@ public class WebServiceImpl implements WebServicePluginInterface {
 
         String trimmedMessageId = messageExtService.cleanMessageIdentifier(retrieveMessageRequest.getMessageID());
         boolean markAsDownloaded = toBooleanDefaultIfNull(toBooleanObject(retrieveMessageRequest.getMarkAsDownloaded()), true);  //workaround jaxws bug
-        WSMessageLogEntity wsMessageLogEntity = wsMessageLogService.findByMessageId(trimmedMessageId);
-        if (markAsDownloaded && wsMessageLogEntity == null) {
-            LOG.businessError(BUS_MSG_NOT_FOUND, trimmedMessageId);
-            throw new RetrieveMessageFault(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", webServicePluginExceptionFactory.createFaultMessageIdNotFound(trimmedMessageId));
-        }
-
         userMessage = downloadUserMessage(trimmedMessageId, markAsDownloaded);
 
         // To avoid blocking errors during the Header's response validation
@@ -568,6 +565,9 @@ public class WebServiceImpl implements WebServicePluginInterface {
         UserMessage userMessage;
         try {
             userMessage = wsPlugin.downloadMessage(trimmedMessageId, null, markAsAcknowledged);
+        } catch (WSMessageLogNotFoundException wsmlnfEx) {
+            LOG.businessError(BUS_MSG_NOT_FOUND, trimmedMessageId);
+            throw new RetrieveMessageFault(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", webServicePluginExceptionFactory.createFaultMessageIdNotFound(trimmedMessageId));
         } catch (final MessageNotFoundException mnfEx) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", mnfEx);

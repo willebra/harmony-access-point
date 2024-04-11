@@ -12,6 +12,7 @@ import eu.domibus.plugin.ws.backend.reliability.WSPluginBackendReliabilityServic
 import eu.domibus.plugin.ws.backend.rules.WSPluginDispatchRule;
 import eu.domibus.plugin.ws.backend.rules.WSPluginDispatchRulesService;
 import eu.domibus.plugin.ws.connector.WSPluginImpl;
+import eu.domibus.plugin.ws.exception.WSMessageLogNotFoundException;
 import eu.domibus.plugin.ws.exception.WSPluginException;
 import eu.domibus.plugin.ws.message.WSMessageLogService;
 import org.springframework.stereotype.Service;
@@ -70,13 +71,14 @@ public class WSPluginMessageSender {
                 backendMessage.getType(),
                 backendMessage.getEntityId());
         WSPluginDispatchRule dispatchRule = null;
+        String messageId = null;
         try {
             dispatchRule = rulesService.getRule(backendMessage.getRuleName());
             String endpoint = dispatchRule.getEndpoint();
             LOG.debug("Endpoint identified: [{}]", endpoint);
             dispatcher.dispatch(messageBuilder.buildSOAPMessage(backendMessage), endpoint);
             backendMessage.setBackendMessageStatus(WSBackendMessageStatus.SENT);
-            String messageId = backendMessage.getMessageId();
+            messageId = backendMessage.getMessageId();
             LOG.info("Backend notification [{}] for domibus id [{}] sent to [{}] successfully",
                     backendMessage.getType(),
                     messageId,
@@ -87,6 +89,8 @@ public class WSPluginMessageSender {
                 LOG.debug("Found the property [{}] set to [{}]", PUSH_MARK_AS_DOWNLOADED, markAsDownloaded);
                 wsPlugin.downloadMessage(messageId, null, markAsDownloaded);
             }
+        } catch (final WSMessageLogNotFoundException wsmlnfEx) {
+            LOG.warn("WSMessageLog not found for messageId [{}]", messageId);
         } catch (Throwable t) {//NOSONAR: Catching Throwable is done on purpose in order to even catch out of memory exceptions.
             LOG.error("Error occurred when sending backend message with ID [{}]", backendMessage.getEntityId(), t);
             if (dispatchRule == null) {
