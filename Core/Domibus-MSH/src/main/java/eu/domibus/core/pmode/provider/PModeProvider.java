@@ -332,7 +332,8 @@ public abstract class PModeProvider {
 
     protected boolean isPullContext(final boolean isPull, ProcessingType processingType, String mpc) {
         if( (processingType == ProcessingType.PULL) ||
-                (isPull && mpcService.forcePullOnMpc(mpc)) ) {
+                isPull ||
+                mpcService.forcePullOnMpc(mpc)) {
             LOG.debug("Pull context true");
             return true;
         }
