@@ -1,9 +1,25 @@
 # Domibus upgrade information
 ## Domibus 5.1.4 (from 5.1.3)
-    - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0 
+- Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0 
+- Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+    
+    ### PULL only
+       - Update the roles in the pull processes to reflect the correct matching of From party role matches the initiatorRole and To party role matches the responderRole. If you are using the sample pModes, replace
+        <process name="tc2Process"
+        mep="oneway"
+        binding="pull"
+        initiatorRole="defaultInitiatorRole"
+        responderRole="defaultResponderRole">
+        with
+        <process name="tc2Process"
+        mep="oneway"
+        binding="pull"
+        initiatorRole="defaultResponderRole"
+        responderRole="defaultInitiatorRole">
+        A workaround for this change is to disable the roles validation by setting domibus.partyinfo.roles.validation.enabled=false in domibus.properties
     
     ### Tomcat only
-    - add values for quartz data source properties if defaults are not good
+     - Add values for quartz data source properties if defaults are not good
       #the name of the DataSource class provided by the JDBC driver
       domibus.quartz.datasource.driverClassName=com.mysql.cj.jdbc.Driver
       #the JDBC url for the DB
@@ -25,10 +41,10 @@
       domibus.quartz.datasource.minimumIdle=1
     
     ### Weblogic only
-    - execute the WLST API script(from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-renameJDBCDatasources.properties to rename quartz datasources
+     - Execute the WLST API script(from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-renameJDBCDatasources.properties to rename quartz datasources
     
     ### Wildfly only
-     - in file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml":
+     - In file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml":
         - replace the following datasource and pool names from 
             .............................
             <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryMysqlNonXADS" enabled="true" use-ccm="true">
@@ -46,7 +62,7 @@
             <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryOracleQuartzDS" enabled="true" use-ccm="true">
             .............................
 
-    - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+    
 ## Domibus 5.1.3 (from 5.1.2)
     - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
 

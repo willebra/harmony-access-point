@@ -269,20 +269,35 @@ public abstract class PModeProvider {
 
             senderParty = findSenderParty(userMessage);
             receiverParty = findReceiverParty(userMessage, isPull, senderParty, beforeDynamicDiscovery);
-            LOG.debug("Found SenderParty as [{}] and  Receiver Party as [{}]", senderParty, receiverParty);
+            final Role senderRole = findSenderRole(userMessage);
+            final Role receiverRole = findReceiverRole(userMessage);
 
-            final Role initiatorRole = findInitiatorRole(userMessage);
-            final Role responderRole = findResponderRole(userMessage);
+            LOG.debug("Found SenderParty as [{}], senderRole as [{}] and  Receiver Party as [{}], receiverRole as [{}]", senderParty, senderRole, receiverParty, receiverRole);
 
             service = findServiceName(userMessage.getService());
             LOG.businessInfo(DomibusMessageCode.BUS_MESSAGE_SERVICE_FOUND, service, userMessage.getService());
             action = findActionName(userMessage.getActionValue());
             LOG.businessInfo(DomibusMessageCode.BUS_MESSAGE_ACTION_FOUND, action, userMessage.getActionValue());
+
+            //TODO - refactor EDELIVERY-12876
+            Role initiatorRole = senderRole;
+            Role responderRole = receiverRole;
+
+            if (isPullContext(isPull, processingType, userMessage.getMpcValue())) { // in pull, the responder is the From party that sends the UserMessage
+                LOG.debug("Pull context, switching roles.");
+                initiatorRole = receiverRole;
+
+                responderRole = senderRole;
+            }
+            LOG.info("Found roles initiatorRole=[{}], responderRole=[{}]", initiatorRole, responderRole);
+
             if (isPull && mpcService.forcePullOnMpc(userMessage.getMpcValue())) {
                 mpc = mpcService.extractBaseMpc(userMessage.getMpcValue());
+                LOG.debug("Extracted base mpc [{}] ", mpc);
                 leg = findPullLegName(agreementName, senderParty, receiverParty, service, action, mpc, initiatorRole, responderRole);
             } else {
                 mpc = userMessage.getMpcValue();
+                LOG.debug("UserMessage mpc [{}] ", mpc);
                 leg = findLegName(agreementName, senderParty, receiverParty, service, action, initiatorRole, responderRole, processingType, mpc);
             }
             LOG.businessInfo(DomibusMessageCode.BUS_LEG_NAME_FOUND, leg, agreementName, senderParty, receiverParty, service, action, mpc);
@@ -315,6 +330,15 @@ public abstract class PModeProvider {
         }
     }
 
+    protected boolean isPullContext(final boolean isPull, ProcessingType processingType, String mpc) {
+        if( (processingType == ProcessingType.PULL) ||
+                (isPull && mpcService.forcePullOnMpc(mpc)) ) {
+            LOG.debug("Pull context true");
+            return true;
+        }
+        return false;
+    }
+
     protected String findSenderParty(UserMessage userMessage) throws EbMS3Exception {
         String senderParty;
         PartyId fromPartyId = userMessage.getPartyInfo().getFrom().getFromPartyId();
@@ -336,16 +360,16 @@ public abstract class PModeProvider {
         return senderParty;
     }
 
-    protected Role findInitiatorRole(UserMessage userMessage) throws EbMS3Exception {
-        String initiatorRole = userMessage.getPartyInfo().getFrom().getRoleValue();
-        if (StringUtils.isBlank(initiatorRole)) {
+    protected Role findSenderRole(UserMessage userMessage) throws EbMS3Exception {
+        String senderRole = userMessage.getPartyInfo().getFrom().getRoleValue();
+        if (StringUtils.isBlank(senderRole)) {
             LOG.businessError(DomibusMessageCode.MANDATORY_MESSAGE_HEADER_METADATA_MISSING, "From/Role");
             throw EbMS3ExceptionBuilder.getInstance()
                     .ebMS3ErrorCode(ErrorCode.EbMS3ErrorCode.EBMS_0003)
                     .message("Mandatory field Sender Role is not provided.")
                     .build();
         }
-        return getBusinessProcessRole(initiatorRole);
+        return getBusinessProcessRole(senderRole);
     }
 
     protected String findReceiverParty(UserMessage userMessage, boolean isPull, String senderParty, boolean beforeDynamicDiscovery) throws EbMS3Exception {
@@ -377,16 +401,16 @@ public abstract class PModeProvider {
         return receiverParty;
     }
 
-    protected Role findResponderRole(UserMessage userMessage) throws EbMS3Exception {
-        String responderRole = userMessage.getPartyInfo().getTo().getRoleValue();
-        if (StringUtils.isBlank(responderRole)) {
+    protected Role findReceiverRole(UserMessage userMessage) throws EbMS3Exception {
+        String receiverRole = userMessage.getPartyInfo().getTo().getRoleValue();
+        if (StringUtils.isBlank(receiverRole)) {
             LOG.businessError(DomibusMessageCode.MANDATORY_MESSAGE_HEADER_METADATA_MISSING, "To Role");
             throw EbMS3ExceptionBuilder.getInstance()
                     .ebMS3ErrorCode(ErrorCode.EbMS3ErrorCode.EBMS_0003)
                     .message("Mandatory field Receiver Role is not provided.")
                     .build();
         }
-        return getBusinessProcessRole(responderRole);
+        return getBusinessProcessRole(receiverRole);
     }
 
     @MDCKey({DomibusLogger.MDC_MESSAGE_ID, DomibusLogger.MDC_MESSAGE_ROLE, DomibusLogger.MDC_MESSAGE_ENTITY_ID})
