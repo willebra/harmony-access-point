@@ -5,7 +5,6 @@ package eu.domibus.core.message.pull;
  * @since 3.3
  */
 public enum PullProcessStatus {
-    TOO_MANY_PROCESSES,
     TOO_MANY_RESPONDER,
     NO_RESPONDER,
     MORE_THAN_ONE_LEG_FOR_THE_SAME_MPC,

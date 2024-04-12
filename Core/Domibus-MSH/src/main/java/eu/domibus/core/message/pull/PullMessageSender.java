@@ -200,7 +200,7 @@ public class PullMessageSender {
         Boolean testMessage = testMessageValidator.checkTestMessage(userMessage);
 
         // Find legConfiguration for the received UserMessage
-        MessageExchangeConfiguration userMessageExchangeConfiguration = pModeProvider.findUserMessageExchangeContext(userMessage, MSHRole.RECEIVING);
+        MessageExchangeConfiguration userMessageExchangeConfiguration = pModeProvider.findUserMessageExchangeContext(userMessage, MSHRole.RECEIVING, true);
         String pModeKey = userMessageExchangeConfiguration.getPmodeKey();
         LOG.debug("pModeKey for received userMessage is [{}]", pModeKey);
 

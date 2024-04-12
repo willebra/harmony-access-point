@@ -4,6 +4,7 @@ import eu.domibus.api.model.PartInfo;
 import eu.domibus.api.model.PartProperty;
 import eu.domibus.api.model.PartyId;
 import eu.domibus.api.model.UserMessage;
+import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.core.generator.id.MessageIdGenerator;
 import eu.domibus.core.message.dictionary.*;
 import eu.domibus.plugin.Submission;
@@ -54,6 +55,9 @@ public class SubmissionAS4TransformerTest {
 
     @Injectable
     MshRoleDao mshRoleDao;
+
+    @Injectable
+    private DomibusPropertyProvider domibusPropertyProvider;
 
     @Tested
     private SubmissionAS4Transformer submissionAS4Transformer;
