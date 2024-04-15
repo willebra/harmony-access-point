@@ -61,7 +61,6 @@
                      <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryOracleQuartzDS" enabled="true" use-ccm="true">
                      .............................
 
-    
 ## Domibus 5.1.3 (from 5.1.2)
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
 
@@ -117,30 +116,28 @@
 
                 - Run the appropriate DB upgrade script:
                     o [Oracle only]
-                        - single tenancy: oracle-5.0.6-to-5.1-upgrade.ddl, oracle-5.0.6-to-5.1-data-upgrade.ddl
+                        - single tenancy: oracle-5.0.8-to-5.1-upgrade.ddl, oracle-5.0.8-to-5.1-data-upgrade.ddl
                         - multitenancy:
-                            - general schema: oracle-5.0.6-to-5.1-multi-tenancy-upgrade.ddl
-                            - domain schemas: oracle-5.0.6-to-5.1-upgrade.ddl, oracle-5.1-data-upgrade.ddl
-                        - partitioning the database:
-                            - if your database is not partitioned then run @oracle-5.0.5-to-5.0.6-partitioning-upgrade.ddl
+                            - general schema: oracle-5.0.8-to-5.1-multi-tenancy-upgrade.ddl
+                            - domain schemas: oracle-5.0.8-to-5.1-upgrade.ddl, oracle-5.0.8-to-5.1-data-upgrade.ddl
                   o [MySQL only]
                       The scripts below - please adapt to your local configuration (i.e. users, database names) - can be run using either:
                           - the root user, specifying the target databases as part of the command. For example, for single tenancy:
-                                  mysql -u root -p domibus < mysql-5.0.6-to-5.1-upgrade.ddl
-                                  mysql -u root -p domibus < mysql-5.0.6-to-5.1-data-upgrade.ddl
+                                  mysql -u root -p domibus < mysql-5.0.8-to-5.1-upgrade.ddl
+                                  mysql -u root -p domibus < mysql-5.0.8-to-5.1-data-upgrade.ddl
                               or, for multitenancy:
-                                  mysql -u root -p domibus_general < mysql-5.0.6-to-5.1-multi-tenancy-upgrade.ddl
-                                  mysql -u root -p domibus_domain_1 < mysql-5.0.6-to-5.1-upgrade.ddl
-                                  mysql -u root -p domibus_domain_1 < mysql-5.1-data-upgrade.ddl
+                                  mysql -u root -p domibus_general < mysql-5.0.8-to-5.1-multi-tenancy-upgrade.ddl
+                                  mysql -u root -p domibus_domain_1 < mysql-5.0.8-to-5.1-upgrade.ddl
+                                  mysql -u root -p domibus_domain_1 < mysql-5.0.8-to-5.1-data-upgrade.ddl
                           - the non-root user (e.g. edelivery): for which the root user must first relax the conditions on function creation by granting the SYSTEM_VARIABLES_ADMIN right to the non-root user:
                                   GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'edelivery'@'localhost';
                             and then specifying the target databases as part of the command. For example, for single tenancy:
-                                   mysql -u edelivery -p domibus < mysql-5.0.6-to-5.1-upgrade.ddl
-                                   mysql -u edelivery -p domibus < mysql-5.1-data-upgrade.ddl
+                                   mysql -u edelivery -p domibus < mysql-5.0.8-to-5.1-upgrade.ddl
+                                   mysql -u edelivery -p domibus < mysql-5.0.8-to-5.1-data-upgrade.ddl
                                or, for multitenancy:
-                                   mysql -u edelivery -p domibus_general < mysql-5.0.6-to-5.1-multi-tenancy-upgrade.ddl
-                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.0.6-to-5.1-upgrade.ddl
-                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.1-data-upgrade.ddl.
+                                   mysql -u edelivery -p domibus_general < mysql-5.0.8-to-5.1-multi-tenancy-upgrade.ddl
+                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.0.8-to-5.1-upgrade.ddl
+                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.0.8-to-5.1-data-upgrade.ddl.
 ## Domibus 5.0.8 (from 5.0.7):
                 - Update the properties domibus.pmode.validation.action.pattern and domibus.pmode.validation.service.value.pattern in case of backward compatibility issues regarding the action and service values
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
@@ -289,7 +286,7 @@
                 - Replace the Domibus war
                 - Run the appropriate DB upgrade script(mysql-5.0-to-5.0.1-upgrade.ddl for MySQL or oracle-5.0-to-5.0.1-upgrade.ddl for Oracle)
 
-## Domibus 5.0 (from 4.2.9)
+## Domibus 5.0 (from 4.2.13)
 
   ### Multitenancy only
                     - domibus.security.keystore.* and domibus.security.truststore.* properties are used only the first time domibus starts and persisted in the DB to be used from there on;
@@ -596,6 +593,9 @@
                                eu.domibus.common.MessageStatusChangeEvent.getProperties, eu.domibus.common.PayloadAbstractEvent.getProperties, eu.domibus.ext.services.DomibusPropertyExtService.getDomainProperty(eu.domibus.ext.domain.DomainDTO, java.lang.String),
                                eu.domibus.ext.services.DomibusPropertyExtService.setDomainProperty, eu.domibus.ext.services.DomibusPropertyExtService.getDomainProperty, eu.domibus.ext.services.DomibusPropertyExtService.getDomainResolvedProperty,
                                eu.domibus.ext.services.DomibusPropertyExtService.getResolvedProperty, eu.domibus.ext.services.PModeExtService.updatePModeFile(byte[], java.lang.String)
+## Domibus 4.2.13 (from 4.2.12):
+                - Replace the Domibus war
+                - Replace the default dss extension jar into  "/conf/domibus/extensions/lib"
 ## Domibus 4.2.12 (from 4.2.11):
                 - Replace the Domibus war
                 - Replace the default dss extension jar into  "/conf/domibus/extensions/lib"
@@ -636,6 +636,7 @@
 
                     - If you don't use custom caches just replace the old file with the new file version
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s) into "/conf/domibus/plugins/config" respectively into "/conf/domibus/plugins/lib"
+                - Run the DB upgrade script for Oracle only oracle-4.2.3-to-4.2.6-upgrade.ddl
  ## Domibus 4.2.5 (from 4.2.4):
                 - Replace the Domibus war
                 - Replace the default dss extension jar into "/conf/domibus/extensions/lib"
