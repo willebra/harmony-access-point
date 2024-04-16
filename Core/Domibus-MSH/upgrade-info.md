@@ -8,7 +8,7 @@ Release checklist:
     Upgrade the ehcache.xml file present in "conf/domibus/internal"
     Tomcat only: Upgarde the file activemq.xml present in "conf/domibus/internal"
     Wildfly only: Upgrade the file standalone-full.xml present in "domibus/standalone/configuration"
-    Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties
+    WebLogic only: Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties
                      wlstapi.cmd ../scripts/import.py --property ../5.0-to-5.0.8-WeblogicCluster.properties
 ```
 
