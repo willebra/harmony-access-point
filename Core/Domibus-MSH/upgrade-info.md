@@ -1,9 +1,24 @@
+```
+Release checklist: 
+    Replace the Domibus war
+    Replace the default plugin(s) property file(s) and jar(s) into "conf/domibus/plugins/config" respectively into "conf/domibus/plugins/lib"
+    Replace the dss extension property files and jar into "conf/domibus/extensions/config" respectively into "conf/domibus/extensions/lib"
+    Run the appropriate DB upgrade script (mysql-5.1.1-to-5.1.2-upgrade.ddl for MySQL or oracle-5.1.1-to-5.1.2-upgrade.ddl for Oracle)
+    Upgrade the domibus.properties and logback.xml files present in "conf/domibus" and in case of multitenancy "conf/domibus/domains/domain_name"
+    Upgrade the ehcache.xml file present in "conf/domibus/internal"
+    Tomcat only: Upgarde the file activemq.xml present in "conf/domibus/internal"
+    Wildfly only: Upgrade the file standalone-full.xml present in "domibus/standalone/configuration"
+    Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties
+                     wlstapi.cmd ../scripts/import.py --property ../5.0-to-5.0.8-WeblogicCluster.properties
+```
+
+
 # Domibus upgrade information
 ## Domibus 5.1.4 (from 5.1.3)
                 - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0 
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
-    
-### PULL only 
+
+#### PULL only if not already applied
                 - Update the roles in the pull processes to reflect the correct matching of From party role matches the initiatorRole and To party role matches the responderRole. If you are using the sample pModes, 
                 replace
                      <process name="tc2Process"
@@ -19,16 +34,16 @@
                      responderRole="defaultInitiatorRole">
                 A workaround for this change is to disable the roles validation by setting domibus.partyinfo.roles.validation.enabled=false in domibus.properties
      
-### Tomcat only
+#### Tomcat only if not already applied
                 - Add values for quartz data source properties if defaults are not good
                      #the name of the DataSource class provided by the JDBC driver
-                     domibus.quartz.datasource.driverClassName=com.mysql.cj.jdbc.Driver
+                     domibus.quartz.datasource.driverClassName=${domibus.datasource.driverClassName}
                      #the JDBC url for the DB
-                     domibus.quartz.datasource.url=jdbc:mysql://${domibus.database.serverName}:${domibus.database.port}/${domibus.database.schema}?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+                     domibus.quartz.datasource.url=${domibus.datasource.url}
                      #default authentication username used when obtaining Connections from the underlying driver
-                     domibus.quartz.datasource.user=edelivery
+                     domibus.quartz.datasource.user=${domibus.datasource.user}
                      #the default authentication password used when obtaining Connections from the underlying driver
-                     domibus.quartz.datasource.password=edelivery
+                     domibus.quartz.datasource.password=${domibus.datasource.password}
                      #HikariCP specific
                      #Controls the maximum lifetime of a connection in the pool (in seconds)
                      domibus.quartz.datasource.maxLifetime=1800
@@ -41,10 +56,13 @@
                      #Controls the minimum number of idle connections that HikariCP tries to maintain in the pool
                      domibus.quartz.datasource.minimumIdle=1
      
-### Weblogic only
-                - Execute the WLST API script(from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-renameJDBCDatasources.properties to rename quartz datasources
+#### Weblogic only if not already applied
+                - Execute the WLST API script remove.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-removeObsoleteJDBCDatasource.properties to remove the edeliveryNonXA datasource:
+                     wlstapi.cmd ../scripts/remove.py --property ../5.0-to-5.0.8-Weblogic-removeObsoleteJDBCDatasource.properties
+                - Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties to add the eDeliveryQuartzDs datasource: 
+                     wlstapi.cmd ../scripts/import.py --property ../5.0-to-5.0.8-WeblogicCluster.properties
     
-### Wildfly only
+#### Wildfly only if not already applied
                 - In file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml" replace the following datasource and pool names from
 
                      .............................
@@ -167,13 +185,13 @@
 ### Tomcat only
                 - Add values for quartz data source properties if defaults are not good
                      #the name of the DataSource class provided by the JDBC driver
-                     domibus.quartz.datasource.driverClassName=com.mysql.cj.jdbc.Driver
+                     domibus.quartz.datasource.driverClassName=${domibus.datasource.driverClassName}
                      #the JDBC url for the DB
-                     domibus.quartz.datasource.url=jdbc:mysql://${domibus.database.serverName}:${domibus.database.port}/${domibus.database.schema}?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC
+                     domibus.quartz.datasource.url=${domibus.datasource.url}
                      #default authentication username used when obtaining Connections from the underlying driver
-                     domibus.quartz.datasource.user=edelivery
+                     domibus.quartz.datasource.user=${domibus.datasource.user}
                      #the default authentication password used when obtaining Connections from the underlying driver
-                     domibus.quartz.datasource.password=edelivery
+                     domibus.quartz.datasource.password=${domibus.datasource.password}
                      #HikariCP specific
                      #Controls the maximum lifetime of a connection in the pool (in seconds)
                      domibus.quartz.datasource.maxLifetime=1800
