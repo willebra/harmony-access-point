@@ -89,7 +89,7 @@
     </appender>
 
     <!--  In order to enable logging of request/responses please change the loglevel to INFO in logback.xml, the logging level set here is ignored -->
-    <logger name="org.apache.cxf" additivity="false">
+    <logger name="org.apache.cxf">
         <appender-ref ref="domain_name-file"/>
     </logger>
 

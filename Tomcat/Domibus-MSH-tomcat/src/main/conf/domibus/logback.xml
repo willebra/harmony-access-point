@@ -176,7 +176,7 @@
     <!-- Statistics log end-->
 
     <!--  In order to enable logging of request/responses please change the loglevel to INFO -->
-    <logger name="org.apache.cxf" level="WARN" additivity="false">
+    <logger name="org.apache.cxf" level="WARN">
         <appender-ref ref="file"/>
     </logger>
 
