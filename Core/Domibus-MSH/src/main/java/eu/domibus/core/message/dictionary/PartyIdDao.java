@@ -46,7 +46,7 @@ public class PartyIdDao extends BasicDao<PartyId> {
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
-    protected PartyId findExistingPartyId(final String value, String type) {
+    public PartyId findExistingPartyId(final String value, String type) {
         if (StringUtils.isNotBlank(type)) {
             return findPartyByValueAndType(value, type);
         }
@@ -73,12 +73,4 @@ public class PartyIdDao extends BasicDao<PartyId> {
         return query.getResultList();
     }
 
-    public PartyId findFirstByValue(final String value) {
-        List<PartyId> res = searchByValue(value);
-        if (res.size() == 0) {
-            LOG.debug("No Party Id found with value [{}]", value);
-            return null;
-        }
-        return res.get(0);
-    }
 }
