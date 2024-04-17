@@ -7,6 +7,7 @@ import eu.domibus.core.message.testservice.TestServiceException;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.MessagingProcessingException;
+import eu.domibus.messaging.XmlProcessingException;
 import eu.domibus.test.AbstractIT;
 import eu.domibus.web.rest.ro.TestServiceMessageInfoRO;
 import org.junit.Before;
@@ -33,12 +34,8 @@ public class TestServiceIT extends AbstractIT {
     PartyIdDao partyIdDao;
 
     @Before
-    public void before() {
-        try {
-            uploadPmode(18001);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void before() throws XmlProcessingException, IOException {
+        uploadPmode();
     }
 
     @Test
