@@ -7,16 +7,13 @@ import eu.domibus.api.model.*;
 import eu.domibus.api.party.PartyService;
 import eu.domibus.api.usermessage.UserMessageService;
 import eu.domibus.common.model.configuration.Agreement;
-import eu.domibus.common.model.configuration.Identifier;
 import eu.domibus.common.model.configuration.Party;
 import eu.domibus.core.error.ErrorLogEntry;
 import eu.domibus.core.error.ErrorLogService;
 import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageLogDao;
-import eu.domibus.core.message.dictionary.PartyIdDao;
 import eu.domibus.core.message.signal.SignalMessageDao;
 import eu.domibus.core.monitoring.ConnectionMonitoringHelper;
-import eu.domibus.core.party.PartyServiceImpl;
 import eu.domibus.core.pmode.provider.PModeProvider;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
@@ -75,11 +72,11 @@ public class TestService {
 
     private final ConnectionMonitoringHelper connectionMonitoringHelper;
 
-    PartyService partyService;
+    private final PartyService partyService;
 
     public TestService(PModeProvider pModeProvider, MessageSubmitter messageSubmitter, UserMessageLogDao userMessageLogDao,
                        UserMessageDao userMessageDao, SignalMessageDao signalMessageDao, ErrorLogService errorLogService,
-                       UserMessageService userMessageService, ConnectionMonitoringHelper connectionMonitoringHelper) {
+                       UserMessageService userMessageService, ConnectionMonitoringHelper connectionMonitoringHelper, PartyService partyService) {
         this.pModeProvider = pModeProvider;
         this.messageSubmitter = messageSubmitter;
         this.userMessageLogDao = userMessageLogDao;
@@ -88,6 +85,7 @@ public class TestService {
         this.errorLogService = errorLogService;
         this.userMessageService = userMessageService;
         this.connectionMonitoringHelper = connectionMonitoringHelper;
+        this.partyService = partyService;
     }
 
     public String submitTest(String senderParty, String receiverParty) throws IOException, MessagingProcessingException {
