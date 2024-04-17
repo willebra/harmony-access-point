@@ -3,6 +3,7 @@ package eu.domibus.core.message.test;
 import eu.domibus.api.model.PartyId;
 import eu.domibus.core.message.dictionary.PartyIdDao;
 import eu.domibus.core.message.testservice.TestService;
+import eu.domibus.core.message.testservice.TestServiceException;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.MessagingProcessingException;
@@ -14,10 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 @Transactional
 public class TestServiceIT extends AbstractIT {
@@ -49,19 +51,24 @@ public class TestServiceIT extends AbstractIT {
 
         partyIdDao.findOrCreateParty(senderParty, pModePartyType);
         partyIdDao.findOrCreateParty(receiverParty, pModePartyType);
-
         partyIdDao.findOrCreateParty(senderParty, anotherPartyType);
         partyIdDao.findOrCreateParty(receiverParty, anotherPartyType);
-
         List<PartyId> parties = partyIdDao.findAll();
+        assertEquals(4, parties.size());
 
         testService.submitTest(senderParty, receiverParty);
-
-        parties = partyIdDao.findAll();
 
         TestServiceMessageInfoRO res = testService.getLastTestSentWithErrors(senderParty, receiverParty);
         assertNotNull(res);
         assertNull(res.getErrorInfo());
+
+        //partyIdType name="partyTypeUrn" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered"
+        Map<String, String> toReplace = new HashMap<>();
+        toReplace.put("partyIdType name=\"partyTypeUrn\" value=\"urn:oasis:names:tc:ebcore:partyid-type:unregistered\"",
+                "partyIdType name=\"partyTypeUrn\" value=\"urn:oasis:names:tc:ebcore:partyid-type:eudamed\"");
+        uploadPmode(SERVICE_PORT, toReplace);
+
+        assertThrows(TestServiceException.class, () -> testService.getLastTestSentWithErrors(senderParty, receiverParty));
     }
 
 
