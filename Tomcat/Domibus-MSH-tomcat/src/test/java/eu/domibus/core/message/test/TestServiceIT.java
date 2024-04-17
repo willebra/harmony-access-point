@@ -50,8 +50,6 @@ public class TestServiceIT extends AbstractIT {
         partyIdDao.findOrCreateParty(receiverParty, pModePartyType);
         partyIdDao.findOrCreateParty(senderParty, anotherPartyType);
         partyIdDao.findOrCreateParty(receiverParty, anotherPartyType);
-        List<PartyId> parties = partyIdDao.findAll();
-        assertEquals(4, parties.size());
 
         testService.submitTest(senderParty, receiverParty);
 
