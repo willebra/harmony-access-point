@@ -179,6 +179,7 @@ public interface DomibusPropertyMetadataManagerSPI {
     String DOMIBUS_LOGGING_METADATA_PRINT = "domibus.logging.metadata.print";
     String DOMIBUS_LOGGING_REMOTE_CERTIFICATES_PRINT = "domibus.logging.remote.certificates.print";
     String DOMIBUS_LOGGING_LOCAL_CERTIFICATES_PRINT = "domibus.logging.local.certificates.print";
+    String DOMIBUS_LOGGING_SEND_MESSAGE_ENQUEUED_MAX_MINUTES = "domibus.logging.sendMessage.enqueued.max.minutes";
     String DOMIBUS_LOGGING_EBMS3_ERROR_PRINT = "domibus.logging.ebms3.error.print";
     String DOMIBUS_LOGGING_CXF_LIMIT = "domibus.logging.cxf.limit";
     String DOMIBUS_CONNECTION_CXF_SSL_OFFLOAD_ENABLE = "domibus.connection.cxf.ssl.offload.enable";
