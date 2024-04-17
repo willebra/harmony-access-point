@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static eu.domibus.common.model.configuration.Identifier_.PARTY_ID_TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -119,8 +120,9 @@ public class UserMessageDaoTestIT extends AbstractIT {
 
         String testParty = testMessage.getUserMessage().getPartyInfo().getToParty(); // "domibus-red"
         String senderPartyId = "domibus-blue";
-        PartyId fromPartyId = partyIdDao.findFirstByValue(senderPartyId);
-        PartyId toPartyId = partyIdDao.findFirstByValue(testParty);
+        String type = "urn:oasis:names:tc:ebcore:partyid-type:unregistered";
+        PartyId fromPartyId = partyIdDao.findExistingPartyId(senderPartyId, type);
+        PartyId toPartyId = partyIdDao.findExistingPartyId(testParty, type);
         UserMessage userMessage = userMessageDao.findLastTestMessageFromPartyToParty(fromPartyId, toPartyId);
         assertNotNull(userMessage);
         assertEquals(msgId, userMessage.getMessageId());

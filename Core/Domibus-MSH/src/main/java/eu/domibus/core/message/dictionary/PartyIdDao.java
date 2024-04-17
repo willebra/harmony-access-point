@@ -73,13 +73,4 @@ public class PartyIdDao extends BasicDao<PartyId> {
         return query.getResultList();
     }
 
-    // TODO: to be deleted
-    public PartyId findFirstByValue(final String value) {
-        List<PartyId> res = searchByValue(value);
-        if (res.size() == 0) {
-            LOG.debug("No Party Id found with value [{}]", value);
-            return null;
-        }
-        return res.get(0);
-    }
 }
