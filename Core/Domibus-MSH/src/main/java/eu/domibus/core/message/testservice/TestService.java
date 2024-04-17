@@ -6,6 +6,7 @@ import eu.domibus.api.exceptions.DomibusCoreErrorCode;
 import eu.domibus.api.model.*;
 import eu.domibus.api.usermessage.UserMessageService;
 import eu.domibus.common.model.configuration.Agreement;
+import eu.domibus.common.model.configuration.Identifier;
 import eu.domibus.common.model.configuration.Party;
 import eu.domibus.core.error.ErrorLogEntry;
 import eu.domibus.core.error.ErrorLogService;
@@ -163,12 +164,13 @@ public class TestService {
     public TestServiceMessageInfoRO getLastTestSent(String senderPartyId, String partyId) {
         LOG.debug("Getting last sent test message for partyId [{}]", partyId);
 
-        PartyId senderParty = partyIdDao.findFirstByValue(senderPartyId);
+
+        PartyId senderParty = getPartyIdByValue(senderPartyId);
         if (senderParty == null) {
             LOG.debug("No Party found with id value [{}]", senderPartyId);
             return null;
         }
-        PartyId party = partyIdDao.findFirstByValue(partyId);
+        PartyId party = getPartyIdByValue(partyId);
         if (party == null) {
             LOG.debug("No Party found with id value [{}]", partyId);
             return null;
@@ -181,6 +183,32 @@ public class TestService {
 
         UserMessageLog userMessageLog = userMessageLogDao.findByEntityId(userMessage.getEntityId());
         return getTestServiceMessageInfoRO(partyId, userMessage.getMessageId(), userMessageLog);
+    }
+
+    private PartyId getPartyIdByValue(String value) {
+        Party party = pModeProvider.getPartyByIdentifier(value);
+        if (party == null) {
+            LOG.debug("Party with identifier [{}] not found in pMode", value);
+            return null;
+        }
+
+        Identifier identifier = party.getIdentifiers().stream()
+                .filter(identif -> StringUtils.equalsIgnoreCase(identif.getPartyId(), value))
+                .findFirst().orElse(null);
+        if (identifier == null) {
+            LOG.debug("Party identifier [{}] not found in pMode", value);
+            return null;
+        }
+
+        PartyId partyId = partyIdDao.findExistingPartyId(identifier.getPartyId(),
+                identifier.getPartyIdType() == null ? null : identifier.getPartyIdType().getValue());
+        if (partyId == null) {
+            LOG.debug("Party with value [{}] and type [{}] not found in dictionary", value,
+                    identifier.getPartyIdType() == null ? null : identifier.getPartyIdType().getValue());
+            return null;
+        }
+
+        return partyId;
     }
 
     /**
@@ -225,12 +253,12 @@ public class TestService {
                 return null;
             }
         } else {
-            PartyId senderParty = partyIdDao.findFirstByValue(senderPartyId);
+            PartyId senderParty = getPartyIdByValue(senderPartyId);
             if (senderParty == null) {
                 LOG.debug("No Party found with id value [{}]", senderPartyId);
                 return null;
             }
-            PartyId party = partyIdDao.findFirstByValue(partyId);
+            PartyId party = getPartyIdByValue(partyId);
             if (party == null) {
                 LOG.debug("No Party found with id value [{}]", partyId);
                 return null;
