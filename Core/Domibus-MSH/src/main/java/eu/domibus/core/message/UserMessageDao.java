@@ -35,7 +35,6 @@ public class UserMessageDao extends BasicDao<UserMessage> {
     private static final String GROUP_ID = "GROUP_ID";
 
     public static final String MSH_ROLE = "MSH_ROLE";
-    public static final String PARTY = "PARTY";
 
     private final MessageStatusDao messageStatusDao;
 
@@ -187,7 +186,7 @@ public class UserMessageDao extends BasicDao<UserMessage> {
         final TypedQuery<UserMessage> query = this.em.createNamedQuery("UserMessage.findTestMessageFromPartyToPartyDesc", UserMessage.class);
 
         query.setParameter("SENDER_PARTY", fromParty);
-        query.setParameter(PARTY, toParty);
+        query.setParameter("PARTY", toParty);
         query.setParameter(MSH_ROLE, mshRoleDao.findByValue(MSHRole.SENDING));
 
         query.setMaxResults(1);
@@ -198,7 +197,7 @@ public class UserMessageDao extends BasicDao<UserMessage> {
         final TypedQuery<UserMessage> query = this.em.createNamedQuery("UserMessage.findTestMessageToPartyDesc", UserMessage.class);
 
         List<PartyId> partyEntities = partyIdDao.searchByValue(partyId);
-        query.setParameter(PARTY, partyEntities);
+        query.setParameter("PARTIES", partyEntities);
 
         MSHRoleEntity roleEntity = mshRoleDao.findByValue(MSHRole.SENDING);
         query.setParameter(MSH_ROLE, roleEntity);
@@ -210,7 +209,7 @@ public class UserMessageDao extends BasicDao<UserMessage> {
         final TypedQuery<UserMessage> query = this.em.createNamedQuery("UserMessage.findSentTestMessageWithStatusDesc", UserMessage.class);
 
         List<PartyId> partyEntities = partyIdDao.searchByValue(partyId);
-        query.setParameter(PARTY, partyEntities);
+        query.setParameter("PARTIES", partyEntities);
 
         MSHRoleEntity roleEntity = mshRoleDao.findByValue(MSHRole.SENDING);
         query.setParameter(MSH_ROLE, roleEntity);
@@ -239,7 +238,7 @@ public class UserMessageDao extends BasicDao<UserMessage> {
         final TypedQuery<UserMessage> query = this.em.createNamedQuery("UserMessage.findTestMessageFromPartyDesc", UserMessage.class);
 
         List<PartyId> partyEntities = partyIdDao.searchByValue(partyId);
-        query.setParameter(PARTY, partyEntities);
+        query.setParameter("PARTIES", partyEntities);
 
         MSHRoleEntity roleEntity = mshRoleDao.findByValue(MSHRole.RECEIVING);
         query.setParameter(MSH_ROLE, roleEntity);

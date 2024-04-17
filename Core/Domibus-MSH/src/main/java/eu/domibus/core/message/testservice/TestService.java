@@ -164,7 +164,6 @@ public class TestService {
     public TestServiceMessageInfoRO getLastTestSent(String senderPartyId, String partyId) {
         LOG.debug("Getting last sent test message for partyId [{}]", partyId);
 
-
         PartyId senderParty = getPartyIdByValue(senderPartyId);
         if (senderParty == null) {
             LOG.debug("No Party found with id value [{}]", senderPartyId);
