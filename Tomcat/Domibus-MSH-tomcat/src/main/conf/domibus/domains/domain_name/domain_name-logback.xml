@@ -88,6 +88,11 @@
         </encoder>
     </appender>
 
+    <!--  In order to enable logging of request/responses please change the loglevel to INFO in logback.xml, the logging level set here is ignored -->
+    <logger name="org.apache.cxf" additivity="false">
+        <appender-ref ref="domain_name-file"/>
+    </logger>
+
     <logger name="domain_name.eu.domibus" level="INFO">
         <appender-ref ref="domain_name-security-file"/>
         <appender-ref ref="domain_name-business-file"/>
