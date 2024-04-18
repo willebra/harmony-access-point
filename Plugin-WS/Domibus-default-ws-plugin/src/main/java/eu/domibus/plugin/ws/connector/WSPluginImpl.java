@@ -251,7 +251,7 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
         if (markAsDownloaded) {
             int deletedMessageCount = wsMessageLogService.deleteByMessageId(messageId);
             if(deletedMessageCount == 0) {
-                throw new WSMessageLogNotFoundException();
+                throw new WSMessageLogNotFoundException("WSMessageLogEntity not found for message id [" + messageId + "]");
             }
             LOG.debug("Removed downloaded message from the plugin table containing the pending messages (WSMessageLog messageId [{}])", messageId);
         }

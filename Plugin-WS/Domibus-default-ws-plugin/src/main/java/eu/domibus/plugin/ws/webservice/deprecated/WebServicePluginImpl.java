@@ -347,7 +347,7 @@ public class WebServicePluginImpl implements BackendInterface {
         try {
             userMessage = wsPlugin.downloadMessage(trimmedMessageId, null);
         } catch (final WSMessageLogNotFoundException wsmlnfEx) {
-            LOG.businessError(DomibusMessageCode.BUS_MSG_NOT_FOUND, trimmedMessageId);
+            LOG.businessError(DomibusMessageCode.BUS_MSG_NOT_FOUND, wsmlnfEx, trimmedMessageId);
             throw new RetrieveMessageFault(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", webServicePluginExceptionFactory.createFault("No message with id [" + trimmedMessageId + "] pending for download"));
         } catch (final MessageNotFoundException mnfEx) {
             if (LOG.isDebugEnabled()) {

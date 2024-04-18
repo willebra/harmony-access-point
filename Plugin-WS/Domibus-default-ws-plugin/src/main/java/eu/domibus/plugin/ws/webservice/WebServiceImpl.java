@@ -161,16 +161,13 @@ public class WebServiceImpl implements WebServicePluginInterface {
     }
 
     public UserMessage downloadUserMessage(String messageId) {
-        UserMessage userMessage = null;
+        UserMessage userMessage;
         try {
             userMessage = wsPlugin.downloadMessage(messageId, null);
         } catch (final WSMessageLogNotFoundException wsmlnfEx) {
             LOG.warn("WSMessageLog not found for messageId [{}]", messageId);
-        } catch (final MessageNotFoundException mnfEx) {
             throw new WSPluginException(MESSAGE_NOT_FOUND_ID + messageId + "]");
-        }
-
-        if (userMessage == null) {
+        } catch (final MessageNotFoundException mnfEx) {
             throw new WSPluginException(MESSAGE_NOT_FOUND_ID + messageId + "]");
         }
         return userMessage;

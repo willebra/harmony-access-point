@@ -90,7 +90,7 @@ public class WSPluginMessageSender {
                 wsPlugin.downloadMessage(messageId, null, markAsDownloaded);
             }
         } catch (final WSMessageLogNotFoundException wsmlnfEx) {
-            LOG.warn("WSMessageLog not found for messageId [{}]", messageId);
+            LOG.warn("WSMessageLogEntity not found for message id [" + messageId + "]", wsmlnfEx);
         } catch (Throwable t) {//NOSONAR: Catching Throwable is done on purpose in order to even catch out of memory exceptions.
             LOG.error("Error occurred when sending backend message with ID [{}]", backendMessage.getEntityId(), t);
             if (dispatchRule == null) {
