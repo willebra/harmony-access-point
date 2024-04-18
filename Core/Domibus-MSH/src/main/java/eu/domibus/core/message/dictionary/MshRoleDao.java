@@ -4,12 +4,11 @@ import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MSHRoleEntity;
 import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.SingleValueDictionaryDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 
 /**
  * @author Cosmin Baciu
@@ -20,16 +19,17 @@ import javax.transaction.Transactional;
  */
 @Repository
 public class MshRoleDao extends SingleValueDictionaryDao<MSHRoleEntity> {
-    @Autowired
-    protected DomainContextProvider domainProvider;
 
-    public MshRoleDao() {
+    protected final DomainContextProvider domainProvider;
+
+    public MshRoleDao(DomainContextProvider domainProvider) {
         super(MSHRoleEntity.class);
+        this.domainProvider = domainProvider;
     }
 
     @Transactional
     public MSHRoleEntity findOrCreate(final MSHRole role) {
-        if(role == null) {
+        if (role == null) {
             return null;
         }
 

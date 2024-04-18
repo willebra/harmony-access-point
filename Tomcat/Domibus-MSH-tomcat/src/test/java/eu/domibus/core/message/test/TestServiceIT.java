@@ -57,7 +57,6 @@ public class TestServiceIT extends AbstractIT {
         assertNotNull(res);
         assertNull(res.getErrorInfo());
 
-        //partyIdType name="partyTypeUrn" value="urn:oasis:names:tc:ebcore:partyid-type:unregistered"
         Map<String, String> toReplace = new HashMap<>();
         toReplace.put("partyIdType name=\"partyTypeUrn\" value=\"urn:oasis:names:tc:ebcore:partyid-type:unregistered\"",
                 "partyIdType name=\"partyTypeUrn\" value=\"urn:oasis:names:tc:ebcore:partyid-type:eudamed\"");
