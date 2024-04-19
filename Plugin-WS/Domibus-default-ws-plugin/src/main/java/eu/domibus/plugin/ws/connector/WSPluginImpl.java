@@ -111,7 +111,7 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
             wsPluginBackendService.send(event, SUBMIT_MESSAGE);
             wsPluginBackendService.send(event, RECEIVE_SUCCESS);
         } catch (DataIntegrityViolationException e) {
-            LOG.error("Could not deliver message with messageId [{}] ", wsMessageLogEntity.getMessageId(), e);
+            LOG.error("Could not deliver message with messageId [{}]. Possibly the message was already delivered", wsMessageLogEntity.getMessageId(), e);
             throw new WSPluginException("Could not deliver message with messageId " + wsMessageLogEntity.getMessageId(), e);
         }
     }

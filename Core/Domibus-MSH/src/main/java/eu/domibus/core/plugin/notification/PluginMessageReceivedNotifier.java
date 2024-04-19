@@ -29,7 +29,7 @@ public class PluginMessageReceivedNotifier implements PluginEventNotifier <Deliv
 
     @Override
     public void notifyPlugin(DeliverMessageEvent messageEvent, BackendConnector<?, ?> backendConnector) {
-        LOG.businessInfo(DomibusMessageCode.BUS_NOTIFY_MESSAGE_RECEIVED);
+        LOG.businessInfo(DomibusMessageCode.BUS_NOTIFY_MESSAGE_RECEIVED, messageEvent.getMessageId());
         backendConnectorDelegate.deliverMessage(backendConnector, messageEvent);
     }
 }
