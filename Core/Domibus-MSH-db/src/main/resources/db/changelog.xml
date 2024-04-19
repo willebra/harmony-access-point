@@ -54,7 +54,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <addUniqueConstraint columnNames="MESSAGE_ID" constraintName="UK_WS_MESSAGE_ID" tableName="WS_PLUGIN_TB_MESSAGE_LOG"/>
     </changeSet>
+
 
     <changeSet author="Francois Gautier" id="EDELIVERY-2427">
         <comment>WS Plugin specific tables for backend dispatch</comment>
