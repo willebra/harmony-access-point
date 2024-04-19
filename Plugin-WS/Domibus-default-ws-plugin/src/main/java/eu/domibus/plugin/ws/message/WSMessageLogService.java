@@ -15,7 +15,7 @@ public interface WSMessageLogService {
 
     void delete(WSMessageLogEntity wsMessageLogEntity);
 
-    void deleteByMessageId(final String messageId);
+    int deleteByMessageId(final String messageId);
 
     void deleteByMessageIds(List<String> messageIds);
 

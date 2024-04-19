@@ -34,8 +34,8 @@ public class WSMessageLogServiceImpl implements WSMessageLogService {
     }
 
     @Override
-    public void deleteByMessageId(String messageId) {
-        wsMessageLogDao.deleteByMessageId(messageId);
+    public int deleteByMessageId(String messageId) {
+        return wsMessageLogDao.deleteByMessageId(messageId);
     }
 
     @Override
