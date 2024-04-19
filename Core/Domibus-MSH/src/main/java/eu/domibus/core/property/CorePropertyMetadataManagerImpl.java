@@ -237,6 +237,7 @@ public class CorePropertyMetadataManagerImpl implements DomibusPropertyMetadataM
             DomibusPropertyMetadata.getGlobalProperty(DOMIBUS_LOGGING_METADATA_PRINT, Type.BOOLEAN),
             new DomibusPropertyMetadata(DOMIBUS_LOGGING_REMOTE_CERTIFICATES_PRINT, Type.BOOLEAN, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_LOGGING_LOCAL_CERTIFICATES_PRINT, Type.BOOLEAN, Usage.DOMAIN, true),
+            new DomibusPropertyMetadata(DOMIBUS_LOGGING_SEND_MESSAGE_ENQUEUED_MAX_MINUTES, Type.POSITIVE_INTEGER, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_LOGGING_EBMS3_ERROR_PRINT, Type.BOOLEAN, Usage.GLOBAL_AND_DOMAIN, true),
             DomibusPropertyMetadata.getGlobalProperty(DOMIBUS_LOGGING_CXF_LIMIT, Type.NUMERIC),         //there are still usages in xml!!!! move them?
 

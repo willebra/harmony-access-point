@@ -1,8 +1,10 @@
 package eu.domibus.core.ebms3.sender;
 
 import eu.domibus.api.multitenancy.DomainContextProvider;
+import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.core.message.UserMessageDefaultService;
 import eu.domibus.core.multitenancy.DomibusDomainException;
+import eu.domibus.core.util.DateUtilImpl;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.messaging.MessageConstants;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+
+import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_LOGGING_SEND_MESSAGE_ENQUEUED_MAX_MINUTES;
 
 /**
  * @author Cosmin Baciu
@@ -26,6 +30,12 @@ public abstract class AbstractMessageSenderListener implements MessageListener {
 
     @Autowired
     protected UserMessageDefaultService userMessageService;
+
+    @Autowired
+    protected DomibusPropertyProvider domibusPropertyProvider;
+
+    @Autowired
+    protected DateUtilImpl dateUtil;
 
     @Override
     public void onMessage(final Message message) {
@@ -60,6 +70,8 @@ public abstract class AbstractMessageSenderListener implements MessageListener {
             return;
         }
 
+        validateEnqueuedMessageDuration(message, messageId);
+
         try {
             domainContextProvider.setCurrentDomainWithValidation(domainCode);
         } catch (DomibusDomainException ex) {
@@ -72,6 +84,29 @@ public abstract class AbstractMessageSenderListener implements MessageListener {
         sendUserMessage(messageId, messageEntityId, retryCount);
 
         getLogger().debug("Finished sending message ID [{}] for domain [{}]", messageId, domainCode);
+    }
+
+    protected void validateEnqueuedMessageDuration(Message message, String messageId) {
+        if (getLogger().isDebugEnabled()) {
+            getLogger().debug("Validating the enqueued duration for [{}]", messageId);
+
+            Integer maxMinutesEnqueued = domibusPropertyProvider.getIntegerProperty(DOMIBUS_LOGGING_SEND_MESSAGE_ENQUEUED_MAX_MINUTES);
+            if (maxMinutesEnqueued <= 0) {
+                getLogger().debug("Maximum allowed time in minutes is currently ignored [{}]", maxMinutesEnqueued);
+                return;
+            }
+
+            long timestamp = 0;
+            try {
+                timestamp = message.getJMSTimestamp();
+            } catch (JMSException e) {
+                getLogger().debug("Error getting the message JMS timestamp for [{}]", messageId, e);
+            }
+
+            if (timestamp > 0 && dateUtil.getDateMinutesAgo(maxMinutesEnqueued).getTime() > timestamp) {
+                getLogger().warn("User message [{}] has been enqueued for more than the maximum allowed time of [{}] minutes", messageId, maxMinutesEnqueued);
+            }
+        }
     }
 
     public abstract DomibusLogger getLogger();

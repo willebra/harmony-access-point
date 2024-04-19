@@ -6,6 +6,7 @@ Domibus 5.1.4
 - removed eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS datasources from wildfly standalone-full.xml file
 - Improved the self sending mechanism
 - Added property for disabling the use of system default certificates (cacerts) on https downloads (CRLs).
+- Added property for logging messages that are being sent but which have been enqueued for more than a specific duration
 - Added support for special characters in message ids
 - Improved the handling/persistence of digital certificates
 - Handle receipts with the same message id
