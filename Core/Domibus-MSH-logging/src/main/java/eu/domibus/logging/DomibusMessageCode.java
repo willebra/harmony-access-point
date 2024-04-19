@@ -103,6 +103,7 @@ public enum DomibusMessageCode implements MessageCode {
     BUS_MESSAGE_STATUS_ROLLBACK("BUS-092", "Message with type [{}] has status rolled back to [{}]"),
     BUS_NOTIFY_MESSAGE_RESPONSE_SENT_ERROR("BUS-093", "An error occurred while notifying plugin [{}] of message response sent."),
     BUS_MESSAGE_PLUGIN_RECEIVE_FAILED("BUS-094", "Failed to receive message in the plugin [{}]"),
+    BUS_NOTIFY_MESSAGE_RECEIVED("BUS-095", "Notify message received for messageId [{}] or messageEntityId [{}]."),
 
     SEC_UNSECURED_LOGIN_ALLOWED("SEC-001", "Unsecure login is allowed, no authentication will be performed"),
     SEC_BASIC_AUTHENTICATION_USE("SEC-002", "Basic authentication is used"),

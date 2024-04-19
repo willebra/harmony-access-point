@@ -18,6 +18,7 @@ import eu.domibus.plugin.transformer.MessageSubmissionTransformer;
 import eu.domibus.plugin.ws.backend.dispatch.WSPluginBackendService;
 import eu.domibus.plugin.ws.backend.reliability.queue.WSSendMessageListenerContainer;
 import eu.domibus.plugin.ws.exception.WSMessageLogNotFoundException;
+import eu.domibus.plugin.ws.exception.WSPluginException;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import eu.domibus.plugin.ws.initialize.WSPluginInitializer;
@@ -25,6 +26,7 @@ import eu.domibus.plugin.ws.message.WSMessageLogEntity;
 import eu.domibus.plugin.ws.message.WSMessageLogService;
 import eu.domibus.plugin.ws.property.WSPluginPropertyManager;
 import eu.domibus.plugin.ws.webservice.StubDtoTransformer;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,10 +102,16 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
                 event.getProps().get(MessageConstants.ORIGINAL_SENDER),
                 new Date());
 
-        wsMessageLogService.create(wsMessageLogEntity);
+        try {
+            LOG.debug("Create wsMessageLogEntity for messageId [{}] ", wsMessageLogEntity.getMessageId());
+            wsMessageLogService.create(wsMessageLogEntity);
 
-        wsPluginBackendService.send(event, SUBMIT_MESSAGE);
-        wsPluginBackendService.send(event, RECEIVE_SUCCESS);
+            wsPluginBackendService.send(event, SUBMIT_MESSAGE);
+            wsPluginBackendService.send(event, RECEIVE_SUCCESS);
+        } catch (DataIntegrityViolationException e) {
+            LOG.error("Could not deliver message with messageId [{}]. Possibly the message was already delivered", wsMessageLogEntity.getMessageId(), e);
+            throw new WSPluginException("Could not deliver message with messageId " + wsMessageLogEntity.getMessageId(), e);
+        }
     }
 
     /**
