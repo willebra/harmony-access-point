@@ -172,6 +172,7 @@ public class BackendNotificationService {
         deliverMessageEvent.setMessageId(userMessage.getMessageId());
         addMessagePropertiesToEvent(deliverMessageEvent, userMessage, null);
 
+        LOG.debug("Do notifyOfIncoming with deliverMessageEvent.");
         notifyOfIncoming(deliverMessageEvent, matchingBackendFilter, notificationType);
     }
 

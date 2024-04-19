@@ -11,6 +11,7 @@ Domibus 5.1.4
 - Improved the handling/persistence of digital certificates
 - Handle receipts with the same message id
 - Upgraded Tomcat 9 to the latest version 9.0.86
+- Fix issue with duplicate messageIds in listPending messages
 Domibus 5.1.3
 - Fix logback collision error in multitenant setups, the ${domainName} string should be replaced in the <domain_name>_logback.xml with the actual <domain_name>
 Domibus 5.1.2
