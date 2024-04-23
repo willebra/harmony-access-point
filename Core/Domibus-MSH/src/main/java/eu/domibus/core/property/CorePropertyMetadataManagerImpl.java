@@ -267,6 +267,7 @@ public class CorePropertyMetadataManagerImpl implements DomibusPropertyMetadataM
             new DomibusPropertyMetadata(DOMIBUS_MSH_RETRY_CRON, Type.CRON, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_RETENTION_WORKER_CRON_EXPRESSION, Type.CRON, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_ONGOING_MESSAGES_SANITIZING_WORKER_CRON, Type.CRON, Usage.DOMAIN, true),
+            new DomibusPropertyMetadata(DOMIBUS_ONGOING_MESSAGES_SANITIZING_WORKER_DELAY_HOURS, Type.NUMERIC, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_ONGOING_MESSAGES_SANITIZING_ALERT_LEVEL, Type.CRON, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_ONGOING_MESSAGES_SANITIZING_ALERT_SUBJECT, Type.CRON, Usage.DOMAIN, true),
             new DomibusPropertyMetadata(DOMIBUS_ONGOING_MESSAGES_SANITIZING_ALERT_BODY, Type.CRON, Usage.DOMAIN, true),

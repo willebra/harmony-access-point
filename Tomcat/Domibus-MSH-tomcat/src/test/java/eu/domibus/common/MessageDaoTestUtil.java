@@ -214,9 +214,15 @@ public class MessageDaoTestUtil {
     }
 
     @Transactional
+    public UserMessageLog createUserMessageLog(String msgId, Date received, MessageStatus messageStatus) {
+        return createUserMessageLog(msgId, received, messageStatus, MPC, false);
+    }
+
+    @Transactional
     public UserMessageLog createUserMessageLog(String msgId, Date received) {
         return createUserMessageLog(msgId, received, MessageStatus.RECEIVED, MPC, false);
     }
+
     @Transactional
     public UserMessageLog createUserMessageLogFragment(String msgId, Date received) {
         return createUserMessageLog(msgId, received, MessageStatus.RECEIVED, MPC, true);
