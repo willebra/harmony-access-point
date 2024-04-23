@@ -50,6 +50,7 @@ public class OngoingMessageSanitizingService {
             Date lastDateNotBeingProcessed = DateUtils.addMinutes(dateUtil.getUtcDate(), maxRetention * -1);
             String idPrefix = dateUtil.getIdPkDateHourPrefix(lastDateNotBeingProcessed);
             lastMessageId = Long.parseLong(idPrefix + MIN);
+            LOG.debug("Last Message Id: [{}]", lastMessageId);
         }
         List<EArchiveBatchUserMessage> messagesNotFinalAsc = userMessageLogDao.findMessagesNotFinalAsc(0, lastMessageId);
         return messagesNotFinalAsc;
