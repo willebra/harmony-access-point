@@ -70,17 +70,18 @@ public abstract class AbstractMessageSenderListener implements MessageListener {
             return;
         }
 
-        validateEnqueuedMessageDuration(message, messageId);
-
         try {
             domainContextProvider.setCurrentDomainWithValidation(domainCode);
         } catch (DomibusDomainException ex) {
             getLogger().error("Invalid domain: [{}]", domainCode, ex);
             return;
         }
+      
+        validateEnqueuedMessageDuration(message, messageId);
+      
         getLogger().putMDC(DomibusLogger.MDC_MESSAGE_ID, messageId);
         getLogger().debug("Sending message ID [{}] for domain [{}]", messageId, domainCode);
-
+      
         sendUserMessage(messageId, messageEntityId, retryCount);
 
         getLogger().debug("Finished sending message ID [{}] for domain [{}]", messageId, domainCode);
