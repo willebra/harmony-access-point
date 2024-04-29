@@ -18,14 +18,20 @@ import eu.domibus.core.message.pull.PullMessageService;
 import eu.domibus.core.plugin.notification.BackendNotificationService;
 import eu.domibus.core.pmode.provider.PModeProvider;
 import eu.domibus.messaging.MessageConstants;
-import mockit.*;
+import mockit.Expectations;
+import mockit.FullVerifications;
+import mockit.Injectable;
+import mockit.Tested;
 import mockit.integration.junit4.JMockit;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.jms.Queue;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -105,14 +111,33 @@ public class RetryDefaultServiceTest {
         List<Long> retryMessageIds = Arrays.asList(123L, 456L, 789L);
 
         new Expectations(retryService) {{
+            pModeProvider.getMaxRetryTimeout();
+            result = 12;
             userMessageLogDao.findRetryMessages(anyLong, anyLong);
             result = new ArrayList<>(retryMessageIds);
+
+            userMessageLogDao.findByEntityId(123L);
+            result = getUserMessageLog(LocalDateTime.now().minusMinutes(5));
+            userMessageLogDao.findByEntityId(456L);
+            result = getUserMessageLog(LocalDateTime.now().minusMinutes(10));
+            userMessageLogDao.findByEntityId(789L);
+            result = getUserMessageLog(LocalDateTime.now().minusMinutes(15));
         }};
 
         List<Long> result = retryService.getMessagesNotAlreadyScheduled();
-        assertEquals(3, result.size());
+        assertEquals(2, result.size());
 
-        assertEquals(result, retryMessageIds);
+        assertEquals(result, Arrays.asList(123L, 456L));
+    }
+
+    private UserMessageLog getUserMessageLog(LocalDateTime localDateTime) {
+        UserMessageLog userMessageLog = new UserMessageLog();
+        userMessageLog.setCreationTime(asDate(localDateTime));
+        return userMessageLog;
+    }
+
+    private Date asDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneOffset.UTC).toInstant());
     }
 
     @Test
