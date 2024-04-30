@@ -123,7 +123,8 @@ public class RetryDefaultService implements RetryService {
 
         long nowMilli = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
 
-        long minEntityId = dateUtil.getMinEntityId(MINUTES.toSeconds(maxRetryTimeout + retryTimeoutDelay));
+        int timeOutMin = maxRetryTimeout + retryTimeoutDelay;
+        long minEntityId = dateUtil.getMinEntityId(MINUTES.toSeconds(timeOutMin));
         long maxEntityId = dateUtil.getMaxEntityId(0);
 
         LOG.trace("minEntityId [{}], maxEntityId [{}]", minEntityId, maxEntityId);
@@ -139,8 +140,9 @@ public class RetryDefaultService implements RetryService {
         for (Long entityId : messageEntityIdsToSend) {
             UserMessageLog byEntityId = userMessageLogDao.findByEntityId(entityId);
 
-            long timeout = (maxRetryTimeout + retryTimeoutDelay) * MILLIS_PER_MINUTE;
+            long timeout = timeOutMin * MILLIS_PER_MINUTE;
             if((byEntityId.getCreationTime().getTime() + timeout) > nowMilli){
+                LOG.debug("EntityId [{}] creationTime [{}] timeout [{} m]", entityId, byEntityId.getCreationTime(), timeOutMin);
                 result.add(entityId);
             }
         }
