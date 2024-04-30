@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -136,13 +135,12 @@ public class RetryDefaultService implements RetryService {
         LOG.trace("Found messages to be send [{}]", messageEntityIdsToSend);
 
 
-        // START - This part should NOT be propagated to 5.2 (TSID is making the filter work correctly)
+        // START - This part should NOT be propagated to 5.2 (TSID is making the filter works correctly)
         for (Long entityId : messageEntityIdsToSend) {
             UserMessageLog byEntityId = userMessageLogDao.findByEntityId(entityId);
 
             long timeout = (maxRetryTimeout + retryTimeoutDelay) * MILLIS_PER_MINUTE;
             if((byEntityId.getCreationTime().getTime() + timeout) > nowMilli){
-                LOG.info("Entity [{}] [{}] [{}] [{}]", entityId, Instant.ofEpochMilli(byEntityId.getCreationTime().getTime()).atZone(ZoneOffset.UTC).toLocalDateTime(), byEntityId.getCreationTime().getTime() + timeout, nowMilli);
                 result.add(entityId);
             }
         }
