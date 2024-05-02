@@ -327,6 +327,11 @@ public class FSSendMessagesService {
     protected boolean canReadFileSafely(FileObject fileObject, String domain) {
         String filePath = fileObject.getName().getPath();
 
+        if (!checkFileExists(fileObject)) {
+            LOG.debug("Could not process file [{}] because it does not exist anymore.", filePath);
+            return false;
+        }
+
         if (checkSizeChangedRecently(fileObject, domain)) {
             LOG.debug("Could not process file [{}] because its size has changed recently.", filePath);
             return false;
@@ -441,6 +446,15 @@ public class FSSendMessagesService {
             return true;
         }
         return false;
+    }
+
+    protected boolean checkFileExists(FileObject fileObject) {
+        try {
+            return fileObject.exists();
+        } catch (FileSystemException e) {
+            LOG.warn("Error while checking file [{}]", fileObject.getName().getPath(), e);
+            return false;
+        }
     }
 
     protected void enqueueProcessableFileWithContext(final FileObject fileObject, final Map<String, String> context) {
