@@ -37,6 +37,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -84,7 +85,7 @@ public class FSSendMessagesService {
     protected FSFileNameHelper fsFileNameHelper;
 
 
-    protected Map<String, FileInfo> observedFilesInfo = new HashMap<>();
+    protected Map<String, FileInfo> observedFilesInfo = new ConcurrentHashMap<>();
 
     /**
      * Triggering the send messages means that the message files from the OUT directory
