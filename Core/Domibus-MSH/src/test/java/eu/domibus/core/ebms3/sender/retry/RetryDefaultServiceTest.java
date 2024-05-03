@@ -27,8 +27,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.jms.Queue;
-import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -117,11 +117,11 @@ public class RetryDefaultServiceTest {
             result = new ArrayList<>(retryMessageIds);
 
             userMessageLogDao.findByEntityId(123L);
-            result = getUserMessageLog(LocalDateTime.now().minusMinutes(5));
+            result = getUserMessageLog(ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(5));
             userMessageLogDao.findByEntityId(456L);
-            result = getUserMessageLog(LocalDateTime.now().minusMinutes(10));
+            result = getUserMessageLog(ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(10));
             userMessageLogDao.findByEntityId(789L);
-            result = getUserMessageLog(LocalDateTime.now().minusMinutes(15));
+            result = getUserMessageLog(ZonedDateTime.now(ZoneOffset.UTC).minusMinutes(15));
         }};
 
         List<Long> result = retryService.getMessagesNotAlreadyScheduled();
@@ -130,14 +130,14 @@ public class RetryDefaultServiceTest {
         assertEquals(result, Arrays.asList(123L, 456L));
     }
 
-    private UserMessageLog getUserMessageLog(LocalDateTime localDateTime) {
+    private UserMessageLog getUserMessageLog(ZonedDateTime localDateTime) {
         UserMessageLog userMessageLog = new UserMessageLog();
         userMessageLog.setCreationTime(asDate(localDateTime));
         return userMessageLog;
     }
 
-    private Date asDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.atZone(ZoneOffset.UTC).toInstant());
+    private Date asDate(ZonedDateTime zonedDateTime) {
+        return Date.from(zonedDateTime.toInstant());
     }
 
     @Test
