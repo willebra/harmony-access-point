@@ -633,3 +633,7 @@ ngx-mat-timepicker .mat-mdc-form-field {
 .mat-calendar-header {
   padding-top: 0 !important;
 }
+
+.cdk-overlay-pane {
+  overflow-y: auto !important;
+}
