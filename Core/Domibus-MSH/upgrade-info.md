@@ -15,8 +15,10 @@ Release checklist:
 
 # Domibus upgrade information
 ## Domibus 5.1.4 (from 5.1.3)
-                - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0 
-                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s) 
+                - Run the appropriate DB upgrade script (mysql-5.1.2-to-5.4-upgrade.ddl for MySQL or oracle-5.1.2-to-5.1.4-upgrade.ddl for Oracle)
+                - Update property name from "domibus.cacerts.validation.enabled" to "domibus.cacerts.download.enabled"
+                - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0
 
 #### PULL only if not already applied
                 - Update the roles in the pull processes to reflect the correct matching of From party role matches the initiatorRole and To party role matches the responderRole. If you are using the sample pModes, 
