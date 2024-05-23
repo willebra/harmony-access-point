@@ -1,6 +1,6 @@
 package eu.domibus.core.message.nonrepudiation;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.exceptions.DomibusCoreException;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.SignalMessage;
@@ -32,17 +32,6 @@ public class SignalMessageRawServiceIT extends AbstractIT {
     @Autowired
     protected SignalMessageRawEnvelopeDao signalMessageRawEnvelopeDao;
 
-
-    @Ignore //TODO: to be removed by EDELIVERY-11795
-    @Test
-    public void noSignalFound() {
-        try {
-            signalMessageRawService.saveSignalMessageRawService("", 1L);
-            Assert.fail();
-        } catch (DomibusCoreException e) {
-            //OK
-        }
-    }
 
     @Test
     @Transactional

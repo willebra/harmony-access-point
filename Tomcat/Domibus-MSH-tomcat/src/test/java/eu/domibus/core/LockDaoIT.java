@@ -1,6 +1,6 @@
 package eu.domibus.core;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.core.spring.lock.LockDao;
 import eu.domibus.core.spring.lock.LockEntity;
 import eu.domibus.logging.DomibusLogger;

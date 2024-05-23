@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   isMultiDomain = false;
   extAuthProvideRedirectTo: string;
 
-  @ViewChild(RouterOutlet, {static: false})
+  @ViewChild(RouterOutlet)
   outlet: RouterOutlet;
 
   constructor(private securityService: SecurityService,
@@ -124,16 +124,13 @@ export class AppComponent implements OnInit {
   }
 
   private onHttpEventService(error) {
-    // TODO(18/09/20, Ion Perpegel): review the possible status values and their meaning
-    console.log('Caught onHttpEventService event with error=', error);
-    if (error && (error.status === Server.HTTP_FORBIDDEN || error.status === Server.HTTP_UNAUTHORIZED)) {
-      // did we have previously a valid session?
-      if (this.securityService.isClientConnected()) {
-        this.sessionService.setExpiredSession(SessionState.EXPIRED_INACTIVITY_OR_ERROR);
-        this.securityService.logout();
-      }
+    console.log('onHttpEventService in app component error=', error)
+    if (error && (error.status === Server.HTTP_UNAUTHORIZED || error.status === Server.HTTP_FORBIDDEN)) {
+      this.securityService.clearAppData(SessionState.EXPIRED_INACTIVITY_OR_ERROR);
+      this.router.navigate(['/login']);
     }
   }
+
 
   isSuperAdmin() {
     return (this.isMultiDomain && this.securityService.isCurrentUserSuperAdmin());

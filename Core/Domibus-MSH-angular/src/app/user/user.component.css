@@ -4,6 +4,6 @@
   height: 100%;
 }
 
-/deep/ .user-deleted {
+::ng-deep .user-deleted {
   text-decoration: line-through !important;
 }

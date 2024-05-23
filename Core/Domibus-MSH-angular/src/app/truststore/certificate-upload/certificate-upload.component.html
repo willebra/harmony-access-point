@@ -3,7 +3,7 @@
 <mat-dialog-content style="width:450px;">
 
   <form [formGroup]="truststoreForm">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
 
         <label class="custom-file-upload">
@@ -13,7 +13,8 @@
         {{selectedFileName}}
 
         <mat-form-field class="password" style="margin-top: 20px;">
-          <input matInput placeholder="Alias" id="alias_id" name="alias" type="text"
+          <mat-label>Alias"</mat-label>
+          <input matInput id="alias_id" name="alias" type="text"
                  [formControl]="truststoreForm.controls['alias']" required="true">
           <span class="help-block" *ngIf="shouldShowErrors(truststoreForm.controls['alias'])">
               <div *ngIf="truststoreForm.controls['alias'].errors?.required" class="error">Certificate alias is required</div>

@@ -86,4 +86,5 @@ public interface MultiDomainCryptoService extends DomainsAware {
 
     String getTrustStoreFileExtension();
 
+    void refreshTrustedLists(Domain domain);
 }

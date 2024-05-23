@@ -11,6 +11,7 @@ import eu.domibus.plugin.ws.backend.rules.WSPluginDispatchRulesService;
 import eu.domibus.plugin.ws.backend.*;
 import eu.domibus.plugin.ws.connector.WSPluginImpl;
 import eu.domibus.plugin.ws.exception.WSPluginException;
+import eu.domibus.plugin.ws.message.WSMessageLogService;
 import mockit.Expectations;
 import mockit.FullVerifications;
 import mockit.Injectable;
@@ -60,6 +61,9 @@ public class WSPluginMessageSenderTest {
 
     @Injectable
     private DomibusPropertyExtService domibusPropertyExtService;
+
+    @Injectable
+    private WSMessageLogService wsMessageLogService;
 
     @Test(expected = WSPluginException.class)
     public void sendSubmitMessage_noRule(@Injectable WSBackendMessageLogEntity wsBackendMessageLogEntity) {

@@ -61,6 +61,12 @@
         </dependency>
         <!-- End Domibus modules -->
 
+        <dependency>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>1.7</version>
+        </dependency>
+
         <!-- BouncyCastle -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -185,6 +191,11 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-bindings-soap</artifactId>
         </dependency>
     </dependencies>
 </project>

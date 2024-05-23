@@ -1,10 +1,8 @@
 ﻿import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {SecurityService} from '../../security/security.service';
 import {DomibusInfoService} from '../appinfo/domibusinfo.service';
-import {SessionService} from '../../security/session.service';
 import {SessionState} from '../../security/SessionState';
-import {DomainService} from '../../security/domain.service';
 
 /**
  * It will handle for each route where is defined:
@@ -12,12 +10,10 @@ import {DomainService} from '../../security/domain.service';
  * - authorization - only if the route has data: checkRoles initialized
  */
 @Injectable()
-export class AuthenticatedAuthorizedGuard implements CanActivate {
+export class AuthenticatedAuthorizedGuard {
 
   constructor(private router: Router, private securityService: SecurityService,
-              private domibusInfoService: DomibusInfoService,
-              private sessionService: SessionService,
-              private domainService: DomainService) {
+              private domibusInfoService: DomibusInfoService) {
   }
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -55,12 +51,7 @@ export class AuthenticatedAuthorizedGuard implements CanActivate {
   }
 
   private handleNotAuthenticated() {
-    // if previously connected then the session went expired
-    if (this.securityService.isClientConnected()) {
-      this.sessionService.setExpiredSession(SessionState.EXPIRED_INACTIVITY_OR_ERROR);
-      this.securityService.clearSession();
-      this.domainService.resetDomain();
-    }
+    this.securityService.clearAppData(SessionState.EXPIRED_INACTIVITY_OR_ERROR);
   }
 
   private async getNotAuthenticatedRoute(state: RouterStateSnapshot): Promise<UrlTree> {

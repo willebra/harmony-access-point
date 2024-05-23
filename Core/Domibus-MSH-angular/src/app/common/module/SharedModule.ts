@@ -7,9 +7,9 @@ import {InputDebounceBehaviourDirective} from '../directive/InputDebounceBehavio
 import {TriStateCheckboxComponent} from '../directive/tri-state-checkbox/tri-state-checkbox.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {FormsModule} from '@angular/forms';
-import {AddNestedPropertyDialogComponent} from '../../properties/support/add-nested-property-dialog/add-nested-property-dialog.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatIconModule} from '@angular/material/icon';
+import {NgxMatDatetimePickerModule} from '@angular-material-components/datetime-picker';
 
 @NgModule({
   declarations: [
@@ -20,6 +20,7 @@ import {MatIconModule} from '@angular/material/icon';
     TriStateCheckboxComponent,
   ],
   imports: [
+    NgxMatDatetimePickerModule,
     MatCheckboxModule,
     FormsModule,
     MatDialogModule,

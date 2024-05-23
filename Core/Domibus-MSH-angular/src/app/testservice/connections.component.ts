@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewChild
@@ -13,13 +14,13 @@ import BaseListComponent from '../common/mixins/base-list.component';
 import {ClientPageableListMixin} from '../common/mixins/pageable-list.mixin';
 import * as moment from 'moment';
 import {ConnectionMonitorEntry, ConnectionsMonitorService} from './support/connectionsmonitor.service';
-import {MatDialog} from '@angular/material';
 import {ConnectionDetailsComponent} from './connection-details/connection-details.component';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
-import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 import {PartyResponseRo} from '../party/support/party';
 import {MatSelectChange} from '@angular/material/select';
+import {DialogsService} from '../common/dialogs/dialogs.service';
+import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
 
 /**
  * @author Ion Perpegel
@@ -28,31 +29,32 @@ import {MatSelectChange} from '@angular/material/select';
  * Connections monitor form.
  */
 @Component({
-  moduleId: module.id,
   templateUrl: 'connections.component.html',
   styleUrls: ['connections.component.css'],
   providers: [ConnectionsMonitorService]
 })
 @ComponentName('Connection Monitoring')
 export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPageableListMixin)
-  implements OnInit, AfterViewInit, AfterViewChecked {
+  implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
 
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
-  @ViewChild('monitorStatus', {static: false}) monitorStatusTemplate: TemplateRef<any>;
-  @ViewChild('monitorStatusHeader', {static: false}) monitorStatusHeaderTemplate: TemplateRef<any>;
-  @ViewChild('alertableStatus', {static: false}) alertableStatusTemplate: TemplateRef<any>;
-  @ViewChild('alertableStatusHeader', {static: false}) alertableStatusHeaderTemplate: TemplateRef<any>;
-  @ViewChild('deleteOldStatus', {static: false}) deleteOldStatusTemplate: TemplateRef<any>;
-  @ViewChild('deleteOldStatusHeader', {static: false}) deleteOldStatusHeaderTemplate: TemplateRef<any>;
-  @ViewChild('connectionStatus', {static: false}) connectionStatusTemplate: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
+  @ViewChild('monitorStatus') monitorStatusTemplate: TemplateRef<any>;
+  @ViewChild('monitorStatusHeader') monitorStatusHeaderTemplate: TemplateRef<any>;
+  @ViewChild('alertableStatus') alertableStatusTemplate: TemplateRef<any>;
+  @ViewChild('alertableStatusHeader') alertableStatusHeaderTemplate: TemplateRef<any>;
+  @ViewChild('deleteOldStatus') deleteOldStatusTemplate: TemplateRef<any>;
+  @ViewChild('deleteOldStatusHeader') deleteOldStatusHeaderTemplate: TemplateRef<any>;
+  @ViewChild('connectionStatus') connectionStatusTemplate: TemplateRef<any>;
   allMonitored: boolean;
   allAllertable: boolean;
   allDeleteHistory: boolean;
   currentSenderPartyId: any;
   sender: PartyResponseRo;
+  private refreshMonitorTimer: number;
 
   constructor(private applicationService: ApplicationContextService, private connectionsMonitorService: ConnectionsMonitorService,
-              private alertService: AlertService, private dialog: MatDialog, private changeDetector: ChangeDetectorRef, private http: HttpClient) {
+              private alertService: AlertService, private changeDetector: ChangeDetectorRef,
+              private http: HttpClient, private dialogsService: DialogsService) {
     super();
   }
 
@@ -230,12 +232,13 @@ export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPage
     Object.assign(row, refreshedRow);
 
     if (row.status == 'PENDING') {
-      setTimeout(() => this.refreshMonitor(row), 1500);
+      this.resetTimer();
+      this.refreshMonitorTimer = window.setTimeout(() => this.refreshMonitor(row), 1500);
     }
   }
 
   openDetails(row: ConnectionMonitorEntry) {
-    this.dialog.open(ConnectionDetailsComponent, {
+    this.dialogsService.open(ConnectionDetailsComponent, {
       data: {
         senderPartyId: row.senderPartyId,
         partyId: row.partyId
@@ -327,5 +330,16 @@ export class ConnectionsComponent extends mix(BaseListComponent).with(ClientPage
 
   anyTestable() {
     return this.rows.some(el => el.testable);
+  }
+
+  ngOnDestroy() {
+    this.resetTimer();
+  }
+
+  private resetTimer() {
+    if (this.refreshMonitorTimer) {
+      clearTimeout(this.refreshMonitorTimer);
+      this.refreshMonitorTimer = null;
+    }
   }
 }

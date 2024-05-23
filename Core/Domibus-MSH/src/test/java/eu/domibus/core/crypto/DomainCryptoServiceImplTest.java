@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_EXTENSION_IAM_AUTHENTICATION_IDENTIFIER;
 import static org.mockito.Mockito.*;
@@ -80,8 +80,6 @@ public class DomainCryptoServiceImplTest {
         final String dss = "DSS";
         final DomainCryptoServiceSpi defaultSpi = Mockito.mock(DomainCryptoServiceSpi.class);
         final DomainCryptoServiceSpi dssSpi = Mockito.mock(DomainCryptoServiceSpi.class);
-        when(defaultSpi.getIdentifier()).thenReturn(dss);
-        when(dssSpi.getIdentifier()).thenReturn(dss);
         domainCryptoService.setDomainCryptoServiceSpiList(Lists.newArrayList());
         when(domainCryptoService.getSpiIdentifier()).thenReturn(dss);
 

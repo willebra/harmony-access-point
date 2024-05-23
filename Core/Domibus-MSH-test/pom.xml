@@ -24,6 +24,48 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-abstract-IT-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/abstractIT</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../Tomcat/Domibus-MSH-tomcat/src/main/conf/domibus/internal</directory>
+                                    <includes>
+                                        <include>activemq.xml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../../Tomcat/Domibus-MSH-tomcat/src/test/resources</directory>
+                                    <includes>
+                                        <include>domibus.properties</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>../../Tomcat/Domibus-MSH-tomcat/src/test/resources/keystores</directory>
+                                    <targetPath>keystores</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>../../Tomcat/Domibus-MSH-tomcat/src/test/resources/domains</directory>
+                                    <targetPath>domains</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>../../Core/Domibus-MSH/src/main/conf/domibus/policies</directory>
+                                    <targetPath>policies</targetPath>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -83,7 +125,7 @@
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>compile</scope>
                 <exclusions>
@@ -129,9 +171,16 @@
     <dependencies>
         <!-- Domibus modules -->
         <dependency>
-            <groupId>org.niis</groupId>
-            <artifactId>harmony-MSH-tomcat</artifactId>
-            <version>${project.version}</version>
+            <groupId>eu.europa.ec.digit.commons</groupId>
+            <artifactId>commons-test</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <!-- This dependency picks up commons-test's calls to Log4J and redirects them to SLF4J -->
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.niis</groupId>
@@ -391,7 +440,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>org.hamcrest</groupId>

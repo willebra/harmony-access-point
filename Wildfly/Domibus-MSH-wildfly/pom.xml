@@ -6,7 +6,7 @@
     <parent>
         <groupId>eu.domibus</groupId>
         <artifactId>wildfly</artifactId>
-        <version>5.1.2</version>
+        <version>5.1.4</version>
     </parent>
 
     <artifactId>domibus-MSH-wildfly</artifactId>
@@ -199,7 +199,7 @@
                 <executions>
                     <execution>
                         <id>enforce-no-duplicate-dependencies</id>
-                        <phase>verify</phase>
+                        <phase>test</phase>
                         <goals>
                             <goal>enforce</goal>
                         </goals>

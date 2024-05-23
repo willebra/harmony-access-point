@@ -1,18 +1,15 @@
 package eu.domibus.common.model.configuration;
 
 import mockit.integration.junit4.JMockit;
-import org.apache.cxf.common.util.ReflectionUtil;
-import org.hibernate.Session;
 import org.hibernate.collection.internal.PersistentSet;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**

@@ -8,9 +8,11 @@ import eu.domibus.api.property.DomibusConfigurationService;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.api.security.AuthRole;
 import eu.domibus.api.security.DomibusUserDetails;
+import eu.domibus.api.user.AtLeastOneDomainException;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.web.security.DomibusUserDetailsImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
@@ -79,12 +81,15 @@ public class ECASUserDetailsService implements AuthenticationUserDetailsService<
     public DomibusUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         LOG.debug("loadUserByUsername - start");
         if (isWeblogicSecurity()) {
+            DomibusUserDetails userDetails;
             try {
-                return createUserDetails(username);
+                userDetails = createUserDetails(username);
             } catch (Exception ex) {
                 LOG.error("error during loadUserByUserName", ex);
                 throw new UsernameNotFoundException("Cannot retrieve the user's details", ex);
             }
+            validateDomains(userDetails);
+            return userDetails;
         }
 
         throw new UsernameNotFoundException("Cannot find any user who has the name " + username);
@@ -276,6 +281,7 @@ public class ECASUserDetailsService implements AuthenticationUserDetailsService<
         if (StringUtils.isEmpty(userRoleMappings)) {
             throw new IllegalArgumentException("Domibus user role mappings to LDAP groups could not be empty");
         }
+        LOG.debug("reading user role mappings property [{}] = [{}]", ECAS_DOMIBUS_USER_ROLE_MAPPINGS_KEY, userRoleMappings);
 
         return Stream.of(userRoleMappings.split(ECAS_DOMIBUS_MAPPING_PAIR_SEPARATOR))
                 .map(str -> str.split(ECAS_DOMIBUS_MAPPING_VALUE_SEPARATOR))
@@ -290,9 +296,16 @@ public class ECASUserDetailsService implements AuthenticationUserDetailsService<
         if (StringUtils.isEmpty(domainMappings)) {
             throw new IllegalArgumentException("Domibus domain mappings to LDAP groups could not be empty");
         }
+        LOG.debug("reading domain mappings property [{}] = [{}]", ECAS_DOMIBUS_DOMAIN_MAPPINGS_KEY, domainMappings);
 
         return Stream.of(domainMappings.split(ECAS_DOMIBUS_MAPPING_PAIR_SEPARATOR))
                 .map(str -> str.split(ECAS_DOMIBUS_MAPPING_VALUE_SEPARATOR))
                 .collect(Collectors.toMap(str -> str[0], str -> str[1]));
+    }
+
+    private void validateDomains(DomibusUserDetails userDetails) {
+        if (CollectionUtils.isEmpty(userDetails.getAvailableDomainCodes())) {
+            throw new AtLeastOneDomainException();
+        }
     }
 }

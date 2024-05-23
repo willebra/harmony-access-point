@@ -14,12 +14,14 @@ import eu.domibus.core.message.signal.SignalMessageDao;
 import eu.domibus.core.message.signal.SignalMessageLogDao;
 import eu.domibus.core.util.DateUtilImpl;
 import joptsimple.internal.Strings;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -89,11 +91,13 @@ public class MessageDaoTestUtil {
     final static String RESPONDER_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
 
 
-    public void createSignalMessageLog(String msgId, Date received) {
-        createSignalMessageLog(msgId, received, MSHRole.RECEIVING, MessageStatus.RECEIVED);
+    @Transactional
+    public SignalMessage createSignalMessageLog(String msgId, Date received) {
+        return createSignalMessageLog(msgId, received, MSHRole.RECEIVING, MessageStatus.RECEIVED);
     }
 
-    public void createSignalMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus) {
+    @Transactional
+    public SignalMessage createSignalMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus) {
         UserMessage userMessage = new UserMessage();
         userMessage.setMessageId(msgId);
         userMessage.setMshRole(mshRoleDao.findOrCreate(mshRole == MSHRole.RECEIVING ? MSHRole.SENDING : MSHRole.RECEIVING));
@@ -116,8 +120,11 @@ public class MessageDaoTestUtil {
 
         signalMessageLog.setSignalMessage(signal);
         signalMessageLogDao.create(signalMessageLog);
+
+        return signal;
     }
 
+    @Transactional
     public UserMessageLog createUserMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus, boolean isTestMessage, boolean properties, String mpc, Date archivedAndExported, boolean fragment) {
         String originalSender = null, finalRecipient = null;
         if (properties) {
@@ -127,6 +134,7 @@ public class MessageDaoTestUtil {
         return createUserMessageLog(msgId, received, mshRole, messageStatus, isTestMessage, mpc, archivedAndExported, originalSender, finalRecipient, fragment);
     }
 
+    @Transactional
     public UserMessageLog createUserMessageLog(String msgId, Date received, MSHRole mshRole, MessageStatus messageStatus, boolean isTestMessage, String mpc, Date archivedAndExported,
                                                String originalSender, String finalRecipient, boolean fragment) {
         UserMessage userMessage = new UserMessage();
@@ -158,10 +166,25 @@ public class MessageDaoTestUtil {
         userMessageDao.create(userMessage);
 
         UserMessageLog userMessageLog = new UserMessageLog();
-        userMessageLog.setReceived(received);
         userMessageLog.setMshRole(mshRoleDao.findOrCreate(mshRole));
         userMessageLog.setMessageStatus(messageStatusDao.findOrCreate(messageStatus));
-        switch (messageStatus) {
+        setUserMessageLogDates(userMessageLog, received, archivedAndExported);
+        userMessageLog.setNotificationStatus(notificationStatusDao.findOrCreate(NotificationStatus.NOTIFIED));
+
+        userMessageLog.setUserMessage(userMessage);
+        userMessageLogDao.create(userMessageLog);
+
+        return userMessageLog;
+    }
+
+    public static void setUserMessageLogDates(UserMessageLog userMessageLog, Date received, Date archivedAndExported) {
+        userMessageLog.setExported(archivedAndExported);
+        userMessageLog.setArchived(archivedAndExported);
+        userMessageLog.setReceived(received);
+        switch (userMessageLog.getMessageStatus()) {
+            case SEND_ENQUEUED:
+                userMessageLog.setReceived(received);
+                break;
             case DELETED:
                 userMessageLog.setDeleted(received);
                 break;
@@ -178,14 +201,6 @@ public class MessageDaoTestUtil {
                 userMessageLog.setScheduled(false);
                 break;
         }
-        userMessageLog.setExported(archivedAndExported);
-        userMessageLog.setArchived(archivedAndExported);
-        userMessageLog.setNotificationStatus(notificationStatusDao.findOrCreate(NotificationStatus.NOTIFIED));
-
-        userMessageLog.setUserMessage(userMessage);
-        userMessageLogDao.create(userMessageLog);
-
-        return userMessageLog;
     }
 
     @Transactional
@@ -199,9 +214,15 @@ public class MessageDaoTestUtil {
     }
 
     @Transactional
+    public UserMessageLog createUserMessageLog(String msgId, Date received, MessageStatus messageStatus) {
+        return createUserMessageLog(msgId, received, messageStatus, MPC, false);
+    }
+
+    @Transactional
     public UserMessageLog createUserMessageLog(String msgId, Date received) {
         return createUserMessageLog(msgId, received, MessageStatus.RECEIVED, MPC, false);
     }
+
     @Transactional
     public UserMessageLog createUserMessageLogFragment(String msgId, Date received) {
         return createUserMessageLog(msgId, received, MessageStatus.RECEIVED, MPC, true);
@@ -309,5 +330,31 @@ public class MessageDaoTestUtil {
         userMessageLogDao.deleteMessageLogs(ids);
         signalMessageLogDao.deleteMessageLogs(ids);
         signalMessageDao.deleteMessages(ids);
+    }
+
+    @Transactional
+    public void updateUserMessageAndUserMessageLogPrimaryKey(Long oldIdPk, Long newIdPk) {
+        Query disableForeignChecksQuery = em.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0;");
+        disableForeignChecksQuery.executeUpdate();
+
+        Query userMessageLogQuery = em.createNativeQuery("update TB_USER_MESSAGE_LOG set ID_PK = :NEW_ID_PK where ID_PK = :OLD_ID_PK");
+        userMessageLogQuery.setParameter("OLD_ID_PK", oldIdPk);
+        userMessageLogQuery.setParameter("NEW_ID_PK", newIdPk);
+        userMessageLogQuery.executeUpdate();
+
+        Query userMessageQuery = em.createNativeQuery("update TB_USER_MESSAGE set ID_PK = :NEW_ID_PK where ID_PK = :OLD_ID_PK");
+        userMessageQuery.setParameter("OLD_ID_PK", oldIdPk);
+        userMessageQuery.setParameter("NEW_ID_PK", newIdPk);
+        userMessageQuery.executeUpdate();
+    }
+
+    @Transactional
+    public void makeMessageFieldOlder(String messageId, String field, int nrMinutesBack) {
+        Date date = DateUtils.addMinutes(new Date(), nrMinutesBack * -1);
+
+        em.createQuery("update UserMessageLog set " + field + "=:DATE where userMessage.entityId in (select entityId from UserMessage where messageId=:MESSAGE_ID)")
+                .setParameter("MESSAGE_ID", messageId)
+                .setParameter("DATE", date)
+                .executeUpdate();
     }
 }

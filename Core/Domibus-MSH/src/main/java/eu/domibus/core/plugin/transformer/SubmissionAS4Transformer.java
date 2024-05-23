@@ -2,6 +2,7 @@ package eu.domibus.core.plugin.transformer;
 
 import eu.domibus.api.ebms3.Ebms3Constants;
 import eu.domibus.api.model.*;
+import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.core.generator.id.MessageIdGenerator;
 import eu.domibus.core.message.dictionary.*;
 import eu.domibus.logging.DomibusLogger;
@@ -13,6 +14,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+
+import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_PMODE_LEGCONFIGURATION_MPC_ENABLED;
+import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED;
 
 /**
  * @author Christian Koch, Stefan Mueller
@@ -52,11 +56,21 @@ public class SubmissionAS4Transformer {
     @Autowired
     protected MshRoleDao mshRoleDao;
 
+    @Autowired
+    protected DomibusPropertyProvider domibusPropertyProvider;
+
     public UserMessage transformFromSubmission(final Submission submission) {
         final UserMessage result = new UserMessage();
+        boolean defaultMpcFromLegEnabled = domibusPropertyProvider.getBooleanProperty(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_ENABLED);
         String mpc = submission.getMpc();
-        final MpcEntity mpcEntity = mpcDictionaryService.findOrCreateMpc(StringUtils.isBlank(mpc) ? Ebms3Constants.DEFAULT_MPC : mpc);
-        result.setMpc(mpcEntity);
+        // when the mpc is missing, use Ebms3Constants.DEFAULT_MPC unless Domibus is configured to extract the mpc value from the matching leg configuration
+        if(StringUtils.isBlank(mpc) && !defaultMpcFromLegEnabled) {
+            mpc = Ebms3Constants.DEFAULT_MPC;
+        }
+        MpcEntity mpcEntity = null;
+        if(StringUtils.isNotBlank(mpc)) {
+            mpcEntity = mpcDictionaryService.findOrCreateMpc(mpc);
+        }        result.setMpc(mpcEntity);
         this.generateMessageInfo(submission, result);
         this.generatePartyInfo(submission, result);
         this.generateCollaborationInfo(submission, result);

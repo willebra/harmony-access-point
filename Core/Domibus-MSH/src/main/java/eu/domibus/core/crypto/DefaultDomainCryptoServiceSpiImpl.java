@@ -212,7 +212,7 @@ public class DefaultDomainCryptoServiceSpiImpl implements DomainCryptoServiceSpi
     }
 
     private void logRemoteCertificate(Optional<X509Certificate> certificate) {
-        logCertificate(certificate, "Found the certificate of the remote entity used during the encryption or the trust verification phase having alias [{}]");
+        logCertificate(certificate, "Found the certificate of the remote entity used during the encryption or the trust verification phase having CN [{}]");
     }
 
     @Override
@@ -300,7 +300,7 @@ public class DefaultDomainCryptoServiceSpiImpl implements DomainCryptoServiceSpi
     }
 
     private void logLocalCertificate(Optional<X509Certificate> certificate) {
-        logCertificate(certificate, "Found the certificate of the local entity corresponding to the private key used during the signing or the decryption phase having alias [{}]");
+        logCertificate(certificate, "Found the certificate of the local entity corresponding to the private key used during the signing or the decryption phase having CN [{}]");
     }
 
     private void logCertificate(Optional<X509Certificate> certificate, String message) {

@@ -7,7 +7,6 @@ import {
   TemplateRef,
   ViewChild
 } from '@angular/core';
-import {MatDialog} from '@angular/material';
 import {PartyService} from './support/party.service';
 import {PartyFilteredResult, PartyResponseRo, ProcessRo} from './support/party';
 import {AlertService} from '../common/alert/alert.service';
@@ -41,7 +40,7 @@ export class PartyComponent extends mix(BaseListComponent)
   .with(ClientFilterableListMixin, ModifiableListMixin, ClientPageableListMixin)
   implements OnInit, DirtyOperations, AfterViewInit, AfterViewChecked {
 
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
 
   allRows: PartyResponseRo[];
 
@@ -53,7 +52,7 @@ export class PartyComponent extends mix(BaseListComponent)
 
   pModeExists: boolean;
 
-  constructor(private applicationService: ApplicationContextService, public dialog: MatDialog, private dialogsService: DialogsService,
+  constructor(private applicationService: ApplicationContextService, private dialogsService: DialogsService,
               public partyService: PartyService, public alertService: AlertService, private http: HttpClient,
               private changeDetector: ChangeDetectorRef) {
     super();
@@ -115,28 +114,33 @@ export class PartyComponent extends mix(BaseListComponent)
       {
         name: 'Party Name',
         prop: 'name',
-        width: 10
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'End Point',
         prop: 'endpoint',
-        width: 150
+        width: 450,
+        minWidth: 440,
       },
       {
         name: 'Party Id',
         prop: 'joinedIdentifiers',
-        width: 10
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Process (I=Initiator, R=Responder, IR=Both)',
         prop: 'joinedProcesses',
-        width: 200
+        width: 350,
+        minWidth: 340,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
         prop: 'actions',
-        width: 60,
+        width: 150,
+        minWidth: 140,
         canAutoResize: true,
         sortable: false
       }
@@ -236,7 +240,7 @@ export class PartyComponent extends mix(BaseListComponent)
     const edited = JSON.parse(JSON.stringify(row)); // clone
     const allProcessesCopy = JSON.parse(JSON.stringify(this.allProcesses));
 
-    const dialogRef = this.dialog.open(PartyDetailsComponent, {
+    const dialogRef = this.dialogsService.open(PartyDetailsComponent, {
       data: {
         edit: edited,
         allProcesses: allProcessesCopy

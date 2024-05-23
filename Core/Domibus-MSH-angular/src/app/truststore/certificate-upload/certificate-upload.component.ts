@@ -1,7 +1,7 @@
 import {Component, Inject, ViewChild} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {TrustStoreService} from '../support/trustore.service';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, NgControl, NgForm, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NgControl, NgForm, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 @Component({
@@ -12,15 +12,15 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 })
 export class CertificateUploadComponent {
 
-  truststoreForm: FormGroup;
+  truststoreForm: UntypedFormGroup;
   selectedFileName: string;
   fileSelected = false;
 
-  @ViewChild('fileInput', {static: false}) fileInput;
+  @ViewChild('fileInput') fileInput;
 
-  constructor(public dialogRef: MatDialogRef<CertificateUploadComponent>, private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(public dialogRef: MatDialogRef<CertificateUploadComponent>, private fb: UntypedFormBuilder, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.truststoreForm = fb.group({
-      'alias': new FormControl('', Validators.required),
+      'alias': new UntypedFormControl('', Validators.required),
     });
   }
 

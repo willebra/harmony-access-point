@@ -1,6 +1,6 @@
 package eu.domibus.rest;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.property.DomibusProperty;
 import eu.domibus.api.property.DomibusPropertyException;
 import eu.domibus.core.property.DomibusPropertiesFilter;

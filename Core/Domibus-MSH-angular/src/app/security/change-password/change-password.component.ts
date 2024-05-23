@@ -5,6 +5,7 @@ import {SecurityService} from '../../security/security.service';
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from '../../common/alert/alert.service';
 import {Router} from '@angular/router';
+import {Location} from '@angular/common'
 
 @Component({
   templateUrl: './change-password.component.html',
@@ -19,11 +20,11 @@ export class ChangePasswordComponent implements OnInit {
   public passwordPattern: string;
   public passwordValidationMessage: string;
 
-  @ViewChild('userForm', {static: false})
+  @ViewChild('userForm')
   public userForm: NgForm;
 
   constructor(private securityService: SecurityService, private http: HttpClient,
-              private alertService: AlertService, private router: Router) {
+              private alertService: AlertService, private router: Router, private _location: Location) {
 
     this.currentPassword = this.securityService.password;
     this.securityService.password = null;
@@ -58,6 +59,10 @@ export class ChangePasswordComponent implements OnInit {
 
   public isFormDisabled() {
     return !this.userForm || this.userForm.invalid || !this.userForm.dirty;
+  }
+
+  onCancelClick() {
+    this._location.back();
   }
 
 }

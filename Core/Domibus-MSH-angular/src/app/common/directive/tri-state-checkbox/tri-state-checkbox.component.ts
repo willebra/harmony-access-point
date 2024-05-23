@@ -1,6 +1,5 @@
 import {Component, forwardRef, Input} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {MAT_CHECKBOX_CLICK_ACTION} from '@angular/material/checkbox';
 
 /**
  * @author Ion Perpegel
@@ -15,7 +14,6 @@ import {MAT_CHECKBOX_CLICK_ACTION} from '@angular/material/checkbox';
       useExisting: forwardRef(() => TriStateCheckboxComponent),
       multi: true,
     },
-    {provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'noop'},
   ],
 })
 export class TriStateCheckboxComponent implements ControlValueAccessor {

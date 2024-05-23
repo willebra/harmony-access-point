@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {MatDialog} from '@angular/material';
 import {ResolveEnd, Router} from '@angular/router';
-import {isNullOrUndefined} from 'util';
+import {isNullOrUndefined} from '@swimlane/ngx-datatable';
 import {DomibusInfoService} from '../appinfo/domibusinfo.service';
-
 
 @Component({
   selector: 'page-helper',
@@ -16,7 +14,7 @@ export class PageHelperComponent implements OnInit {
   helpPages: Map<String, String> = new Map<String, String>();
   activateHelp = false;
 
-  constructor(public dialog: MatDialog, private router: Router, private domibusInfoService: DomibusInfoService) {
+  constructor(private router: Router, private domibusInfoService: DomibusInfoService) {
   }
 
   async ngOnInit() {
@@ -40,10 +38,8 @@ export class PageHelperComponent implements OnInit {
   }
 
   private async setHelpPages() {
-    console.log('call getDomibusInfo')
     const domibusInfo = await this.domibusInfoService.getDomibusInfo();
-    const MAIN_HELP_PAGE = 'https://edelivery.digital/';
-
+    const MAIN_HELP_PAGE = `https://edelivery.digital/`;
     const VERSION_SPECIFIC_PAGE = `#harmony-ap-v${domibusInfo.versionNumber}-help-`;
 
     const routes = this.router.config;

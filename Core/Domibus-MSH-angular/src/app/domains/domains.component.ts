@@ -15,8 +15,8 @@ import {ComponentName} from '../common/component-name-decorator';
 import {ClientSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {DomainService} from '../security/domain.service';
 import {Domain} from '../security/domain';
-import {UserService} from 'app/user/support/user.service';
-import {SecurityService} from 'app/security/security.service';
+import { UserService } from 'app/user/support/user.service';
+import { SecurityService } from 'app/security/security.service';
 
 /**
  * @author Ion Perpegel
@@ -25,7 +25,6 @@ import {SecurityService} from 'app/security/security.service';
  * Domains management page
  */
 @Component({
-  moduleId: module.id,
   templateUrl: 'domains.component.html',
   styleUrls: ['domains.component.css'],
   providers: []
@@ -34,11 +33,11 @@ import {SecurityService} from 'app/security/security.service';
 export class DomainsComponent extends mix(BaseListComponent).with(ClientPageableListMixin, ClientSortableListMixin)
   implements OnInit, AfterViewInit, AfterViewChecked {
 
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
-  @ViewChild('monitorStatus', {static: false}) statusTemplate: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
+  @ViewChild('monitorStatus') statusTemplate: TemplateRef<any>;
 
   constructor(private alertService: AlertService, private domainService: DomainService, private changeDetector: ChangeDetectorRef,
-      private userService: UserService, private securityService: SecurityService) {
+              private userService: UserService, private securityService: SecurityService) {
     super();
   }
 
@@ -83,14 +82,6 @@ export class DomainsComponent extends mix(BaseListComponent).with(ClientPageable
         canAutoResize: true,
         sortable: false
       },
-      // {
-      //   cellTemplate: this.rowActions,
-      //   name: 'Actions',
-      //   prop: 'actions',
-      //   width: 60,
-      //   canAutoResize: true,
-      //   sortable: false
-      // }
     ];
     this.columnPicker.selectedColumns = this.columnPicker.allColumns;
   }
@@ -117,7 +108,7 @@ export class DomainsComponent extends mix(BaseListComponent).with(ClientPageable
       this.alertService.success(`Successfully ${active ? 'added' : 'removed'} domain ${domain.name}.`);
       super.isLoading = false;
     } catch (err) {
-      this.alertService.exception(`Error while ${active ? 'adding' : 'removing'} domain ${domain.name}. `, err);
+      this.alertService.exception(`Error while ${active ? 'adding' : 'removing'} domain ${domain.name}.`, err);
       setTimeout(() => {
         domain.active = !active;
         super.isLoading = false;

@@ -1,8 +1,7 @@
-import {Component, OnInit} from "@angular/core";
-import {DomibusInfoService} from "../../common/appinfo/domibusinfo.service";
+import {Component, OnInit} from '@angular/core';
+import {DomibusInfoService} from '../../common/appinfo/domibusinfo.service';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'not-authorized.component.html'
 })
 

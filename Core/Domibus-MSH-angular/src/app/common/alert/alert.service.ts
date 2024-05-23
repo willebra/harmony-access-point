@@ -8,7 +8,7 @@ import {
   MultipleItemsResponse,
   ResponseItemDetail
 } from './support/multiple-items-response';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar} from '@angular/material/snack-bar';
 import {AlertComponent} from './alert.component';
 
 @Injectable()
@@ -40,6 +40,11 @@ export class AlertService {
     }
 
     const errMsg = this.formatError(error, message);
+    console.log('formatted error is:', errMsg)
+    if (!errMsg || errMsg == '') {
+      return;
+    }
+
     this.displayErrorMessage(errMsg, false, 0);
     return Promise.resolve();
   }
@@ -86,12 +91,12 @@ export class AlertService {
     });
 
     if (fadeTime) {
-      setTimeout(() => this.clearAlert(), fadeTime);
+      window.setTimeout(() => this.clearAlert(), fadeTime);
     }
   }
 
   private getPath(url: string): string {
-    var parser = document.createElement('a');
+    const parser = document.createElement('a');
     parser.href = url;
     return parser.pathname;
   }

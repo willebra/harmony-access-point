@@ -1,6 +1,6 @@
 package eu.domibus.ext.delegate.mapper;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.message.acknowledge.MessageAcknowledgement;
 import eu.domibus.api.message.attempt.MessageAttempt;
 import eu.domibus.ext.domain.MessageAcknowledgementDTO;

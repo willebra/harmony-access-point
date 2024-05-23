@@ -18,15 +18,17 @@
     <ngx-datatable
       class="material striped"
       [columnMode]="'force'"
+      [scrollbarH]="true"
+      [virtualization]="false"
       [headerHeight]="50"
       [footerHeight]="50"
       [rowHeight]="'auto'"
       [rows]="rows"
       [selected]="selected"
-      [selectionType]="'multi'"
+      [selectionType]="SelectionType.multi"
       (select)='onSelect($event)'
       (activate)="onActivate($event)"
-      id="pageGridId">
+      id="pageGridId" style="width: 100%; height: 100%;">
       <ngx-datatable-column name="Plugin" prop="backendName" [sortable]="false">
         <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
               <span class="justified, clickable" style="word-wrap: break-word" id="pluginRow{{rows.indexOf(row)}}_id">
@@ -75,24 +77,26 @@
       </ngx-datatable-column>
       <ngx-datatable-column name="Actions" prop="actions" [sortable]="false">
         <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
-          <button mat-icon-button color="primary" type="button" [disabled]="!row.active || rows.indexOf(row)===0"
-                  (click)="moveAction(row, -1)" id="moveUpButtonRow{{rows.indexOf(row)}}_id"
-                  matTooltip="Move Up" button-click-behaviour>
-            <mat-icon>arrow_drop_up</mat-icon>
-          </button>
-          <button mat-icon-button color="primary" type="button" [disabled]="!row.active || rows.indexOf(row)===rows.length - 1"
-                  (click)="moveAction(row, +1)" id="moveDownButtonRow{{rows.indexOf(row)}}_id"
-                  matTooltip="Move Down" button-click-behaviour>
-            <mat-icon>arrow_drop_down</mat-icon>
-          </button>
-          <button mat-icon-button color="primary" type="button" (click)="edit(row)" [disabled]="!row.active"
-                  id="editButtonRow{{rows.indexOf(row)}}_id" matTooltip="Edit" button-click-behaviour>
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="primary" type="button" (click)="buttonDeleteAction(row)"
-                  id="deleteButtonRow{{rows.indexOf(row)}}_id" matTooltip="Delete" button-click-behaviour>
-            <mat-icon>delete</mat-icon>
-          </button>
+          <div style="width: 200px;">
+            <button mat-icon-button color="primary" type="button" [disabled]="!row.active || rows.indexOf(row)===0"
+                    (click)="moveAction(row, -1)" id="moveUpButtonRow{{rows.indexOf(row)}}_id"
+                    matTooltip="Move Up" button-click-behaviour>
+              <mat-icon>arrow_drop_up</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" type="button" [disabled]="!row.active || rows.indexOf(row)===rows.length - 1"
+                    (click)="moveAction(row, +1)" id="moveDownButtonRow{{rows.indexOf(row)}}_id"
+                    matTooltip="Move Down" button-click-behaviour>
+              <mat-icon>arrow_drop_down</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" type="button" (click)="edit(row)" [disabled]="!row.active"
+                    id="editButtonRow{{rows.indexOf(row)}}_id" matTooltip="Edit" button-click-behaviour>
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" type="button" (click)="buttonDeleteAction(row)"
+                    id="deleteButtonRow{{rows.indexOf(row)}}_id" matTooltip="Delete" button-click-behaviour>
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
         </ng-template>
       </ngx-datatable-column>
     </ngx-datatable>

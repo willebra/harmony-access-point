@@ -11,7 +11,7 @@ import {
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from '../common/alert/alert.service';
 import {MessagesRequestRO} from './ro/messages-request-ro';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import {MoveDialogComponent} from './move-dialog/move-dialog.component';
 import {MessageDialogComponent} from './message-dialog/message-dialog.component';
 import {DirtyOperations} from '../common/dirty-operations';
@@ -25,6 +25,8 @@ import {ClientPageableListMixin} from '../common/mixins/pageable-list.mixin';
 import {ClientSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
+import {Moment} from 'moment/moment';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
   selector: 'app-jms',
@@ -47,9 +49,9 @@ export class JmsComponent extends mix(BaseListComponent)
   defaultQueueSet: EventEmitter<boolean>;
   queuesInfoGot: EventEmitter<boolean>;
 
-  @ViewChild('rowWithDateFormatTpl', {static: false}) rowWithDateFormatTpl: TemplateRef<Object>;
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
-  @ViewChild('rawTextTpl', {static: false}) public rawTextTpl: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<Object>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
+  @ViewChild('rawTextTpl') public rawTextTpl: TemplateRef<any>;
 
   queues: any[];
   filteredQueues: any[];
@@ -79,7 +81,7 @@ export class JmsComponent extends mix(BaseListComponent)
   }
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              public dialog: MatDialog, private dialogsService: DialogsService, private changeDetector: ChangeDetectorRef) {
+              private dialogsService: DialogsService, private changeDetector: ChangeDetectorRef, private dateService: DateService) {
     super();
   }
 
@@ -99,12 +101,11 @@ export class JmsComponent extends mix(BaseListComponent)
     this.filteredQueues = [];
     this.originalQueues = [];
 
-    // set toDate equals to now
-    this.filter.toDate = new Date();
-    this.filter.toDate.setHours(23, 59, 59, 999);
     this.originalQueueName = null;
 
     this.markedForDeletionMessages = [];
+
+    this.setDateParams();
 
     this.loadDestinations();
 
@@ -120,6 +121,17 @@ export class JmsComponent extends mix(BaseListComponent)
         }
       });
     });
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.filter.toDate = todayEndDay;
+
+    this.timestampFromMaxDate = todayEndDay;
+    this.timestampToMaxDate = todayEndDay;
+
+    this.timestampToMinDate = null;
   }
 
   public async tryFilter(userInitiated = true): Promise<boolean> {
@@ -142,17 +154,17 @@ export class JmsComponent extends mix(BaseListComponent)
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Time',
         prop: 'timestamp',
-        width: 80
+        width: 50
       },
       {
         name: 'Custom prop',
         prop: 'customPropertiesText',
-        width: 250
+        width: 400
       },
       {
         name: 'JMS prop',
         prop: 'jmspropertiesText',
-        width: 200
+        width: 250
       },
       {
         cellTemplate: this.rowActions,
@@ -201,7 +213,7 @@ export class JmsComponent extends mix(BaseListComponent)
     result.subscribe(
       (destinations) => {
         for (const key in destinations) {
-          var src = destinations[key];
+          const src = destinations[key];
           const queue = this.queues.find(el => el.name === src.name);
           if (queue) {
             Object.assign(queue, src);
@@ -227,12 +239,26 @@ export class JmsComponent extends mix(BaseListComponent)
     this.showDetails(row);
   }
 
-  onTimestampFromChange(event) {
-    this.timestampToMinDate = event.value;
+  onTimestampFromChange(param: Moment) {
+    if (param) {
+      this.timestampToMinDate = param.toDate();
+      this.filter.fromDate = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.fromDate = null;
+    }
   }
 
-  onTimestampToChange(event) {
-    this.timestampFromMaxDate = event.value;
+  onTimestampToChange(param: Moment) {
+    if (param) {
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.toDate = date;
+    } else {
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
+      this.filter.toDate = null;
+    }
   }
 
   canSearch() {
@@ -293,7 +319,7 @@ export class JmsComponent extends mix(BaseListComponent)
 
     try {
       let queues = this.getAllowedDestinationQueues(elements);
-      this.dialog.open(MoveDialogComponent, {data: {queues: queues}})
+      this.dialogsService.open(MoveDialogComponent, {data: {queues: queues}})
         .afterClosed().subscribe(result => {
         if (result && result.destination) {
           const messageIds = elements.map((message) => message.id);
@@ -379,7 +405,7 @@ export class JmsComponent extends mix(BaseListComponent)
   }
 
   showDetails(selectedRow: any) {
-    const dialogRef: MatDialogRef<MessageDialogComponent> = this.dialog.open(MessageDialogComponent);
+    const dialogRef: MatDialogRef<MessageDialogComponent> = this.dialogsService.open(MessageDialogComponent);
     dialogRef.componentInstance.message = selectedRow;
     dialogRef.componentInstance.currentSearchSelectedSource = this.currentSearchSelectedSource;
   }

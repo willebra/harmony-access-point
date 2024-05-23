@@ -2,21 +2,31 @@
   <page-header id="auditHeader_id">Audit</page-header>
 
   <div class="selectionCriteria">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
 
-            <mat-select matInput placeholder="Table" id="table_id" name="table" multiple [(ngModel)]="filter.auditTargetName">
-              <mat-option *ngFor="let item of existingAuditTargets" [value]="item">{{item}}</mat-option>
-            </mat-select>
-            <mat-select matInput placeholder="User" id="user_id" name="userId" multiple [(ngModel)]="filter.user"
-                        *ngIf="!extAuthProviderEnabled" id="user_id">
-              <mat-option *ngFor="let item of existingUsers" [value]="item">{{item}}</mat-option>
-            </mat-select>
-            <mat-select matInput placeholder="Action" id="action_id" name="action" multiple [(ngModel)]="filter.action">
-              <mat-option *ngFor="let item of existingActions" [value]="item">{{item}}</mat-option>
-            </mat-select>
+            <mat-form-field>
+              <mat-label>Table</mat-label>
+              <mat-select matInput id="table_id" name="table" multiple [(ngModel)]="filter.auditTargetName">
+                <mat-option *ngFor="let item of existingAuditTargets" [value]="item">{{item}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="!extAuthProviderEnabled">
+              <mat-label>User</mat-label>
+              <mat-select matInput id="user_id" name="userId" multiple [(ngModel)]="filter.user" id="user_id">
+                <mat-option *ngFor="let item of existingUsers" [value]="item">{{item}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Action</mat-label>
+              <mat-select matInput id="action_id" name="action" multiple [(ngModel)]="filter.action">
+                <mat-option *ngFor="let item of existingActions" [value]="item">{{item}}</mat-option>
+              </mat-select>
+            </mat-form-field>
 
             <ng-container *ngIf="displayDomainCheckBox">
               <mat-checkbox name="showDomainAlerts" [(ngModel)]="filter.domain" id="isDomain_id">
@@ -24,21 +34,33 @@
               </mat-checkbox>
             </ng-container>
 
-            <md2-datepicker placeholder="Changed from:" appClearInvalid
-                            [(ngModel)]="filter.from" name="from" [type]="'datetime'"
-                            [max]="timestampFromMaxDate"
-                            (change)='onTimestampFromChange($event)'
-                            id="from_id" *ngIf="advancedSearch"
-                            advanced-filter-behaviour [parent]="this">
-            </md2-datepicker>
-            <md2-datepicker placeholder=" Changed to:" appClearInvalid
-                            [(ngModel)]="filter.to" name="to" [type]="'datetime'"
-                            [min]="timestampToMinDate"
-                            [max]="timestampToMaxDate"
-                            (change)='onTimestampToChange($event)'
-                            id="to_id" *ngIf="advancedSearch"
-                            advanced-filter-behaviour [parent]="this">
-            </md2-datepicker>
+            <br/>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Changed From</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedFrom" id="from_id" name="from"
+                     [ngModel]="filter.from" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [max]="timestampFromMaxDate" advanced-filter-behaviour [parent]="this">
+              <mat-datepicker-toggle matSuffix [for]="receivedFrom" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedFrom>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Changed To</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedTo" id="to_id" name="to"
+                     [ngModel]="filter.to" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [min]="timestampToMinDate" [max]="timestampToMaxDate" advanced-filter-behaviour [parent]="this">
+              <mat-datepicker-toggle matSuffix [for]="receivedTo" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedTo>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
 
             <filter-area-footer [parent]="this" [form]="filterForm"></filter-area-footer>
           </form>
@@ -47,7 +69,7 @@
     </mat-card>
   </div>
 
-    <grid-header [parent]="this"></grid-header>
+  <grid-header [parent]="this"></grid-header>
 
   <div class="domibus-grid-container">
     <page-grid [parent]="this"></page-grid>

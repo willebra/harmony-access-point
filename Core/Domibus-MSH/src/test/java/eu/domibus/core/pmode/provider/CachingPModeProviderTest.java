@@ -1395,10 +1395,10 @@ public class CachingPModeProviderTest {
             cachingPModeProvider.findReceiverParty(userMessage, false, senderParty, false);
             result = receiverParty;
 
-            cachingPModeProvider.findInitiatorRole(userMessage);
+            cachingPModeProvider.findSenderRole(userMessage);
             result = initiatorRole;
 
-            cachingPModeProvider.findResponderRole(userMessage);
+            cachingPModeProvider.findReceiverRole(userMessage);
             result = responderRole;
 
             userMessage.getService();
@@ -1532,13 +1532,13 @@ public class CachingPModeProviderTest {
     }
 
     @Test
-    public void findInitiatorRole_RoleNotProvided() {
+    public void findSenderRole_RoleNotProvided() {
         new Expectations(cachingPModeProvider) {{
             userMessage.getPartyInfo().getFrom().getRoleValue();
             result = " ";
         }};
         try {
-            cachingPModeProvider.findInitiatorRole(userMessage);
+            cachingPModeProvider.findSenderRole(userMessage);
             Assert.fail("expected error that sender role should be provided");
         } catch (EbMS3Exception e) {
             assertEquals(ErrorCode.EbMS3ErrorCode.EBMS_0003, e.getErrorCode());
@@ -1547,7 +1547,7 @@ public class CachingPModeProviderTest {
     }
 
     @Test
-    public void findInitiatorRole_OK() throws EbMS3Exception {
+    public void findSenderRole_OK() throws EbMS3Exception {
         new Expectations(cachingPModeProvider) {{
             userMessage.getPartyInfo().getFrom().getRoleValue();
             result = initiatorRole.getValue();
@@ -1555,19 +1555,19 @@ public class CachingPModeProviderTest {
             cachingPModeProvider.getBusinessProcessRole(initiatorRole.getValue());
             result = initiatorRole;
         }};
-        assertEquals(cachingPModeProvider.findInitiatorRole(userMessage), initiatorRole);
+        assertEquals(cachingPModeProvider.findSenderRole(userMessage), initiatorRole);
         new FullVerifications() {
         };
     }
 
     @Test
-    public void findResponderRole_RoleNotProvided() {
+    public void findReceiverRole_RoleNotProvided() {
         new Expectations(cachingPModeProvider) {{
             userMessage.getPartyInfo().getTo().getRoleValue();
             result = " ";
         }};
         try {
-            cachingPModeProvider.findResponderRole(userMessage);
+            cachingPModeProvider.findReceiverRole(userMessage);
             Assert.fail("expected error that responder role should be provided");
         } catch (EbMS3Exception e) {
             assertEquals(ErrorCode.EbMS3ErrorCode.EBMS_0003, e.getErrorCode());
@@ -1576,7 +1576,7 @@ public class CachingPModeProviderTest {
     }
 
     @Test
-    public void findResponderRole_OK() throws EbMS3Exception {
+    public void findReceiverRole_OK() throws EbMS3Exception {
         new Expectations(cachingPModeProvider) {{
             userMessage.getPartyInfo().getTo().getRoleValue();
             result = responderRole.getValue();
@@ -1585,7 +1585,7 @@ public class CachingPModeProviderTest {
             result = responderRole;
         }};
 
-        assertEquals(cachingPModeProvider.findResponderRole(userMessage), responderRole);
+        assertEquals(cachingPModeProvider.findReceiverRole(userMessage), responderRole);
 
         new FullVerifications() {
         };

@@ -11,15 +11,15 @@ data-source add \
 --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter \
 --background-validation=true \
 --min-pool-size=20 \
---initial-pool-size=5 \
+--initial-pool-size=50 \
 --max-pool-size=100 \
 --enabled=true
 
 data-source add \
---name=eDeliveryMysqlNonXADS \
+--name=eDeliveryMysqlQuartzDS \
 --driver-name=com.mysql \
 --driver-class=com.mysql.cj.jdbc.Driver \
---jndi-name=java:/jdbc/cipaeDeliveryNonXADs \
+--jndi-name=java:/jdbc/cipaeDeliveryQuartzDs \
 --user-name=${DB_USER} \
 --password=${DB_PASS} \
 --connection-url=${JDBC_CONNECTION_URL} \
@@ -27,7 +27,7 @@ data-source add \
 --valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLValidConnectionChecker \
 --exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.mysql.MySQLExceptionSorter \
 --background-validation=true \
---min-pool-size=20 \
+--min-pool-size=2 \
 --initial-pool-size=5 \
---max-pool-size=100 \
+--max-pool-size=10 \
 --enabled=true

@@ -32,8 +32,7 @@ import static eu.domibus.core.message.retention.MessageRetentionPartitionsServic
 import static eu.domibus.core.message.retention.MessageRetentionPartitionsService.PARTITION_NAME_REGEXP;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author idragusa
@@ -86,13 +85,14 @@ public class MessageRetentionPartitionsServiceTest {
     @Injectable
     AlertConfigurationService alertConfigurationService;
 
+
     @Test
     public void testPartitionName() {
         String partitionNameOld = "P23032207";
         String partitionNameNew = "SYS_P12345";
 
-        Assert.assertTrue(partitionNameOld.matches(PARTITION_NAME_REGEXP));
-        Assert.assertTrue(partitionNameNew.matches(PARTITION_NAME_REGEXP));
+        Assert.assertTrue(partitionNameOld.matches(MessageRetentionPartitionsService.PARTITION_NAME_REGEXP));
+        Assert.assertTrue(partitionNameNew.matches(MessageRetentionPartitionsService.PARTITION_NAME_REGEXP));
     }
 
     @Test

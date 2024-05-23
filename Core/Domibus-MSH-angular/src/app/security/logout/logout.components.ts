@@ -1,7 +1,6 @@
 import {Component} from "@angular/core";
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'logout.component.html',
   styleUrls: ['./logout.component.css']
 })

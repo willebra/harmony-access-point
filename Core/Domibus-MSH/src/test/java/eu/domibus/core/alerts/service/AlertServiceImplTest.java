@@ -43,6 +43,7 @@ import static eu.domibus.core.alerts.model.common.MessageEvent.OLD_STATUS;
 import static eu.domibus.core.alerts.configuration.common.AlertConfigurationServiceImpl.DOMIBUS_ALERT_SUPER_INSTANCE_NAME_SUBJECT;
 import static eu.domibus.core.alerts.service.AlertServiceImpl.*;
 import static java.util.Optional.of;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
@@ -358,7 +359,7 @@ public class AlertServiceImplTest {
         new VerificationsInOrder() {{
             persistedAlert.setAlertStatus(AlertStatus.FAILED);
             times = 1;
-            reprogrammableService.setRescheduleInfo(persistedAlert, withArgThat(new GreaterThan<>(nextAttempt)));
+            reprogrammableService.setRescheduleInfo(persistedAlert, withArgThat(greaterThan(nextAttempt)));
             persistedAlert.setAttempts(1);
             times = 1;
             persistedAlert.setAlertStatus(AlertStatus.RETRY);
@@ -419,7 +420,7 @@ public class AlertServiceImplTest {
             times = 1;
             reprogrammableService.removeRescheduleInfo(persistedAlert);
 
-            persistedAlert.setReportingTimeFailure(withArgThat(new GreaterThan<>(failureTime)));
+            persistedAlert.setReportingTimeFailure(withArgThat(greaterThan(failureTime)));
             times = 1;
 
             persistedAlert.setAttempts(2);

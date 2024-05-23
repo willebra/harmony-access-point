@@ -1,5 +1,6 @@
 package eu.domibus.api.party;
 
+import eu.domibus.api.model.PartyId;
 import eu.domibus.api.pmode.PModeException;
 import eu.domibus.api.pmode.PModeValidationException;
 import eu.domibus.api.pmode.ValidationIssue;
@@ -106,4 +107,12 @@ public interface PartyService {
      * @param certificateContent
      */
     void updateParty(Party party, String certificateContent) throws PModeException;
+
+    /**
+     * Retrieves the PartyId value from dictionary based on the pMode party configuration
+     * @param value the value of the party id
+     * @return the dictionary Entity
+     */
+    PartyId getPartyIdByValue(String value);
+
 }

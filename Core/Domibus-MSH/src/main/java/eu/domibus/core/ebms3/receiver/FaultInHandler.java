@@ -3,7 +3,10 @@ package eu.domibus.core.ebms3.receiver;
 import eu.domibus.api.ebms3.model.Ebms3Messaging;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.UserMessage;
+import eu.domibus.api.multitenancy.Domain;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.common.ErrorCode;
+import eu.domibus.core.cxf.CxfCurrentMessageService;
 import eu.domibus.core.crypto.spi.model.AuthenticationException;
 import eu.domibus.core.ebms3.EbMS3Exception;
 import eu.domibus.core.ebms3.EbMS3ExceptionBuilder;
@@ -22,6 +25,7 @@ import eu.domibus.logging.DomibusMessageCode;
 import eu.domibus.messaging.MessageConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.binding.soap.SoapFault;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.ws.policy.PolicyException;
 import org.apache.neethi.builders.converters.ConverterException;
@@ -56,6 +60,9 @@ public class FaultInHandler extends AbstractFaultHandler {
     private ErrorLogService errorLogService;
 
     @Autowired
+    CxfCurrentMessageService cxfCurrentMessageService;
+
+    @Autowired
     protected TestMessageValidator testMessageValidator;
 
     @Autowired
@@ -69,6 +76,9 @@ public class FaultInHandler extends AbstractFaultHandler {
 
     @Autowired
     UserMessageErrorCreator userMessageErrorCreator;
+
+    @Autowired
+    DomainContextProvider domainContextProvider;
 
     @Override
     public Set<QName> getHeaders() {
@@ -96,7 +106,8 @@ public class FaultInHandler extends AbstractFaultHandler {
             throw new MissingResourceException("Context is null and shouldn't be", SOAPMessageContext.class.getName(), "context");
         }
 
-        final String messageId = (String) PhaseInterceptorChain.getCurrentMessage().getContextualProperty("ebms.messageid");
+        final Message currentMessage = cxfCurrentMessageService.getCurrentMessage();
+        final String messageId = (String) currentMessage.getContextualProperty("ebms.messageid");
         final Exception exception = (Exception) context.get(Exception.class.getName());
         EbMS3Exception ebMS3Exception = getEBMS3Exception(exception, messageId);
 
@@ -105,9 +116,11 @@ public class FaultInHandler extends AbstractFaultHandler {
 
         soapUtil.logRawXmlMessageWhenEbMS3Error(soapMessageWithEbMS3Error);
 
-        updateErrorLog(soapMessageWithEbMS3Error, ebMS3Exception);
-
-        notifyPlugins(ebMS3Exception);
+        final Domain currentDomainSafely = domainContextProvider.getCurrentDomainSafely();
+        if (currentDomainSafely != null) {
+            updateErrorLog(soapMessageWithEbMS3Error, ebMS3Exception);
+            notifyPlugins(ebMS3Exception);
+        }
 
         return true;
     }
@@ -254,6 +267,8 @@ public class FaultInHandler extends AbstractFaultHandler {
             LOG.trace("Messaging header is null, error log not created");
             return;
         }
+        LOG.debug("Creating error log");
+
         final String senderParty = LOG.getMDC(DomibusLogger.MDC_FROM);
         final String receiverParty = LOG.getMDC(DomibusLogger.MDC_TO);
         final String service = LOG.getMDC(DomibusLogger.MDC_SERVICE);
@@ -267,8 +282,19 @@ public class FaultInHandler extends AbstractFaultHandler {
 
     private void notifyPlugins(EbMS3Exception faultCause) {
         LOG.debug("Preparing message details for plugin notification about the receive failure");
-        Ebms3Messaging ebms3Messaging = (Ebms3Messaging) PhaseInterceptorChain.getCurrentMessage().getExchange().get(MessageConstants.EMBS3_MESSAGING_OBJECT);
+
+        final Message currentMessage = cxfCurrentMessageService.getCurrentMessage();
+        Ebms3Messaging ebms3Messaging = (Ebms3Messaging) currentMessage.getExchange().get(MessageConstants.EMBS3_MESSAGING_OBJECT);
+        if(ebms3Messaging == null) {
+            LOG.warn("Could not notify plugins for receive failure: ebms3Messaging is null");
+            return;
+        }
+
         UserMessage userMessage = ebms3Converter.convertFromEbms3(ebms3Messaging.getUserMessage());
+        if(userMessage == null) {
+            LOG.warn("Could not notify plugins for receive failure: UserMessage is null");
+            return;
+        }
 
         final Map<String, String> properties = new HashMap<>();
         if (faultCause.getErrorCode() != null) {

@@ -1,8 +1,10 @@
+
+/* TODO(mdc-migration): The following rule targets internal classes of input that may no longer apply for the MDC version. */
 .panel mat-input-container, .panel mat-select, .panel md2-datepicker, .panel mat-select {
   width: 100% !important;
 }
 
-.mat-form-field, mat-select {
+.mat-mdc-form-field, mat-select {
   width: 80% !important;
 }
 
@@ -12,4 +14,3 @@
   margin: 16px 0;
   display: block;
 }
-

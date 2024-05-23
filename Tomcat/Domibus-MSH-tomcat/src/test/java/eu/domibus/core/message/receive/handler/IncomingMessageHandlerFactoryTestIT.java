@@ -1,6 +1,6 @@
 package eu.domibus.core.message.receive.handler;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.ebms3.model.Ebms3Messaging;
 import eu.domibus.core.ebms3.receiver.handler.*;
 import eu.domibus.core.message.pull.IncomingPullReceiptHandler;

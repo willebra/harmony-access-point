@@ -15,10 +15,10 @@
     <packaging>war</packaging>
     <name>Harmony eArchive webhook swagger definition</name>
     <properties>
-        <upstream.url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui.version}.zip</upstream.url>
-        <openapi.webapp.folder>${project.build.directory}/generated-sources</openapi.webapp.folder>
-        <openapi.output.folder>${basedir}/src/main/resources/</openapi.output.folder>
+        <openapi.output>${project.build.directory}/generated-sources</openapi.output>
+        <generator.resourcesDirectory>${basedir}/src/main/resources/</generator.resourcesDirectory>
         <openapi.output.document>domibus-archive-webhook-openapi</openapi.output.document>
+        <upstream.url>https://github.com/swagger-api/swagger-ui/archive/v${swagger-ui.version}.zip</upstream.url>
     </properties>
     <dependencies>
 
@@ -53,7 +53,7 @@
                 <artifactId>swagger-maven-plugin</artifactId>
                 <configuration>
                     <outputFileName>${openapi.output.document}</outputFileName>
-                    <outputPath>${openapi.output.folder}</outputPath>
+                    <outputPath>${generator.resourcesDirectory}</outputPath>
                     <outputFormat>JSON</outputFormat>
                     <resourcePackages>
                         <package>eu.domibus.archive.client.webhook</package>
@@ -81,10 +81,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${openapi.webapp.folder}</outputDirectory>
+                            <outputDirectory>${openapi.output}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${openapi.output.folder}</directory>
+                                    <directory>${generator.resourcesDirectory}</directory>
                                     <includes>
                                         <include>${openapi.output.document}.json</include>
                                     </includes>
@@ -109,7 +109,7 @@
                             <rules>
                                 <requireFilesExist>
                                     <files>
-                                        <file>${openapi.webapp.folder}/${openapi.output.document}.json</file>
+                                        <file>${openapi.output}/${openapi.output.document}.json</file>
                                     </files>
                                 </requireFilesExist>
                             </rules>
@@ -125,45 +125,64 @@
             <id>swagger</id>
             <build>
                 <plugins>
-                <!-- Purpose of the ANT plugin is to download and extract swagger-ui pages to folder ${project.basedir}/src/main/webapp-->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <echo message="download archive"/>
-                                <get src="${upstream.url}"
-                                     dest="${project.build.directory}/${project.artifactId}.zip"/>
-                                <echo message="unzip archive"/>
-                                <unzip src="${project.build.directory}/${project.artifactId}.zip"
-                                       dest="${project.build.directory}"/>
-                                <echo message="moving resources"/>
-                                <move todir="${openapi.webapp.folder}">
-                                    <fileset
-                                            dir="${project.build.directory}/swagger-ui-${swagger-ui.version}/dist"/>
-                                </move>
-                                <echo message="replace swagger openapi name"/>
-                                <replace file="${openapi.webapp.folder}/index.html"
-                                         token="https://petstore.swagger.io/v2/swagger.json"
-                                         value="domibus-archive-webhook-openapi.json"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+                    <!-- Purpose of the ANT plugin is to download and extract swagger-ui pages to folder ${project.basedir}/src/main/webapp-->
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- download and extract swagger-ui scripts/html pages -->
+                                        <echo message="download archive"/>
+                                        <get src="${upstream.url}" dest="${project.build.directory}/${project.artifactId}.zip"/>
+                                        <echo message="unzip archive"/>
+                                        <unzip src="${project.build.directory}/${project.artifactId}.zip"
+                                               dest="${project.build.directory}"/>
+                                        <echo message="moving resources"/>
+                                        <move todir="${openapi.output}">
+                                            <fileset dir="${project.build.directory}/swagger-ui-${swagger-ui.version}/dist"/>
+                                        </move>
+                                        <echo message="Set openapi.json as default file (openapi.json is generated in test OpenApiGenerator.java)"/>
+                                        <replace file="${openapi.output}/swagger-initializer.js"
+                                                 token="https://petstore.swagger.io/v2/swagger.json" value="domibus-archive-webhook-openapi.json" />
+                                        <replace file="${openapi.output}/swagger-ui.js"
+                                                 token="https://petstore.swagger.io/v2/swagger.json" value="domibus-archive-webhook-openapi.json" />
+                                        <!-- generate openAPI document using springdoc -->
+                                        <!-- start maven plugin with java instead of mvn because some maven applications does not have execute permission as example
+                                           maven in intellij -->
+                                        <exec dir="${project.basedir}" executable="${java.home}/bin/java">
+                                            <arg value="-cp"/>
+                                            <!--suppress UnresolvedMavenProperty -->
+                                            <arg value='${maven.home}/boot/*'/>
+                                            <!--suppress UnresolvedMavenProperty -->
+                                            <arg value="-Dmaven.multiModuleProjectDirectory=${maven.multiModuleProjectDirectory}" />
+                                            <!--suppress UnresolvedMavenProperty -->
+                                            <arg value="-Dmaven.home=${maven.home}" />
+                                            <!--suppress UnresolvedMavenProperty -->
+                                            <arg value="-Dclassworlds.conf=${maven.home}/bin/m2.conf" />
+                                            <arg value="-Dfile.encoding=UTF-8" />
+                                            <arg value="-Dproject.reporting.outputEncoding=UTF-8" />
+                                            <arg value="org.codehaus.classworlds.Launcher" />
+                                            <arg value="org.apache.maven.plugins:maven-failsafe-plugin:${maven-failsafe-plugin.version}:integration-test" />
+                                            <arg value="-Dit.test=OpenApiGenerator" />
+                                        </exec>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <!-- build war artefacts with swagger-ui -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <webappDirectory>${openapi.webapp.folder}</webappDirectory>
-                </configuration>
-            </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <configuration>
+                            <webappDirectory>${openapi.output}</webappDirectory>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

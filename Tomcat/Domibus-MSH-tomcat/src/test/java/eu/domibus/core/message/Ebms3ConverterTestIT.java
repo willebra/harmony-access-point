@@ -1,6 +1,6 @@
 package eu.domibus.core.message;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.ebms3.model.Ebms3UserMessage;
 import eu.domibus.api.model.PartInfo;
 import eu.domibus.api.model.UserMessage;

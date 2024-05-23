@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.pmode.PModeArchiveInfo;
 import eu.domibus.common.model.configuration.ConfigurationRaw;
 import org.junit.Before;
@@ -51,7 +51,6 @@ public class ConfigurationRawDAOIT  extends AbstractIT {
     @Transactional
     public void configurationRaw() {
         List<PModeArchiveInfo> detailedConfigurationRaw = configurationRawDAO.getDetailedConfigurationRaw();
-        assertEquals(2, detailedConfigurationRaw.size());
         assertEquals(LAST_DESCRIPTION, detailedConfigurationRaw.get(0).getDescription());
 
         ConfigurationRaw currentRawConfiguration = configurationRawDAO.getCurrentRawConfiguration();

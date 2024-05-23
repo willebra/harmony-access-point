@@ -15,6 +15,7 @@ import eu.domibus.messaging.MessagingProcessingException;
 import eu.domibus.plugin.ws.backend.WSBackendMessageLogEntity;
 import eu.domibus.plugin.ws.backend.WSBackendMessageLogService;
 import eu.domibus.plugin.ws.connector.WSPluginImpl;
+import eu.domibus.plugin.ws.exception.WSMessageLogNotFoundException;
 import eu.domibus.plugin.ws.exception.WSPluginException;
 import eu.domibus.plugin.ws.generated.*;
 import eu.domibus.plugin.ws.generated.body.*;
@@ -163,11 +164,10 @@ public class WebServiceImpl implements WebServicePluginInterface {
         UserMessage userMessage;
         try {
             userMessage = wsPlugin.downloadMessage(messageId, null);
+        } catch (final WSMessageLogNotFoundException wsmlnfEx) {
+            LOG.warn("WSMessageLog not found for messageId [{}]", messageId);
+            throw new WSPluginException(MESSAGE_NOT_FOUND_ID + messageId + "]", wsmlnfEx);
         } catch (final MessageNotFoundException mnfEx) {
-            throw new WSPluginException(MESSAGE_NOT_FOUND_ID + messageId + "]");
-        }
-
-        if (userMessage == null) {
             throw new WSPluginException(MESSAGE_NOT_FOUND_ID + messageId + "]");
         }
         return userMessage;
@@ -536,12 +536,6 @@ public class WebServiceImpl implements WebServicePluginInterface {
 
         String trimmedMessageId = messageExtService.cleanMessageIdentifier(retrieveMessageRequest.getMessageID());
         boolean markAsDownloaded = toBooleanDefaultIfNull(toBooleanObject(retrieveMessageRequest.getMarkAsDownloaded()), true);  //workaround jaxws bug
-        WSMessageLogEntity wsMessageLogEntity = wsMessageLogService.findByMessageId(trimmedMessageId);
-        if (markAsDownloaded && wsMessageLogEntity == null) {
-            LOG.businessError(BUS_MSG_NOT_FOUND, trimmedMessageId);
-            throw new RetrieveMessageFault(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", webServicePluginExceptionFactory.createFaultMessageIdNotFound(trimmedMessageId));
-        }
-
         userMessage = downloadUserMessage(trimmedMessageId, markAsDownloaded);
 
         // To avoid blocking errors during the Header's response validation
@@ -561,10 +555,6 @@ public class WebServiceImpl implements WebServicePluginInterface {
             //if an error occurs related to the message acknowledgement do not block the download message operation
             LOG.error("Error acknowledging message [" + retrieveMessageRequest.getMessageID() + "]", e);
         }
-        if (markAsDownloaded) {
-            // remove downloaded message from the plugin table containing the pending messages
-            wsMessageLogService.delete(wsMessageLogEntity);
-        }
     }
 
     private UserMessage downloadUserMessage(String trimmedMessageId, boolean markAsAcknowledged) throws
@@ -572,6 +562,9 @@ public class WebServiceImpl implements WebServicePluginInterface {
         UserMessage userMessage;
         try {
             userMessage = wsPlugin.downloadMessage(trimmedMessageId, null, markAsAcknowledged);
+        } catch (WSMessageLogNotFoundException wsmlnfEx) {
+            LOG.businessError(BUS_MSG_NOT_FOUND, trimmedMessageId);
+            throw new RetrieveMessageFault(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", webServicePluginExceptionFactory.createFaultMessageIdNotFound(trimmedMessageId));
         } catch (final MessageNotFoundException mnfEx) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug(MESSAGE_NOT_FOUND_ID + trimmedMessageId + "]", mnfEx);
@@ -609,9 +602,12 @@ public class WebServiceImpl implements WebServicePluginInterface {
         for (final PartInfo partInfo : getPartInfo(messaging)) {
             ExtendedPartInfo extPartInfo = (ExtendedPartInfo) partInfo;
             LargePayloadType payloadType = WEBSERVICE_OF.createLargePayloadType();
-            if (extPartInfo.getPayloadDatahandler() != null) {
-                LOG.debug("payloadDatahandler Content Type: [{}]", extPartInfo.getPayloadDatahandler().getContentType());
-                payloadType.setValue(extPartInfo.getPayloadDatahandler());
+            DataHandler payloadDatahandler = extPartInfo.getPayloadDatahandler();
+            if (payloadDatahandler != null) {
+                String contentType = payloadDatahandler.getContentType();
+                LOG.debug("payloadDatahandler Content Type: [{}]", contentType);
+                payloadType.setContentType(contentType);
+                payloadType.setValue(payloadDatahandler);
             }
             if (extPartInfo.isInBody()) {
                 retrieveMessageResponse.value.setBodyload(payloadType);

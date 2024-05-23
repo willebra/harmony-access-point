@@ -5,18 +5,21 @@
     <div style="height: calc(100% - 60px); overflow-y: auto;">
       <div style="overflow-y: hidden;">
         <div>
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-content>
               <div class="panel">
                 <mat-form-field style="width:100%">
-                  <input matInput placeholder="Name" name="name" id="name_id_detail" [(ngModel)]="party.name" input-debounce
+                  <mat-label>Name</mat-label>
+                  <input matInput name="name" id="name_id_detail" [(ngModel)]="party.name" input-debounce
                          #party_name="ngModel" required [maxlength]="255">
                   <span class="help-block" *ngIf="shouldShowErrors(party_name)">
                     <div *ngIf="party_name.errors?.required" style="color:red; font-size: 70%">You should type a party name</div>
                   </span>
                 </mat-form-field>
+
                 <mat-form-field style="width:100%">
-                  <input matInput placeholder="End Point" name="endPoint" id="endPoint_id_detail" [(ngModel)]="party.endpoint" input-debounce
+                  <mat-label>End Point</mat-label>
+                  <input matInput name="endPoint" id="endPoint_id_detail" [(ngModel)]="party.endpoint" input-debounce
                          #party_endPoint="ngModel" required [maxlength]="255" [pattern]="endpointPattern">
                   <span class="help-block" *ngIf="shouldShowErrors(party_endPoint)">
                     <div *ngIf="party_endPoint.errors?.required" style="color:red; font-size: 70%">You should type an endpoint</div>
@@ -29,7 +32,7 @@
         </div>
 
         <div>
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>
               <mat-card-title>Certificate</mat-card-title>
             </mat-card-header>
@@ -37,19 +40,24 @@
               <div class="panel">
                 <fieldset [disabled]="true" style="border: none;">
                   <mat-form-field style="width:100%">
-                    <input matInput placeholder="Subject Name" name="subjectName" value="{{party.certificate?.subject}}" id="subjectName_id">
+                    <mat-label>Subject Name</mat-label>
+                    <input matInput name="subjectName" value="{{party.certificate?.subject}}" id="subjectName_id">
                   </mat-form-field>
                   <mat-form-field style="width:40%">
-                    <input matInput placeholder="Valid From" name="validityFrom" value="{{party.certificate?.validFrom | domibusDate}}" id="validityFrom_id">
+                    <mat-label>Valid From</mat-label>
+                    <input matInput name="validityFrom" value="{{party.certificate?.validFrom | domibusDate}}" id="validityFrom_id">
                   </mat-form-field>
                   <mat-form-field style="width:40%">
-                    <input matInput placeholder="Valid To" name="validityTo" value="{{party.certificate?.validUntil | domibusDate}}" id="validityTo_id">
+                    <mat-label>Valid To</mat-label>
+                    <input matInput name="validityTo" value="{{party.certificate?.validUntil | domibusDate}}" id="validityTo_id">
                   </mat-form-field>
                   <mat-form-field style="width:100%">
-                    <input matInput placeholder="Issuer" name="issuer" value="{{party.certificate?.issuer}}" id="issuer_id">
+                    <mat-label>Issuer</mat-label>
+                    <input matInput name="issuer" value="{{party.certificate?.issuer}}" id="issuer_id">
                   </mat-form-field>
                   <mat-form-field style="width:100%">
-                    <input matInput placeholder="Fingerprints" name="fingerPrint" value="{{party.certificate?.fingerprints}}" id="fingerPrint_id">
+                    <mat-label>Fingerprints</mat-label>
+                    <input matInput name="fingerPrint" value="{{party.certificate?.fingerprints}}" id="fingerPrint_id">
                   </mat-form-field>
                 </fieldset>
                 <label [ngClass]="{'custom-file-upload': party.name, 'custom-file-upload-disabled': !party.name }" (click)="onImportClicked($event)">
@@ -62,7 +70,7 @@
         </div>
 
         <div>
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>
               <mat-card-title [ngClass]="{ 'invalid': party.identifiers.length == 0}">Identifiers</mat-card-title>
             </mat-card-header>
@@ -108,7 +116,7 @@
         </div>
 
         <div>
-          <mat-card>
+          <mat-card appearance="outlined">
             <mat-card-header>
               <mat-card-title>Processes</mat-card-title>
             </mat-card-header>

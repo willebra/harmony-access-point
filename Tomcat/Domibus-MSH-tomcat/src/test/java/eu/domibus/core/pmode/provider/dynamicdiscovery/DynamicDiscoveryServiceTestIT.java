@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode.provider.dynamicdiscovery;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.cluster.Command;
 import eu.domibus.api.cluster.SignalService;
 import eu.domibus.api.dynamicdyscovery.DynamicDiscoveryLookupEntity;
@@ -38,6 +38,7 @@ import eu.europa.ec.dynamicdiscovery.model.identifiers.SMPProcessIdentifier;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,8 @@ public class DynamicDiscoveryServiceTestIT extends AbstractIT {
     public static final String CERTIFICATE_POLICY_QCP_LEGAL = "0.4.0.194112.1.1";
     public static final String CERTIFICATE_POLICY_QCP_NATURAL_QSCD = "0.4.0.194112.1.2";
     public static final String CERTIFICATE_POLICY_QCP_LEGAL_QSCD = "0.4.0.194112.1.3";
+    public static final String KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS = "keystores/gateway_truststore_dyn_disc.jks";
+    public static final String KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS_PASSWORD = "test123";
 
     @Autowired
     MultiDomainPModeProvider multiDomainPModeProvider;
@@ -172,10 +175,61 @@ public class DynamicDiscoveryServiceTestIT extends AbstractIT {
     //start tests
 
     @Test
+    public void lookupFinalRecipientRegisteredOnTheSameAccessPointAsTheSender() throws EbMS3Exception, XmlProcessingException, IOException {
+        initializePmodeAndProperties(DYNAMIC_DISCOVERY_PMODE_WITH_SIGN_AND_ENCRYPTION);
+
+        certificateTestUtils.resetTruststore(KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS, KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS_PASSWORD);
+
+        //clean up
+        cleanBeforeLookup();
+
+        //get the party identifying our Access Point
+        final Party gatewayParty = multiDomainPModeProvider.getGatewayParty();
+        final String gatewayPartyName = gatewayParty.getName();
+        String expectedGatewayParty = "blue_gw";
+        assertEquals(expectedGatewayParty, gatewayPartyName);
+
+        final String finalRecipient1PartyName = DynamicDiscoveryServicePEPPOLConfigurationMockup.participantConfigurations.get(FINAL_RECIPIENT10).getPartyName();
+        LOG.info("---first lookup for final recipient [{}] and party [{}]", FINAL_RECIPIENT10, finalRecipient1PartyName);
+        //we expect the party blue_gw certificate is not added in the truststore because it already exists
+        //we expect the blue_gw is added in the Pmode responder parties
+        doLookupForFinalRecipient(FINAL_RECIPIENT10, finalRecipient1PartyName, 2, 1, 1, 1);
+
+        final List<DynamicDiscoveryLookupEntity> dynamicDiscoveryLookupEntries = dynamicDiscoveryLookupDao.findAll();
+        Assert.assertEquals(1, dynamicDiscoveryLookupEntries.size());
+        final DynamicDiscoveryLookupEntity dynamicDiscoveryLookupEntity = dynamicDiscoveryLookupEntries.get(0);
+        assertEquals(expectedGatewayParty, dynamicDiscoveryLookupEntity.getPartyName());
+
+        //check that the Access Point party is in the Pmode(was added by dynamic discovery lookup)
+        assertPartyIsConfiguredInPmode(expectedGatewayParty);
+
+        //we create a date in the future so that the call below deletes all entries
+        Date dateLimit = DateUtils.addHours(new Date(), 1);
+        dynamicDiscoveryLookupService.deleteDDCLookupEntriesNotDiscoveredInTheLastPeriod(dateLimit);
+
+        //we expect that the cleanup did not delete the Access Point party from the Pmode
+        assertPartyIsConfiguredInPmode(expectedGatewayParty);
+
+    }
+
+    protected void assertPartyIsConfiguredInPmode(String expectedGatewayParty) {
+        //assert that the party is in the Pmode parties list
+        final Party partyByName = multiDomainPModeProvider.getPartyByName(expectedGatewayParty);
+        assertNotNull(partyByName);
+        assertEquals(expectedGatewayParty, partyByName.getName());
+
+        //assert that the party is present in the responder parties
+        final List<Process> allProcesses = multiDomainPModeProvider.findAllProcesses();
+        for (Process allProcess : allProcesses) {
+            assertTrue(allProcess.getResponderParties().stream().anyMatch(party -> party.getName().equals(expectedGatewayParty)));
+        }
+    }
+
+    @Test
     public void lookupAndUpdateConfigurationForPartyToId() throws EbMS3Exception, SQLException, XmlProcessingException, IOException {
         initializePmodeAndProperties(DYNAMIC_DISCOVERY_PMODE_WITH_SIGN_AND_ENCRYPTION);
 
-        certificateTestUtils.resetTruststore("keystores/gateway_truststore_dyn_disc.jks", "test123");
+        certificateTestUtils.resetTruststore(KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS, KEYSTORES_GATEWAY_TRUSTSTORE_DYN_DISC_JKS_PASSWORD);
 
         //clean up
         cleanBeforeLookup();
@@ -463,7 +517,7 @@ public class DynamicDiscoveryServiceTestIT extends AbstractIT {
         fromPartyId.setValue(PARTY_NAME5);
         fromPartyId.setType("urn:fdc:peppol.eu:2017:identifiers:ap");
         final PartyRole partyRole = new PartyRole();
-        partyRole.setValue("urn:fdc:peppol.eu:2017:roles:ap:as4");
+        partyRole.setValue("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder");
         toParty.setToRole(partyRole);
         toParty.setToPartyId(fromPartyId);
 
@@ -764,7 +818,7 @@ public class DynamicDiscoveryServiceTestIT extends AbstractIT {
         final PartyInfo partyInfo = new PartyInfo();
         From from = new From();
         final PartyId fromPartyId = new PartyId();
-        fromPartyId.setValue("domibus-blue");
+        fromPartyId.setValue("blue_gw");
         fromPartyId.setType("urn:fdc:peppol.eu:2017:identifiers:ap");
         final PartyRole partyRole = new PartyRole();
         partyRole.setValue("http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator");

@@ -1,4 +1,4 @@
-package eu.domibus.test;
+package eu.domibus;
 
 import eu.domibus.core.logging.LogbackLoggingConfigurator;
 import eu.domibus.core.property.DomibusPropertiesPropertySource;

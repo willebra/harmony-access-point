@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import eu.domibus.api.ebms3.Ebms3Constants;
 import eu.domibus.api.ebms3.MessageExchangePattern;
 import eu.domibus.api.exceptions.DomibusCoreErrorCode;
+import eu.domibus.api.model.PartyId;
 import eu.domibus.api.multitenancy.Domain;
 import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.api.party.Party;
@@ -21,6 +22,7 @@ import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.common.model.configuration.Process;
 import eu.domibus.common.model.configuration.*;
 import eu.domibus.core.converter.PartyCoreMapper;
+import eu.domibus.core.message.dictionary.PartyIdDao;
 import eu.domibus.core.pmode.provider.PModeProvider;
 import eu.domibus.core.pmode.validation.PModeValidationHelper;
 import eu.domibus.logging.DomibusLogger;
@@ -79,7 +81,10 @@ public class PartyServiceImpl implements PartyService {
     protected DomibusPropertyProvider domibusPropertyProvider;
 
     @Autowired
-    PartyCoreMapper partyCoreMapper;
+    private PartyCoreMapper partyCoreMapper;
+
+    @Autowired
+    private PartyIdDao partyIdDao;
 
     /**
      * {@inheritDoc}
@@ -129,6 +134,33 @@ public class PartyServiceImpl implements PartyService {
         return gatewayParty.getIdentifiers().stream()
                 .map(Identifier::getPartyId)
                 .collect(toList());
+    }
+
+    @Override
+    public PartyId getPartyIdByValue(String value) {
+        eu.domibus.common.model.configuration.Party party = pModeProvider.getPartyByIdentifier(value);
+        if (party == null) {
+            LOG.debug("Party with identifier [{}] not found in pMode", value);
+            return null;
+        }
+
+        Identifier identifier = party.getIdentifiers().stream()
+                .filter(identif -> StringUtils.equalsIgnoreCase(identif.getPartyId(), value))
+                .findFirst().orElse(null);
+        if (identifier == null) {
+            LOG.debug("Party identifier [{}] not found in pMode", value);
+            return null;
+        }
+
+        PartyId partyId = partyIdDao.findExistingPartyId(identifier.getPartyId(),
+                identifier.getPartyIdType() == null ? null : identifier.getPartyIdType().getValue());
+        if (partyId == null) {
+            LOG.debug("Party with value [{}] and type [{}] not found in dictionary", value,
+                    identifier.getPartyIdType() == null ? null : identifier.getPartyIdType().getValue());
+            return null;
+        }
+
+        return partyId;
     }
 
     /**
