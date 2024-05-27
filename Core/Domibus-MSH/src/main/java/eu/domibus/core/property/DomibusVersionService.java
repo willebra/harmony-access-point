@@ -34,6 +34,7 @@ public class DomibusVersionService {
             versionProps.load(inputStream);
             LOG.info("=========================================================================================================");
             LOG.info("|         " + getDisplayVersion() + "        |");
+            LOG.info("|         Upstream version [" + getUpstreamVersion() + "]");
             LOG.info("=========================================================================================================");
         } catch (Exception ex) {
             LOG.warn("Error loading version properties", ex);
