@@ -163,7 +163,13 @@ $datatable_background_color_active: map-get(mat.$grey-palette, 600);
   }
 }
 
-.mat-sidenav .mat-mdc-raised-button:not(:disabled) {
-  --mdc-protected-button-label-text-color: #003399;
-  --mdc-protected-button-container-color: #f0fbfc;
+.mat-sidenav {
+  .mat-mdc-raised-button:not(:disabled) {
+    --mdc-protected-button-label-text-color: #003399;
+    --mdc-protected-button-container-color: #f0fbfc;
+  }
+
+  .mat-expansion-panel-header.mat-expanded {
+    --mat-expansion-header-expanded-state-height: 48px;
+  }
 }

@@ -124,11 +124,20 @@ mat-sidenav[_ngcontent-c0] {
     padding-right: 5px;
   }
 
+  .mat-expansion-panel-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   .mat-mdc-unelevated-button > .mat-icon,
   .mat-mdc-raised-button > .mat-icon,
   .mat-mdc-outlined-button > .mat-icon {
     margin-left: auto;
     margin-right: auto;
+  }
+
+  .sideNavSubmenu .sideNavButton {
+    margin-left: 17px;
   }
 }
 
@@ -454,6 +463,7 @@ html, body, app-root, ng-component {
   flex-grow: 1;
   overflow-y: hidden;
   overflow-x: hidden;
+  padding-bottom: 3px;
 }
 
 .selectionCriteria {

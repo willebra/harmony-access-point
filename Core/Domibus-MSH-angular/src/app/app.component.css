@@ -53,6 +53,10 @@ html, body, material-app, .my-content {
   padding-left: 0;
 }
 
+mat-sidenav-container mat-expansion-panel-header button {
+  margin-bottom: 0;
+}
+
 .menu-collapsed .mat-expansion-panel-header {
   padding-right: 0px;
   margin-right: -10px;
