@@ -50,6 +50,10 @@ public class DomibusVersionService {
         return versionNumber;
     }
 
+    public String getUpstreamVersion() {
+      return versionProps.getProperty("Upstream-Version");
+    }
+
     public String getArtifactName() {
         return versionProps.getProperty("Artifact-Name");
     }
