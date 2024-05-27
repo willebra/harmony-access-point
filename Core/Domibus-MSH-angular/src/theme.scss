@@ -163,3 +163,7 @@ $datatable_background_color_active: map-get(mat.$grey-palette, 600);
   }
 }
 
+.mat-sidenav .mat-mdc-raised-button:not(:disabled) {
+  --mdc-protected-button-label-text-color: #003399;
+  --mdc-protected-button-container-color: #f0fbfc;
+}
