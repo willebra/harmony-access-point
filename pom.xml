@@ -74,10 +74,10 @@
         <tomcat-embed.version>9.0.86</tomcat-embed.version>
         <json-smart.version>2.4.11</json-smart.version>
         <xbean-spring.version>4.23</xbean-spring.version> <!-- see ticket EDELIVERY-10294 -->
-        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
-        <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
-        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
-        <maven-source-plugin.version>2.3</maven-source-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+        <maven-shade-plugin.version>3.5.0</maven-shade-plugin.version>
+        <maven-source-plugin.version>3.3.0</maven-source-plugin.version>
 
         <!-- Sonar properties -->
         <sonar.binaries>target/classes</sonar.binaries>
