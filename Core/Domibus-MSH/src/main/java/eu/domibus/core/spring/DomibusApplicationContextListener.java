@@ -154,22 +154,30 @@ public class DomibusApplicationContextListener {
     }
 
     public void doInitialize() {
-        executeWithLockIfNeeded(this::executeSynchronized);
-        executeNonSynchronized();
+        executeWithLockIfNeeded(() -> executeSynchronized(true));
+        executeNonSynchronized(true);
+    }
+
+    public void initializeForTests() {
+        executeSynchronized(false);
+        executeNonSynchronized(false);
     }
 
     /**
      * Method executed in a serial/sync mode (if in a cluster environment)
      * Add code that needs to be executed with regard to other nodes in the cluster
      */
-    protected void executeSynchronized() {
+    protected void executeSynchronized(boolean completeInitialization) {
         messageDictionaryService.createStaticDictionaryEntries();
-        multiDomainCryptoService.saveStoresFromDBToDisk();
-        tlsCertificateManager.saveStoresFromDBToDisk();
         domibusPropertyValidatorService.enforceValidation();
-        backendFilterInitializerService.updateMessageFilters();
         encryptionService.handleEncryption();
         getUserService().createDefaultUserIfApplicable();
+
+        if (completeInitialization) {
+            backendFilterInitializerService.updateMessageFilters();
+            multiDomainCryptoService.saveStoresFromDBToDisk();
+            tlsCertificateManager.saveStoresFromDBToDisk();
+        }
 
         initializePluginsWithLockIfNeeded();
     }
@@ -189,21 +197,32 @@ public class DomibusApplicationContextListener {
      * Method executed in a parallel/not sync mode (in any environment)
      * Add code that does not need to be executed with regard to other nodes in the cluster
      */
-    protected void executeNonSynchronized() {
-        messageListenerContainerInitializer.initialize();
-        jmsQueueCountSetScheduler.initialize();
-        payloadFileStorageProvider.initialize();
+    protected void executeNonSynchronized(boolean completeInitialization) {
         routingService.initialize();
-
-        eArchiveFileStorageProvider.initialize();
-
-        //this is added on purpose in the non-synchronized area; the initialize method has a more complex logic to decide if it executes in synchronized way
-        domibusQuartzStarter.initialize();
-
         gatewayConfigurationValidator.validateConfiguration();
         backendConnectorService.ensureValidConfiguration();
 
+        jmsQueueCountSetScheduler.initialize();
+        payloadFileStorageProvider.initialize();
+
+        eArchiveFileStorageProvider.initialize();
+
+        if (completeInitialization) {
+            messageListenerContainerInitializer.initialize();
+            //this is added on purpose in the non-synchronized area; the initialize method has a more complex logic to decide if it executes in synchronized way
+            domibusQuartzStarter.initialize();
+        }
+
         initializePluginsNonSynchronized();
+
+        publishMshEndpoint();
+    }
+
+    protected void publishMshEndpoint() {
+        if (mshEndpoint.isPublished()) {
+            LOG.info("The /msh endpoint is already published");
+            return;
+        }
 
         LOG.info("Publishing the /msh endpoint");
         mshEndpoint.publish("/msh");

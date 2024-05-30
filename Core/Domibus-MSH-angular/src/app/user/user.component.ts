@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import {UserResponseRO, UserState} from './support/user';
 import {UserSearchCriteria, UserService} from './support/user.service';
-import {MAT_CHECKBOX_CLICK_ACTION, MatDialog} from '@angular/material';
 import {UserValidatorService} from 'app/user/support/uservalidator.service';
 import {AlertService} from '../common/alert/alert.service';
 import {EditUserComponent} from 'app/user/edituser-form/edituser-form.component';
@@ -27,12 +26,9 @@ import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'user.component.html',
   styleUrls: ['./user.component.css'],
-  providers: [
-    {provide: MAT_CHECKBOX_CLICK_ACTION, useValue: 'check'}
-  ]
+  providers: []
 })
 @ComponentName('Users')
 export class UserComponent extends mix(BaseListComponent)
@@ -43,11 +39,11 @@ export class UserComponent extends mix(BaseListComponent)
   static readonly USER_USERS_URL: string = UserComponent.USER_URL + '/users';
   static readonly USER_CSV_URL: string = UserComponent.USER_URL + '/csv';
 
-  @ViewChild('editableTpl', {static: false}) editableTpl: TemplateRef<any>;
-  @ViewChild('checkBoxTpl', {static: false}) checkBoxTpl: TemplateRef<any>;
-  @ViewChild('deletedTpl', {static: false}) deletedTpl: TemplateRef<any>;
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
-  @ViewChild('rowWithDateFormatTpl', {static: false}) public rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('editableTpl') editableTpl: TemplateRef<any>;
+  @ViewChild('checkBoxTpl') checkBoxTpl: TemplateRef<any>;
+  @ViewChild('deletedTpl') deletedTpl: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') public rowWithDateFormatTpl: TemplateRef<any>;
 
   userRoles: Array<String>;
   domains: Domain[];
@@ -61,7 +57,7 @@ export class UserComponent extends mix(BaseListComponent)
   allUsers: UserResponseRO[];
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private userService: UserService,
-              public dialog: MatDialog, private dialogsService: DialogsService, private userValidatorService: UserValidatorService,
+              private dialogsService: DialogsService, private userValidatorService: UserValidatorService,
               private alertService: AlertService, private securityService: SecurityService, private domainService: DomainService,
               private changeDetector: ChangeDetectorRef) {
     super();
@@ -88,34 +84,42 @@ export class UserComponent extends mix(BaseListComponent)
         name: 'User Name',
         prop: 'userName',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.editableTpl,
         name: 'Role',
         prop: 'roles',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 150,
+        minWidth: 140,
       },
       {
         cellTemplate: this.editableTpl,
         name: 'Email',
         prop: 'email',
         canAutoResize: true,
-        showInitially: false
+        showInitially: false,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.checkBoxTpl,
         name: 'Active',
         canAutoResize: true,
-        width: 25,
+        width: 100,
+        minWidth: 90,
         showInitially: true
       },
       {
         cellTemplate: this.deletedTpl,
         name: 'Deleted',
         canAutoResize: true,
-        width: 25,
+        width: 70,
+        minWidth: 60,
         showInitially: false
       },
       {
@@ -123,12 +127,15 @@ export class UserComponent extends mix(BaseListComponent)
         name: 'Expiration Date',
         prop: 'expirationDate',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 60,
+        width: 100,
+        minWidth: 90,
         canAutoResize: true,
         sortable: false,
         showInitially: true
@@ -144,6 +151,8 @@ export class UserComponent extends mix(BaseListComponent)
           cellTemplate: this.editableTpl,
           name: 'Domain',
           prop: 'domainName',
+          width: 120,
+          minWidth: 110,
           canAutoResize: true,
           showInitially: true
         });
@@ -249,7 +258,7 @@ export class UserComponent extends mix(BaseListComponent)
 
     this.editedUser = new UserResponseRO('', this.currentDomain, '', '', true, UserState[UserState.NEW], [], false, false, null);
     this.setIsDirty();
-    this.dialog.open(EditUserComponent, {
+    this.dialogsService.open(EditUserComponent, {
       data: {
         user: this.editedUser,
         userroles: this.userRoles,
@@ -282,7 +291,7 @@ export class UserComponent extends mix(BaseListComponent)
     }
 
     const rowCopy = Object.assign({}, currentUser);
-    this.dialog.open(EditUserComponent, {
+    this.dialogsService.open(EditUserComponent, {
       data: {
         user: rowCopy,
         userroles: this.userRoles,
@@ -354,8 +363,8 @@ export class UserComponent extends mix(BaseListComponent)
 
   protected createAndSetParameters(): HttpParams {
     let filterParams = super.createAndSetParameters();
-    if(this.filter.deleted_notSet){
-      filterParams = filterParams.set('deleted','all');
+    if (this.filter.deleted_notSet) {
+      filterParams = filterParams.set('deleted', 'all');
     }
     filterParams = filterParams.append('page', '0');
     filterParams = filterParams.append('pageSize', '10000');

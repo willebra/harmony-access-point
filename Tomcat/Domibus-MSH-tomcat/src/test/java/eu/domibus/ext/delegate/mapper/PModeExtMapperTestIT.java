@@ -1,6 +1,6 @@
 package eu.domibus.ext.delegate.mapper;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.pmode.PModeArchiveInfo;
 import eu.domibus.api.pmode.ValidationIssue;
 import eu.domibus.ext.domain.PModeArchiveInfoDTO;

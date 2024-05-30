@@ -77,6 +77,7 @@ public class ApplicationResource {
         final DomibusInfoRO domibusInfoRO = new DomibusInfoRO();
         domibusInfoRO.setVersion(domibusVersionService.getDisplayVersion());
         domibusInfoRO.setVersionNumber(domibusVersionService.getVersionNumber());
+        domibusInfoRO.setUpstreamVersionNumber(domibusVersionService.getUpstreamVersion());
         return domibusInfoRO;
     }
 

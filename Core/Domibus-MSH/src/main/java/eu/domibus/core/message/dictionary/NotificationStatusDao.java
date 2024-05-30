@@ -3,9 +3,11 @@ package eu.domibus.core.message.dictionary;
 import eu.domibus.api.model.NotificationStatus;
 import eu.domibus.api.model.NotificationStatusEntity;
 import eu.domibus.api.model.UserMessageLog;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.SingleValueDictionaryDao;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ import javax.persistence.TypedQuery;
  */
 @Service
 public class NotificationStatusDao extends SingleValueDictionaryDao<NotificationStatusEntity> {
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     private static final DomibusLogger LOG = DomibusLoggerFactory.getLogger(UserMessageLog.class);
 
@@ -28,7 +32,7 @@ public class NotificationStatusDao extends SingleValueDictionaryDao<Notification
     }
 
     public NotificationStatusEntity findOrCreate(NotificationStatus status) {
-        if (status == null) {
+        if(status == null) {
             return null;
         }
 
@@ -54,6 +58,8 @@ public class NotificationStatusDao extends SingleValueDictionaryDao<Notification
     private NotificationStatusEntity getEntity(Object notificationStatus) {
         TypedQuery<NotificationStatusEntity> query = em.createNamedQuery("NotificationStatusEntity.findByStatus", NotificationStatusEntity.class);
         query.setParameter("NOTIFICATION_STATUS", notificationStatus);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
+
 }

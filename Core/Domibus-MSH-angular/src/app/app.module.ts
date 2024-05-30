@@ -2,29 +2,24 @@ import {BrowserModule} from '@angular/platform-browser';
 import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatDialogModule,
-  MatExpansionModule,
-  MatIconModule,
-  MatInputModule,
-  MatListModule,
-  MatMenuModule,
-  MatProgressSpinnerModule,
-  MatSelectModule,
-  MatSidenavModule,
-  MatSlideToggleModule,
-  MatSnackBarModule,
-  MatTooltipModule
-} from '@angular/material';
-import 'hammerjs';
+import {MatButtonModule} from '@angular/material/button';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatCardModule} from '@angular/material/card';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 import {NgxDatatableModule} from '@swimlane/ngx-datatable';
-import {Md2DatepickerModule, MdNativeDateModule} from 'angular-md2';
-
 import {AppComponent} from './app.component';
 import {LoginComponent} from './security/login/login.component';
 import {CurrentPModeComponent} from './pmode/current/currentPMode.component';
@@ -57,6 +52,7 @@ import {DefaultPasswordDialogComponent} from './security/default-password-dialog
 import {MessagelogDetailsComponent} from './messagelog/messagelog-details/messagelog-details.component';
 import {ErrorlogDetailsComponent} from './errorlog/errorlog-details/errorlog-details.component';
 import {EditMessageFilterComponent} from './messagefilter/editmessagefilter-form/editmessagefilter-form.component';
+import {YesNoDialogComponent} from './common/dialogs/yes-no-dialog/yes-no-dialog.component';
 import {DirtyGuard} from './common/guards/dirty.guard';
 import {EditUserComponent} from 'app/user/edituser-form/edituser-form.component';
 import {TruststoreDialogComponent} from './truststore/truststore-dialog/truststore-dialog.component';
@@ -68,14 +64,15 @@ import {ActionDirtyDialogComponent} from './pmode/action-dirty-dialog/action-dir
 import {AuditComponent} from './audit/audit.component';
 import {PartyComponent} from './party/party.component';
 import {PartyDetailsComponent} from './party/party-details/party-details.component';
-import {ClearInvalidDirective} from './common/customDate/clearInvalid.directive';
 import {PageHeaderComponent} from './common/page-header/page-header.component';
 import {DomainSelectorComponent} from './common/domain-selector/domain-selector.component';
 import {PmodeViewComponent} from './pmode/archive/pmode-view/pmode-view.component';
 import {AlertsComponent} from './alerts/alerts.component';
 import {PluginUserComponent} from './pluginuser/pluginuser.component';
 import {EditBasicPluginUserFormComponent} from './pluginuser/editpluginuser-form/edit-basic-plugin-user-form.component';
-import {EditCertificatePluginUserFormComponent} from './pluginuser/editpluginuser-form/edit-certificate-plugin-user-form.component';
+import {
+  EditCertificatePluginUserFormComponent
+} from './pluginuser/editpluginuser-form/edit-certificate-plugin-user-form.component';
 import {PartyIdentifierDetailsComponent} from './party/party-identifier-details/party-identifier-details.component';
 import {GlobalErrorHandler} from './common/global.error-handler';
 import {UserService} from './user/support/user.service';
@@ -107,7 +104,9 @@ import {ApplicationContextService} from './common/application-context.service';
 import {SessionExpiredDialogComponent} from './security/session-expired-dialog/session-expired-dialog.component';
 import {SessionService} from './security/session.service';
 import {AuthInternalProviderGuard} from './common/guards/auth-internal-provider.guard';
-import {AddNestedPropertyDialogComponent} from './properties/support/add-nested-property-dialog/add-nested-property-dialog.component';
+import {
+  AddNestedPropertyDialogComponent
+} from './properties/support/add-nested-property-dialog/add-nested-property-dialog.component';
 import {TLSTruststoreComponent} from './truststore/tls.truststore.component';
 import {TruststoreComponent} from './truststore/truststore.component';
 import {KeystoreComponent} from './truststore/keystore.component';
@@ -116,16 +115,36 @@ import {PluginUserValidatorService} from './pluginuser/support/pluginuservalidat
 import {DomibusFutureDatePipe} from './common/customDate/domibusFutureDatePipe';
 import {DomainsComponent} from './domains/domains.component';
 import {DataTablePagerComponent} from './common/page-grid/datatable-pager.comonent';
-import {ManageBackendsComponent} from './messagefilter/manageBackends-form/manageBackends-form.component';
 import {LandingPageGuard} from './common/guards/landing-page.guard';
-import {YesNoDialogComponent} from './common/dialogs/yes-no-dialog/yes-no-dialog.component';
 import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component';
+import {
+  NGX_MAT_DATE_FORMATS,
+  NgxMatDateFormats,
+  NgxMatDatetimePickerModule
+} from '@angular-material-components/datetime-picker';
+import {NgxMatMomentModule} from '@angular-material-components/moment-adapter';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {ManageBackendsComponent} from './messagefilter/manageBackends-form/manageBackends-form.component';
+import {DateService} from './common/customDate/date.service';
+
+const CUSTOM_MOMENT_FORMATS: NgxMatDateFormats = {
+  parse: {
+    dateInput: 'DD/MM/YYYY HH:mm'
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY HH:mm',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY'
+  }
+};
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     MessageFilterComponent,
+    ManageBackendsComponent,
     MessageLogComponent,
     UserComponent,
     ErrorLogComponent,
@@ -150,7 +169,6 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     SanitizeHtmlPipe,
     DefaultPasswordDialogComponent,
     EditMessageFilterComponent,
-    ManageBackendsComponent,
     MessagelogDetailsComponent,
     ErrorlogDetailsComponent,
     EditUserComponent,
@@ -163,7 +181,6 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     AuditComponent,
     PartyComponent,
     PartyDetailsComponent,
-    ClearInvalidDirective,
     PageHeaderComponent,
     DomainSelectorComponent,
     AlertsComponent,
@@ -191,38 +208,9 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     DomainsComponent,
     DataTablePagerComponent
   ],
-  entryComponents: [
-    AppComponent,
-    PmodeUploadComponent,
-    PmodeViewComponent,
-    MoveDialogComponent,
-    MessageDialogComponent,
-    MessagelogDetailsComponent,
-    YesNoDialogComponent,
-    OkDialogComponent,
-    DefaultPasswordDialogComponent,
-    EditMessageFilterComponent,
-    ManageBackendsComponent,
-    ErrorlogDetailsComponent,
-    EditUserComponent,
-    TruststoreDialogComponent,
-    TrustStoreUploadComponent,
-    CertificateUploadComponent,
-    ActionDirtyDialogComponent,
-    PartyDetailsComponent,
-    EditPluginUserFormBaseComponent,
-    EditBasicPluginUserFormComponent,
-    EditCertificatePluginUserFormComponent,
-    PartyIdentifierDetailsComponent,
-    ChangePasswordComponent,
-    PropertiesComponent,
-    EditPopupBaseComponent,
-    ConnectionDetailsComponent,
-    AlertComponent,
-    SessionExpiredDialogComponent,
-    AddNestedPropertyDialogComponent
-  ],
   imports: [
+    NgxMatDatetimePickerModule,
+    MatDialogModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
@@ -238,8 +226,6 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     MatSelectModule,
     routing,
     ReactiveFormsModule,
-    Md2DatepickerModule,
-    MdNativeDateModule,
     SharedModule,
     MatExpansionModule,
     MatCheckboxModule,
@@ -250,8 +236,14 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     MatSlideToggleModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatDatepickerModule,
+    NgxMatDatetimePickerModule,
+    NgxMatMomentModule
   ],
   providers: [
+    MatDatepickerModule,
+    NgxMatMomentModule,
+    NgxMatDatetimePickerModule,
     AuthenticatedAuthorizedGuard,
     DirtyGuard,
     DefaultPasswordGuard,
@@ -267,10 +259,10 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     DomibusInfoService,
     AlertService,
     {provide: HTTP_INTERCEPTORS, useClass: ExtendedHttpInterceptor, multi: true},
-    // {
-    //   provide: ErrorHandler,
-    //   useClass: GlobalErrorHandler,
-    // },
+    {
+      provide: ErrorHandler,
+      useClass: GlobalErrorHandler,
+    },
     UserService,
     UserValidatorService,
     PluginUserValidatorService,
@@ -279,9 +271,13 @@ import {OkDialogComponent} from './common/dialogs/ok-dialog/ok-dialog.component'
     FileUploadValidatorService,
     ApplicationContextService,
     DatePipe,
-    DecimalPipe
+    DecimalPipe,
+    DateService,
+    {provide: NGX_MAT_DATE_FORMATS, useValue: CUSTOM_MOMENT_FORMATS}
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
+
+

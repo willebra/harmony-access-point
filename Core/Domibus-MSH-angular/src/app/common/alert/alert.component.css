@@ -26,3 +26,7 @@
 .closebtn:hover {
   color: black;
 }
+
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: inherit !important;
+}

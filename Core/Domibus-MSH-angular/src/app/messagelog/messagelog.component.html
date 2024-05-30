@@ -2,92 +2,119 @@
   <page-header id="messagesheader_id">Messages</page-header>
 
   <div class="selectionCriteria">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
             <mat-form-field>
-              <input matInput placeholder="Message Id" name="messageId" [(ngModel)]="filter.messageId"
-                     #messageId="ngModel" id="messageid_id">
+              <mat-label>Message Id</mat-label>
+              <input matInput name="messageId" [(ngModel)]="filter.messageId" id="messageid_id">
             </mat-form-field>
-            <mat-select placeholder="Message Status" [(ngModel)]="filter.messageStatus" name="messageStatus"
-                        id="messagestatus_id">
-              <mat-option [value]="">
-              </mat-option>
-              <mat-option *ngFor="let mstatus of msgStatuses" [value]="mstatus">
-                {{mstatus}}
-              </mat-option>
-            </mat-select>
-            <mat-form-field class="inputFieldParties">
-              <input matInput placeholder="From Party Id" name="fromPartyId" [(ngModel)]="filter.fromPartyId"
-                     #fromPartyId="ngModel" id="frompartyid_id">
-            </mat-form-field>
-            <mat-form-field class="inputFieldParties">
-              <input matInput placeholder="To Party Id" name="toPartyId" [(ngModel)]="filter.toPartyId"
-                     #toPartyId="ngModel" id="topartyid_id">
-            </mat-form-field>
-            <mat-select placeholder="Message Interval" [(ngModel)]="messageInterval" name="messageInterval"
-                        id="messagesInterval_id">
-              <mat-option *ngFor="let val of messageIntervals" [value]="val">
-                {{val.text}}
-              </mat-option>
-            </mat-select>
 
-            <md2-datepicker placeholder="Received From:" appClearInvalid
-                            [(ngModel)]="filter.receivedFrom"
-                            name="receivedFrom"
-                            [type]="'datetime'"
-                            [max]="timestampFromMaxDate"
-                            (change)='onTimestampFromChange($event)'
-                            #timestampControl="ngModel" id="receivedfrom_id" *ngIf="advancedSearch"
-                            advanced-filter-behaviour [parent]="this">
-            </md2-datepicker>
-            <md2-datepicker placeholder="Received Up To:" appClearInvalid
-                            [(ngModel)]="filter.receivedTo"
-                            name="receivedTo"
-                            [min]="timestampToMinDate"
-                            [max]="timestampToMaxDate"
-                            (change)='onTimestampToChange($event)'
-                            [type]="'datetime'"
-                            #timestampControl="ngModel" id="receivedto_id" *ngIf="advancedSearch"
-                            advanced-filter-behaviour [parent]="this">
-            </md2-datepicker>
+            <mat-form-field>
+              <mat-label>Message Status</mat-label>
+              <mat-select [(ngModel)]="filter.messageStatus" name="messageStatus" id="messagestatus_id">
+                <mat-option [value]="">
+                </mat-option>
+                <mat-option *ngFor="let mstatus of msgStatuses" [value]="mstatus">
+                  {{mstatus}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="inputFieldParties">
+              <mat-label>From Party Id</mat-label>
+              <input matInput name="fromPartyId" [(ngModel)]="filter.fromPartyId" id="frompartyid_id">
+            </mat-form-field>
+
+            <mat-form-field class="inputFieldParties">
+              <mat-label>To Party Id</mat-label>
+              <input matInput placeholder="" name="toPartyId" [(ngModel)]="filter.toPartyId" id="topartyid_id">
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Message Interval</mat-label>
+              <mat-select [(ngModel)]="messageInterval" name="messageInterval" id="messagesInterval_id">
+                <mat-option *ngFor="let val of messageIntervals" [value]="val">
+                  {{val.text}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <input matInput [readonly]="!searchUserMessages" placeholder="Conversation Id" name="conversationId"
-                     [(ngModel)]="filter.conversationId"
-                     #conversationId="ngModel" id="conversationid_id" advanced-filter-behaviour [parent]="this">
+              <mat-label>Received From</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedFrom" name="receivedFrom" #receivedFromField="ngModel"
+                     [ngModel]="filter.receivedFrom" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [max]="timestampFromMaxDate" advanced-filter-behaviour [parent]="this">
+              <span>
+                <div *ngIf="receivedFromField.errors?.matDatetimePickerMax" style="color:red; font-size: 70%">Value should not exceed Received Up To or current date</div>
+              </span>
+              <mat-datepicker-toggle matSuffix [for]="receivedFrom" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedFrom>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
             </mat-form-field>
-            <mat-select placeholder="AP Role" name="mshRole" [(ngModel)]="filter.mshRole" id="aprole_id"
-                        *ngIf="advancedSearch" advanced-filter-behaviour [parent]="this">
-              <mat-option [value]="">
-              </mat-option>
-              <mat-option *ngFor="let role of mshRoles" [value]="role">
-                {{role}}
-              </mat-option>
-            </mat-select>
-            <mat-select placeholder="Message Type" name="messageType" [(ngModel)]="filter.messageType"
-                        id="messagetype_id"
-                        *ngIf="advancedSearch" (selectionChange)="onMessageTypeChanged($event)"
-                        advanced-filter-behaviour [parent]="this">
-              <mat-option *ngFor="let type of msgTypes" [value]="type">
-                {{type}}
-              </mat-option>
-            </mat-select>
-            <mat-select [disabled]="!searchUserMessages" placeholder="Notification Status"
-                        [(ngModel)]="filter.notificationStatus" class="optionField"
-                        name="notificationStatus" id="notificationstatus_id" *ngIf="advancedSearch"
-                        advanced-filter-behaviour [parent]="this">
-              <mat-option [value]="">
-              </mat-option>
-              <mat-option *ngFor="let nstatus of notifStatus" [value]="nstatus">
-                {{nstatus}}
-              </mat-option>
-            </mat-select>
+
             <mat-form-field *ngIf="advancedSearch">
-              <input matInput placeholder="Reference Message Id" name="refToMessageId"
-                     [(ngModel)]="filter.refToMessageId"
-                     #refToMessageId="ngModel" id="referencemessageid_id" advanced-filter-behaviour [parent]="this">
+              <mat-label>Received Up To</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedTo" name="receivedTo" #receivedToField="ngModel"
+                     [ngModel]="filter.receivedTo" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [min]="timestampToMinDate" [max]="timestampToMaxDate" advanced-filter-behaviour [parent]="this">
+              <span>
+                <div *ngIf="receivedToField.errors?.matDatetimePickerMin" style="color:red; font-size: 70%">Value should be greater than Received From</div>
+                <div *ngIf="receivedToField.errors?.matDatetimePickerMax" style="color:red; font-size: 70%">Value should not exceed the current date</div>
+              </span>
+              <mat-datepicker-toggle matSuffix [for]="receivedTo" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedTo>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Conversation Id</mat-label>
+              <input matInput [readonly]="!searchUserMessages" name="conversationId" [(ngModel)]="filter.conversationId"
+                     id="conversationid_id" advanced-filter-behaviour [parent]="this">
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>AP Role</mat-label>
+              <mat-select name="mshRole" [(ngModel)]="filter.mshRole" id="aprole_id" advanced-filter-behaviour [parent]="this">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let role of mshRoles" [value]="role">
+                  {{role}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Message Type</mat-label>
+              <mat-select name="messageType" [(ngModel)]="filter.messageType" id="messagetype_id"
+                          (selectionChange)="onMessageTypeChanged($event)" advanced-filter-behaviour [parent]="this">
+                <mat-option *ngFor="let type of msgTypes" [value]="type">
+                  {{type}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Notification Status</mat-label>
+              <mat-select [disabled]="!searchUserMessages" [(ngModel)]="filter.notificationStatus" class="optionField"
+                          name="notificationStatus" id="notificationstatus_id" advanced-filter-behaviour [parent]="this">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let nstatus of notifStatus" [value]="nstatus">
+                  {{nstatus}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Reference Message Id</mat-label>
+              <input matInput name="refToMessageId" [(ngModel)]="filter.refToMessageId"
+                     id="referencemessageid_id" advanced-filter-behaviour [parent]="this">
             </mat-form-field>
 
             <br/>
@@ -96,28 +123,36 @@
                           advanced-filter-behaviour [parent]="this" style="margin-right: 20px;">
               Detailed Search
             </mat-checkbox>
+
             <ng-container *ngIf="advancedSearch">
+              <mat-form-field *ngIf="advancedSearch">
+                <mat-label>Original Sender</mat-label>
+                <input matInput [disabled]="!detailedSearch" name="originalSender" [(ngModel)]="filter.originalSender"
+                       id="originalsender_id" advanced-filter-behaviour [parent]="this">
+              </mat-form-field>
 
               <mat-form-field *ngIf="advancedSearch">
-                <input matInput [disabled]="!detailedSearch" placeholder="Original Sender" name="originalSender" [(ngModel)]="filter.originalSender"
-                       #originalSender="ngModel" id="originalsender_id" advanced-filter-behaviour [parent]="this">
-              </mat-form-field>
-              <mat-form-field *ngIf="advancedSearch">
-                <input matInput [disabled]="!detailedSearch" placeholder="Final Recipient" name="finalRecipient" [(ngModel)]="filter.finalRecipient"
-                       #finalRecipient="ngModel" id="finalrecipient_id" advanced-filter-behaviour [parent]="this">
+                <mat-label>Final Recipient</mat-label>
+                <input matInput [disabled]="!detailedSearch" name="finalRecipient" [(ngModel)]="filter.finalRecipient"
+                       id="finalrecipient_id" advanced-filter-behaviour [parent]="this">
               </mat-form-field>
 
               <mat-form-field>
-                <input matInput [disabled]="!detailedSearch" placeholder="Action" name="action" [(ngModel)]="filter.action"
-                       #action="ngModel" id="action_id" advanced-filter-behaviour [parent]="this">
+                <mat-label>Action</mat-label>
+                <input matInput [disabled]="!detailedSearch" name="action" [(ngModel)]="filter.action"
+                       id="action_id" advanced-filter-behaviour [parent]="this">
               </mat-form-field>
+
               <mat-form-field>
-                <input matInput [disabled]="!detailedSearch" placeholder="Service Type" name="serviceType" [(ngModel)]="filter.serviceType"
-                       #serviceType="ngModel" id="serviceType_id" advanced-filter-behaviour [parent]="this">
+                <mat-label>Service Type</mat-label>
+                <input matInput [disabled]="!detailedSearch" name="serviceType" [(ngModel)]="filter.serviceType"
+                       id="serviceType_id" advanced-filter-behaviour [parent]="this">
               </mat-form-field>
+
               <mat-form-field>
-                <input matInput [disabled]="!detailedSearch" placeholder="Service Value" name="serviceValue" [(ngModel)]="filter.serviceValue"
-                       #serviceValue="ngModel" id="serviceValue_id" advanced-filter-behaviour [parent]="this">
+                <mat-label>Service Value</mat-label>
+                <input matInput [disabled]="!detailedSearch" name="serviceValue" [(ngModel)]="filter.serviceValue"
+                       id="serviceValue_id" advanced-filter-behaviour [parent]="this">
               </mat-form-field>
 
               <br/>
@@ -160,20 +195,22 @@
   </ng-template>
 
   <ng-template #rowActions let-row="row" let-value="value" ngx-datatable-cell-template>
-    <button mat-icon-button color="primary" [disabled]="!row.canDownloadMessage" button-click-behaviour
-            (click)="downloadAction(row)" id="downloadButtonRow{{rows.indexOf(row)}}_id" matTooltip="Download">
-      <mat-icon>file_download</mat-icon>
-    </button>
-    <button mat-icon-button color="primary"  [disabled]="!row.canDownloadEnvelope" button-click-behaviour
-            (click)="downloadEnvelopeAction(row)" id="downloadEnvelopesButtonRow{{rows.indexOf(row)}}_id"
-            matTooltip="Download Envelopes">
-      <mat-icon>local_post_office</mat-icon>
-    </button>
-    <button mat-icon-button color="primary" *ngIf="isCurrentUserAdmin()"
-            [disabled]="!isResendButtonEnabledAction(row)" (click)="resendDialog()"
-            id="resendButtonRow{{rows.indexOf(row)}}_id" matTooltip="Resend" button-click-behaviour>
-      <mat-icon>send</mat-icon>
-    </button>
+    <div style="width: 200px;">
+      <button mat-icon-button color="primary" [disabled]="!row.canDownloadMessage" button-click-behaviour
+              (click)="downloadAction(row)" id="downloadButtonRow{{rows.indexOf(row)}}_id" matTooltip="Download">
+        <mat-icon>file_download</mat-icon>
+      </button>
+      <button mat-icon-button color="primary"  [disabled]="!row.canDownloadEnvelope" button-click-behaviour
+              (click)="downloadEnvelopeAction(row)" id="downloadEnvelopesButtonRow{{rows.indexOf(row)}}_id"
+              matTooltip="Download Envelopes">
+        <mat-icon>local_post_office</mat-icon>
+      </button>
+      <button mat-icon-button color="primary" *ngIf="isCurrentUserAdmin()"
+              [disabled]="!isResendButtonEnabledAction(row)" (click)="resendDialog()"
+              id="resendButtonRow{{rows.indexOf(row)}}_id" matTooltip="Resend" button-click-behaviour>
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
   </ng-template>
 
   <div class="group-action-button">

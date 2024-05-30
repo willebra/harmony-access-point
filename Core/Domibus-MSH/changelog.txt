@@ -1,3 +1,28 @@
+Domibus 5.1.4
+- Added endpoint for refreshing DSS Trusted lists. Can be accessed with POST /ext/trustedlists/refreshoperation
+- Added domibus properties for quartz data source in Tomcat
+- Renamed edeliveryNonXA datasources to eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS in wildfly standalone-full.xml file
+- Removed edeliveryNonXA datasources for weblogic from cli and properties files
+- removed eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS datasources from wildfly standalone-full.xml file
+- Improved the self sending mechanism
+- Added property for disabling the use of system default certificates (cacerts) on https downloads (CRLs).
+- Added property for logging messages that are being sent but which have been enqueued for more than a specific duration
+- Added support for special characters in message ids
+- Improved the handling/persistence of digital certificates
+- Handle receipts with the same message id
+- Upgraded Tomcat 9 to the latest version 9.0.86
+- Fix issue with duplicate messageIds in listPending messages
+- Updated default value for property "domibus.dynamicdiscovery.peppolclient.partyid.responder.role"
+- Added new property "domibus.sender.trust.dynamicReceiver.validation.expression"
+- Updated property name from "domibus.cacerts.validation.enabled" to "domibus.cacerts.download.enabled"
+- Added new property "domibus.pmode.legconfiguration.mpc.enabled"
+- Added new property "domibus.partIdType.validation.pattern"
+- Added new property "domibus.ongoingMessagesSanitizing.worker.delay.hours"
+- Added new property "domibus.logging.sendMessage.enqueued.max.minutes"
+- Updated description of property "domibus.sender.trust.validation.expression"
+- Updated description of property "domibus.database.schema"
+Domibus 5.1.3
+- Fix logback collision error in multitenant setups, the ${domainName} string should be replaced in the <domain_name>_logback.xml with the actual <domain_name>
 Domibus 5.1.2
 - Optimise HQL queries by eliminating unnecessary cross joins, resulting in enhanced overall performance.
 - Users can now update the truststore with varying types and passwords, increasing adaptability.
@@ -46,6 +71,37 @@ Domibus 5.1
 - Added new retention policy for metadata - by setting delete_message_metadata and retention_metadata_offset the user can keep the metadata after the payload was deleted
 - Changed MySQL dialect from MySQL5InnoDBDialect to MySQL8Dialect
 - Disable metrics features by default (logging, memory, garbage collector, cached threads and jms queues)
+Domibus 5.0.8
+- Improve performance of the Messages page
+- Improve the performance of query used for payload handling
+- Remove cross joins with dictionary to improve performance
+- Improve performance of the partitions retention mechanism
+- Authentication errors in console should be logged with WARN instead of INFO
+- Improvement in Domibus-UUMDS ICD document
+- eArchiving batches are deleted immediately after the ARCHIVED notification is received
+- Do not run the migration script if the previous version is not correct
+- Stop the execution of the SQL migration scripts when an error is encountered
+- Added endpoint for refreshing DSS Trusted lists. Can be accessed with POST /ext/trustedlists/refreshoperation
+- Added domibus properties for quartz data source
+- Renamed edeliveryNonXA datasources to eDeliveryMysqlNonXADS and eDeliveryOracleNonXADS in wildfly standalone-full.xml file
+- Relaxed the restriction of service and action values validation in message filter creation
+- Fixed issue in the pMode with reversed party roles in the Pull process. See upgrade info for more details.
+- New property domibus.pmode.legconfiguration.mpc.enabled, defines the behavior of Domibus when the Mpc attribute is not present in the UserMessage.
+- Added properties domibus.pmode.validation.action.pattern, domibus.pmode.validation.service.value.pattern and domibus.pmode.validation.service.type.pattern to validate action and service when updating a pMode
+- Added property domibus.security.provider.bouncyCastle.position to define the position of the Bouncy Castle in the security providers list
+- New worker which reschedules unsent messages stuck in SEND_ENQUEUED and WAITING_FOR_RETRY statuses
+- New worker which reschedules eArchive batches stuck in STARTED statuses
+- Cache configuration for extensions can be done using default ehcache file *-extension-default-ehcache.xml. The expected location (in a Java project) is: /src/main/resources/config/ehcache/*-extension-default-ehcache.xml which will go to .jar file of the extension into e.g. /config/ehcache/ext1-extension-default-ehcache.xml location
+- Cache configuration for extensions can be overridden by a configuration file named *-extension-ehcache.xml (e.g ext1-extension-ehcache.xml) added to /conf/domibus/extensions/config/
+- Moved dss-cache in /extensions/config/dss-extension-ehcache.xml
+- Removed domibus cache statistics duplicates from JMX consoles
+- Upgraded Tomcat 9 to the latest version 9.0.85
+- Upgraded Wildfly version to 26.1.3.Final
+- Upgrade Angular to version 16 and perform multiple UI fixes
+- Implement test to detect library duplicates between domibus core and the plugins/extensions
+- Add primary keys on tables missing the primary keys
+Domibus 5.0.7
+- Fix OWASP vulnerabilities
 Domibus 5.0.6
 - Add validation to check there is no duplicate dependencies in the distributions (tomcat, weblogic and wildfly)
 - [WSPLUGIN] Distribution files have a wsdl folder with wsdl for the the wsPlugin client and the backend client for the push functionality.

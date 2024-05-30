@@ -8,7 +8,7 @@
 	</mpcs>
 	<businessProcesses>
 		<roles>
-			<role name="peppolRole" value="urn:fdc:peppol.eu:2017:roles:ap:as4"/>
+			<role name="peppolRole" value="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder"/>
 		</roles>
 		<parties>
 			<partyIdTypes>

@@ -1,6 +1,6 @@
 package eu.domibus.core.message.dictionary;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.NotificationStatus;

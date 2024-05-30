@@ -125,7 +125,7 @@ public abstract class AbstractWebSecurityConfigurerAdapter extends WebSecurityCo
                         "/rest/application/multitenancy",
                         "/rest/application/supportteam",
                         "/rest/security/user").permitAll()
-                .antMatchers("/rest/userdomains/**").hasAnyAuthority(AuthRole.ROLE_ADMIN.name(), AuthRole.ROLE_AP_ADMIN.name())
+                .antMatchers("/rest/userdomains/**").authenticated()
                 .antMatchers("/rest/application/info").authenticated()
                 .antMatchers("/rest/domains/**").hasAnyAuthority(AuthRole.ROLE_AP_ADMIN.name())
                 .antMatchers(HttpMethod.PUT, "/rest/security/user/password").authenticated()
@@ -155,8 +155,7 @@ public abstract class AbstractWebSecurityConfigurerAdapter extends WebSecurityCo
                 .exceptionHandling().and()
                 .headers().addHeaderWriter(serverHeaderWriter).frameOptions().deny().contentTypeOptions()
                 .and().xssProtection().xssProtectionEnabled(true)
-                .and().contentSecurityPolicy("default-src 'self'; script-src 'self'; child-src 'none'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; form-action 'self';").and()
-                .and()
+                .and().contentSecurityPolicy("default-src 'self'; script-src 'self'; child-src 'none'; connect-src 'self'; img-src * 'self' data: https:; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; form-action 'self';").and().and()
                 .httpBasic().authenticationEntryPoint(http403ForbiddenEntryPoint)
                 .and()
                 .addFilterBefore(setDomainFilter, UsernamePasswordAuthenticationFilter.class)

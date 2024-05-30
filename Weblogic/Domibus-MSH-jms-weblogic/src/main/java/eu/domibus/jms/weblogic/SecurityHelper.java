@@ -1,21 +1,21 @@
 package eu.domibus.jms.weblogic;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import org.apache.commons.configuration2.Configuration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.springframework.stereotype.Component;
 import weblogic.security.internal.SerializedSystemIni;
 import weblogic.security.internal.encryption.ClearOrEncryptedService;
 import weblogic.security.internal.encryption.EncryptionService;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * @author Cosmin Baciu
@@ -45,7 +45,12 @@ public class SecurityHelper {
             }
 
             try {
-                Configuration configuration = new PropertiesConfiguration(bootIdentityFile);
+                FileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                        new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                                .configure(new Parameters().properties()
+                                        .setFileName(bootIdentityFile));
+                PropertiesConfiguration configuration = builder.getConfiguration();
+
                 Iterator<String> keys = configuration.getKeys();
                 while (keys.hasNext()) {
                     final String name = keys.next();

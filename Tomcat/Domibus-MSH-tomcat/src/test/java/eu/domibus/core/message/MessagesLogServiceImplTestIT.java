@@ -1,20 +1,15 @@
 package eu.domibus.core.message;
 
-import eu.domibus.AbstractIT;
-import eu.domibus.ITTestsService;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.*;
-import eu.domibus.api.routing.BackendFilter;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.common.MessageDaoTestUtil;
 import eu.domibus.core.plugin.routing.RoutingService;
 import eu.domibus.messaging.XmlProcessingException;
-import eu.domibus.web.rest.ro.MessageLogRO;
 import eu.domibus.web.rest.ro.MessageLogResultRO;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,9 +37,6 @@ public class MessagesLogServiceImplTestIT extends AbstractIT {
 
     @Autowired
     MessageDaoTestUtil messageDaoTestUtil;
-
-    @Autowired
-    ITTestsService itTestsService;
 
     @Autowired
     protected RoutingService routingService;

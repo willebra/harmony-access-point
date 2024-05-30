@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {PluginUserRO} from '../support/pluginuser';
 import {PluginUserService} from '../support/pluginuser.service';
 import {UserState} from '../../user/support/user';

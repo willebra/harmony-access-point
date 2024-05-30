@@ -14,9 +14,13 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "TB_D_NOTIFICATION_STATUS")
-@NamedQuery(name = "NotificationStatusEntity.findByStatus", hints = {
-        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-        @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select ms from NotificationStatusEntity ms where ms.status=:NOTIFICATION_STATUS")
+@NamedQuery(name = "NotificationStatusEntity.findByStatus",
+        hints = {
+                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                @QueryHint(name = "org.hibernate.cacheable", value = "true")
+        },
+        // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+        query = "select ms from NotificationStatusEntity ms where ms.status=:NOTIFICATION_STATUS and :DOMAIN=:DOMAIN")
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class NotificationStatusEntity extends AbstractBaseEntity {
 

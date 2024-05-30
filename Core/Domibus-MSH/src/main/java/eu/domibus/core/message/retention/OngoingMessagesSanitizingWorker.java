@@ -49,13 +49,7 @@ public class OngoingMessagesSanitizingWorker  extends DomibusQuartzJobBean {
     private DomibusPropertyProvider domibusPropertyProvider;
 
     @Autowired
-    private UserMessageLogDao userMessageLogDao;
-
-    @Autowired
-    private MessageRetentionPartitionsService messageRetentionPartitionsService;
-
-    @Autowired
-    private DateUtil dateUtil;
+    OngoingMessageSanitizingService ongoingMessageSanitizingService;
 
     @Override
     protected void executeJob(JobExecutionContext context, Domain domain) throws JobExecutionException {
@@ -69,14 +63,7 @@ public class OngoingMessagesSanitizingWorker  extends DomibusQuartzJobBean {
             return;
         }
 
-        int maxRetention = messageRetentionPartitionsService.getMaxRetention();
-        long lastMessageId = Long.MAX_VALUE;
-        if(maxRetention > 0) {
-            Date lastDateNotBeingProcessed = DateUtils.addMinutes(dateUtil.getUtcDate(), maxRetention * -1);
-            String idPrefix = dateUtil.getIdPkDateHourPrefix(lastDateNotBeingProcessed);
-            lastMessageId = Long.parseLong(idPrefix + MIN);
-        }
-        List<EArchiveBatchUserMessage> messagesNotFinalAsc = userMessageLogDao.findMessagesNotFinalAsc(0, lastMessageId);
+        List<EArchiveBatchUserMessage> messagesNotFinalAsc = ongoingMessageSanitizingService.findOngoingMessagesWhichAreNotProcessedAnymore();
         if(messagesNotFinalAsc.isEmpty()){
             LOG.debug("No ongoing messages found that are not still being processed.");
             return;
@@ -97,6 +84,8 @@ public class OngoingMessagesSanitizingWorker  extends DomibusQuartzJobBean {
         alertEvent.setEmailSubject(subject);
         alertEvent.setName(subject);
         //alertEvent.setEventType(EventType.OLD_ONGOING_MESSAGES); // TODO Francois GAUTIER 21/06/2023 EDELIVERY-11342
+
+        LOG.info("Sending ongoing message alert [{}]", alertEvent);
 
         pluginEventService.enqueueMessageEvent(alertEvent);
     }

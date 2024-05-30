@@ -1,6 +1,6 @@
 package eu.domibus.common.dao.security;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.user.UserEntityBase;
 import eu.domibus.common.JPAConstants;
 import eu.domibus.core.user.ui.User;

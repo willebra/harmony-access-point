@@ -13,6 +13,6 @@
   </div>
   <span class="column-filter-button">
       <app-column-picker [allColumns]="parent.columnPicker.allColumns" [selectedColumns]="parent.columnPicker.selectedColumns"
-                         (onSelectedColumnsChanged)="parent.columnPicker.changeSelectedColumns($event)"></app-column-picker>
+                         (onSelectedColumnsChanged)="onSelectedColumnsChanged($event)"></app-column-picker>
     </span>
 </div>

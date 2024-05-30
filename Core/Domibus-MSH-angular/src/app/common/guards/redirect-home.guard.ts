@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {SecurityService} from '../../security/security.service';
 
 /**
@@ -8,7 +8,7 @@ import {SecurityService} from '../../security/security.service';
  * @since 4.1
  */
 @Injectable()
-export class RedirectHomeGuard implements CanActivate {
+export class RedirectHomeGuard {
 
   constructor(private router: Router, private securityService: SecurityService) {
   }

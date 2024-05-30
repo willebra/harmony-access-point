@@ -22,6 +22,10 @@ label:hover, label:active, input:hover + label, input:active + label {
   padding: 3px 3px;
   text-align: center;
   padding-top: 20px;
+
+  button {
+    margin-bottom: 16px;
+  }
 }
 
 .divTableHeading {

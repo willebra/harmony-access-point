@@ -34,6 +34,7 @@ public class DomibusVersionService {
             versionProps.load(inputStream);
             LOG.info("=========================================================================================================");
             LOG.info("|         " + getDisplayVersion() + "        |");
+            LOG.info("|         Upstream version [" + getUpstreamVersion() + "]");
             LOG.info("=========================================================================================================");
         } catch (Exception ex) {
             LOG.warn("Error loading version properties", ex);
@@ -48,6 +49,10 @@ public class DomibusVersionService {
         String artifactVersion = getArtifactVersion();
         String versionNumber = artifactVersion.split("-")[0];
         return versionNumber;
+    }
+
+    public String getUpstreamVersion() {
+      return versionProps.getProperty("Upstream-Version");
     }
 
     public String getArtifactName() {

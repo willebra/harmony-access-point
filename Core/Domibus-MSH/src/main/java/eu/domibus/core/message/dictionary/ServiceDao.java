@@ -1,8 +1,10 @@
 package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.ServiceEntity;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +19,9 @@ import java.util.List;
  */
 @Repository
 public class ServiceDao extends BasicDao<ServiceEntity> {
+
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public ServiceDao() {
         super(ServiceEntity.class);
@@ -50,24 +55,28 @@ public class ServiceDao extends BasicDao<ServiceEntity> {
         final TypedQuery<ServiceEntity> query = this.em.createNamedQuery("Service.findByValueAndType", ServiceEntity.class);
         query.setParameter("VALUE", value);
         query.setParameter("TYPE", type);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
     protected ServiceEntity findByValue(final String value) {
         final TypedQuery<ServiceEntity> query = this.em.createNamedQuery("Service.findByValue", ServiceEntity.class);
         query.setParameter("VALUE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
     public List<ServiceEntity> searchByType(Object value) {
         final TypedQuery<ServiceEntity> query = this.em.createNamedQuery("Service.searchByType", ServiceEntity.class);
         query.setParameter("TYPE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return query.getResultList();
     }
 
     public List<ServiceEntity> searchByValue(Object value) {
         final TypedQuery<ServiceEntity> query = this.em.createNamedQuery("Service.searchByValue", ServiceEntity.class);
         query.setParameter("VALUE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return query.getResultList();
     }
 }

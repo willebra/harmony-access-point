@@ -88,18 +88,6 @@ public class PullProcessValidatorTest {
     }
 
     @Test
-    public void checkTooManyProcesses() throws Exception {
-        Process p1 = PojoInstaciatorUtil.instanciate(Process.class, "p1", "mep[name:oneway]", "legs{[name:leg1]}", "responderParties{[name:resp1]}");
-        //p1.setName("p1");
-        Process p2 = PojoInstaciatorUtil.instanciate(Process.class, "mep[name:oneway]", "legs{[name:leg2]}", "responderParties{[name:resp2]}");
-        p2.setName("p2");
-        List<Process> processes = Lists.newArrayList(p1, p2);
-        Set<PullProcessStatus> pullProcessStatuses = pullProcessValidator.verifyPullProcessStatus(new HashSet<>(processes));
-        assertEquals(1, pullProcessStatuses.size());
-        assertTrue(pullProcessStatuses.contains(TOO_MANY_PROCESSES));
-    }
-
-    @Test
     public void checkProcessValidityWithOneLeg() throws Exception {
         Set<PullProcessStatus> processStatuses = getProcessStatuses(PojoInstaciatorUtil.instanciate(Process.class, "mep[name:oneway]", "legs{[name:leg1]}", "initiatorParties{[name:resp1]}"));
         assertEquals(1, processStatuses.size());

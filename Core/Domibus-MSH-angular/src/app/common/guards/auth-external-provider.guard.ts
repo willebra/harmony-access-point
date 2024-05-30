@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {DomibusInfoService} from "../appinfo/domibusinfo.service";
 
 /**
  * It will redirect to home ('/') if the external provider = true
  */
 @Injectable()
-export class AuthExternalProviderGuard implements CanActivate {
+export class AuthExternalProviderGuard {
 
   constructor(private router: Router, private domibusInfoService: DomibusInfoService) {
   }

@@ -7,10 +7,7 @@ import eu.domibus.ext.services.DomibusPropertyManagerExt;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.logging.DomibusMessageCode;
-import eu.domibus.messaging.MessageConstants;
-import eu.domibus.messaging.MessagingProcessingException;
-import eu.domibus.messaging.PModeMismatchException;
-import eu.domibus.messaging.PluginMessageListenerContainer;
+import eu.domibus.messaging.*;
 import eu.domibus.plugin.AbstractBackendConnector;
 import eu.domibus.plugin.Submission;
 import eu.domibus.plugin.exception.TransformationException;
@@ -20,6 +17,8 @@ import eu.domibus.plugin.transformer.MessageRetrievalTransformer;
 import eu.domibus.plugin.transformer.MessageSubmissionTransformer;
 import eu.domibus.plugin.ws.backend.dispatch.WSPluginBackendService;
 import eu.domibus.plugin.ws.backend.reliability.queue.WSSendMessageListenerContainer;
+import eu.domibus.plugin.ws.exception.WSMessageLogNotFoundException;
+import eu.domibus.plugin.ws.exception.WSPluginException;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.Messaging;
 import eu.domibus.plugin.ws.generated.header.common.model.org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import eu.domibus.plugin.ws.initialize.WSPluginInitializer;
@@ -27,6 +26,7 @@ import eu.domibus.plugin.ws.message.WSMessageLogEntity;
 import eu.domibus.plugin.ws.message.WSMessageLogService;
 import eu.domibus.plugin.ws.property.WSPluginPropertyManager;
 import eu.domibus.plugin.ws.webservice.StubDtoTransformer;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -102,10 +102,16 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
                 event.getProps().get(MessageConstants.ORIGINAL_SENDER),
                 new Date());
 
-        wsMessageLogService.create(wsMessageLogEntity);
+        try {
+            LOG.debug("Create wsMessageLogEntity for messageId [{}] ", wsMessageLogEntity.getMessageId());
+            wsMessageLogService.create(wsMessageLogEntity);
 
-        wsPluginBackendService.send(event, SUBMIT_MESSAGE);
-        wsPluginBackendService.send(event, RECEIVE_SUCCESS);
+            wsPluginBackendService.send(event, SUBMIT_MESSAGE);
+            wsPluginBackendService.send(event, RECEIVE_SUCCESS);
+        } catch (DataIntegrityViolationException e) {
+            LOG.error("Could not deliver message with messageId [{}]. Possibly the message was already delivered", wsMessageLogEntity.getMessageId(), e);
+            throw new WSPluginException("Could not deliver message with messageId " + wsMessageLogEntity.getMessageId(), e);
+        }
     }
 
     /**
@@ -239,4 +245,24 @@ public class WSPluginImpl extends AbstractBackendConnector<Messaging, UserMessag
         setRequiredNotifications(messageNotifications);
     }
 
+    /**
+     * @param messageId        the messageId of the message to retrieve
+     * @param target           the target object to be filled.
+     * @param markAsDownloaded if true then we persist the message state as downloaded, and we only download messages that were not already downloaded
+     * @return downloaded UserMessage
+     * @throws WSMessageLogNotFoundException if UserMessage is found for given messageId but markAsDownloaded is true and WSMessageLog not found for messageId
+     * @throws MessageNotFoundException if UserMessage not found for given messageId
+     */
+    @Override
+    public UserMessage downloadMessage(String messageId, UserMessage target, boolean markAsDownloaded) throws MessageNotFoundException {
+        UserMessage userMessage = super.downloadMessage(messageId, target, markAsDownloaded);
+        if (markAsDownloaded) {
+            int deletedMessageCount = wsMessageLogService.deleteByMessageId(messageId);
+            if(deletedMessageCount == 0) {
+                throw new WSMessageLogNotFoundException("WSMessageLogEntity not found for message id [" + messageId + "]");
+            }
+            LOG.debug("Removed downloaded message from the plugin table containing the pending messages (WSMessageLog messageId [{}])", messageId);
+        }
+        return userMessage;
+    }
 }

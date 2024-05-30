@@ -1,5 +1,5 @@
 ﻿import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, RouterStateSnapshot} from '@angular/router';
 import {SecurityService} from '../../security/security.service';
 import {PropertiesService} from 'app/properties/support/properties.service';
 
@@ -9,7 +9,7 @@ import {PropertiesService} from 'app/properties/support/properties.service';
  * - authorization - either Properties or Error Log page
  */
 @Injectable()
-export class LandingPageGuard implements CanActivate {
+export class LandingPageGuard {
 
   constructor(private router: Router, private securityService: SecurityService,
               private propertiesService: PropertiesService) {
@@ -17,7 +17,10 @@ export class LandingPageGuard implements CanActivate {
 
   async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     // make sure the app is properly initialized before checking anything else
-    await this.securityService.isAppInitialized();
+    const isInit = await this.securityService.isAppInitialized();
+    if (!isInit) {
+      return;
+    }
 
     const isAuthenticated = await this.securityService.isAuthenticated();
     if (!isAuthenticated) {

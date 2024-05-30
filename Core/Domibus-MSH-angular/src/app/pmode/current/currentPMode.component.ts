@@ -1,18 +1,17 @@
 ﻿import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from 'app/common/alert/alert.service';
-import {MatDialog} from '@angular/material';
+import {MatDialog} from '@angular/material/dialog';
 import {PmodeUploadComponent} from '../upload/pmode-upload.component';
 import * as FileSaver from 'file-saver';
 import {DirtyOperations} from 'app/common/dirty-operations';
-import {DateFormatService} from 'app/common/customDate/dateformat.service';
+import {DateService} from 'app/common/customDate/date.service';
 import {DialogsService} from '../../common/dialogs/dialogs.service';
 import {ApplicationContextService} from '../../common/application-context.service';
 import {DomainService} from '../../security/domain.service';
 import {Domain} from '../../security/domain';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'currentPMode.component.html',
   providers: [],
   styleUrls: ['./currentPMode.component.css']
@@ -44,7 +43,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    * @param {MatDialog} dialog Object used for opening dialogs
    */
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              public dialog: MatDialog, private dialogsService: DialogsService, private domainService: DomainService) {
+              private dialogsService: DialogsService, private domainService: DomainService, private dateService: DateService) {
   }
 
   /**
@@ -96,7 +95,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    * Method called when Upload button is clicked
    */
   upload() {
-    this.dialog.open(PmodeUploadComponent)
+    this.dialogsService.open(PmodeUploadComponent)
       .afterClosed().subscribe(() => {
       this.getCurrentEntry();
     });
@@ -108,8 +107,11 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
    */
   download(pmode) {
     if (this.pModeExists) {
-      this.http.get(CurrentPModeComponent.PMODE_URL + '/' + pmode.id, {observe: 'response', responseType: 'text'}).subscribe(res => {
-        const uploadDateStr = DateFormatService.format(new Date(pmode.configurationDate));
+      this.http.get(CurrentPModeComponent.PMODE_URL + '/' + pmode.id, {
+        observe: 'response',
+        responseType: 'text'
+      }).subscribe(res => {
+        const uploadDateStr = this.dateService.format(new Date(pmode.configurationDate));
         CurrentPModeComponent.downloadFile(res.body, uploadDateStr, this.currentDomain.name);
       }, err => {
         this.alertService.exception('Error downloading PMode:', err);
@@ -131,7 +133,7 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
       this.alertService.error('Cannot save an empty pMode!');
       return;
     }
-    this.dialog.open(PmodeUploadComponent, {
+    this.dialogsService.open(PmodeUploadComponent, {
       data: {pModeContents: this.pModeContents}
     }).afterClosed().subscribe(result => {
       if (result && result.done) {
@@ -201,8 +203,8 @@ export class CurrentPModeComponent implements OnInit, DirtyOperations {
     const blob = new Blob([data], {type: 'text/xml'});
     let filename = 'PMode';
     if (domain) {
-          filename += '-' + domain;
-        }
+      filename += '-' + domain;
+    }
     if (date !== '') {
       filename += '-' + date;
     }

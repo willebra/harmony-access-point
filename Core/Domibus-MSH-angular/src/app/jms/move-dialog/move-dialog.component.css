@@ -42,3 +42,6 @@ label:hover, label:active, input:hover + label, input:active + label {
   /*border: solid blue;*/
 }
 
+.mat-mdc-form-field {
+  width: 100% !important;
+}

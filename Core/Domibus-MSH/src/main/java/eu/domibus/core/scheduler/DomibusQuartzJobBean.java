@@ -46,6 +46,9 @@ public abstract class DomibusQuartzJobBean extends QuartzJobBean {
             setQuartzJobSecurityContext();
             LOG.putMDC(DomibusLogger.MDC_USER, databaseUtil.getDatabaseUserName());
             executeJob(context, currentDomain);
+        } catch (Exception e) {
+            LOG.error("Error exception while executing job [{}]:[{}]", context.getJobDetail().getKey().getName(), context.getJobDetail().getJobClass(), e);
+            throw new JobExecutionException(e);
         } finally {
             domainContextProvider.clearCurrentDomain();
             LOG.clearCustomKeys();

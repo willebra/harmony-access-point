@@ -1,6 +1,6 @@
 package eu.domibus.core;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.multitenancy.lock.DBClusterSynchronizedRunnable;
 import eu.domibus.api.multitenancy.lock.DbClusterSynchronizedRunnableFactory;
 import eu.domibus.core.spring.lock.LockEntity;

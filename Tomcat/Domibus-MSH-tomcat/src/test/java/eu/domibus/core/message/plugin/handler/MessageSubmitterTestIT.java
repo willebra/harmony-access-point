@@ -1,6 +1,6 @@
 package eu.domibus.core.message.plugin.handler;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.jms.JmsMessage;
 import eu.domibus.api.model.*;
 import eu.domibus.api.multitenancy.Domain;
@@ -67,10 +67,12 @@ import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_
 import static eu.domibus.core.crypto.MultiDomainCryptoServiceImpl.DOMIBUS_KEYSTORE_NAME;
 import static eu.domibus.core.crypto.MultiDomainCryptoServiceImpl.DOMIBUS_TRUSTSTORE_NAME;
 import static eu.domibus.core.pmode.provider.dynamicdiscovery.DynamicDiscoveryServicePEPPOLConfigurationMockup.DOMAIN;
+import static eu.domibus.test.common.SubmissionUtil.DOMIBUS_BLUE;
+import static eu.domibus.test.common.SubmissionUtil.DOMIBUS_RED;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @Transactional
 public class MessageSubmitterTestIT extends AbstractIT {
@@ -172,7 +174,7 @@ public class MessageSubmitterTestIT extends AbstractIT {
         uploadPmode();
         final String messageId = messageSubmitter.submit(submission, "mybackend");
 
-        assertUserMessageAndUserMessageLogAfterSubmission(messageId, submission, "domibus-red");
+        assertUserMessageAndUserMessageLogAfterSubmission(messageId, submission, DOMIBUS_BLUE, DOMIBUS_RED);
 
         //put the real manager back
         ReflectionTestUtils.setField(userMessageDefaultService, "jmsManager", saveField);
@@ -182,18 +184,18 @@ public class MessageSubmitterTestIT extends AbstractIT {
         Mockito.reset(reliabilityChecker);
     }
 
-    private void assertUserMessageAndUserMessageLogAfterSubmission(String messageId, Submission submission, String expectedPartyTo) {
+    private void assertUserMessageAndUserMessageLogAfterSubmission(String messageId, Submission submission, String expectedPartyFrom, String expectedPartyTo) {
         //check that PayloadSubmittedEvent was called
         ArgumentCaptor<PayloadSubmittedEvent> payloadSubmittedEventCaptor = ArgumentCaptor.forClass(PayloadSubmittedEvent.class);
         Mockito.verify(backendConnector, Mockito.times(1)).payloadSubmittedEvent(payloadSubmittedEventCaptor.capture());
         final PayloadSubmittedEvent submittedEvent = payloadSubmittedEventCaptor.getValue();
-        assertSubmittedEvent(submittedEvent, messageId, expectedPartyTo);
+        assertSubmittedEvent(submittedEvent, messageId, expectedPartyFrom, expectedPartyTo);
 
         //check that MessageSendSuccessEvent was called
         ArgumentCaptor<MessageSendSuccessEvent> messageSendSuccessEventCaptor = ArgumentCaptor.forClass(MessageSendSuccessEvent.class);
         Mockito.verify(backendConnector, Mockito.times(1)).messageSendSuccess(messageSendSuccessEventCaptor.capture());
         final MessageSendSuccessEvent sendSuccessEvent = messageSendSuccessEventCaptor.getValue();
-        assertSubmittedEvent(sendSuccessEvent, messageId, expectedPartyTo);
+        assertSubmittedEvent(sendSuccessEvent, messageId, expectedPartyFrom, expectedPartyTo);
         assertNotNull(sendSuccessEvent.getMessageEntityId());
 
         //check the UserMessageLog
@@ -216,9 +218,9 @@ public class MessageSubmitterTestIT extends AbstractIT {
         messagesLogService.countAndFindPaged(MessageType.USER_MESSAGE, 0, 10, "received", false, filters, Collections.emptyList());
     }
 
-    protected void assertSubmittedEvent(MessageEvent messageEvent, String expectedMessageId, String expectedPartyTo) {
+    protected void assertSubmittedEvent(MessageEvent messageEvent, String expectedMessageId, String expectedPartyFrom, String expectedPartyTo) {
         assertEquals(expectedMessageId, messageEvent.getMessageId());
-        assertEquals("domibus-blue", messageEvent.getProps().get(MessageConstants.FROM_PARTY_ID));
+        assertEquals(expectedPartyFrom, messageEvent.getProps().get(MessageConstants.FROM_PARTY_ID));
         assertEquals(expectedPartyTo, messageEvent.getProps().get(MessageConstants.TO_PARTY_ID));
     }
 
@@ -265,7 +267,7 @@ public class MessageSubmitterTestIT extends AbstractIT {
 
         //we set the correct party type according to the Pmode
         submission.getFromParties().clear();
-        submission.getFromParties().add(new Submission.Party("domibus-blue", "urn:fdc:peppol.eu:2017:identifiers:ap"));
+        submission.getFromParties().add(new Submission.Party("blue_gw", "urn:fdc:peppol.eu:2017:identifiers:ap"));
         final String finalRecipient = "0208:1111";
         finalRecipientProperty.setValue(finalRecipient);
         final String messageId = messageSubmitter.submit(submission, "mybackend");
@@ -281,7 +283,7 @@ public class MessageSubmitterTestIT extends AbstractIT {
         //check an entry was added in the lookup table by the dynamic discovery mechanism
         dynamicDiscoveryAssertionUtil.verifyThatDynamicDiscoveryLookupWasAddedInTheDatabase(1, finalRecipient, expectedDiscoveredPartyName);
 
-        assertUserMessageAndUserMessageLogAfterSubmission(messageId, submission, expectedDiscoveredPartyName);
+        assertUserMessageAndUserMessageLogAfterSubmission(messageId, submission, "blue_gw", expectedDiscoveredPartyName);
 
         //put the real manager back
         ReflectionTestUtils.setField(userMessageDefaultService, "jmsManager", saveField);

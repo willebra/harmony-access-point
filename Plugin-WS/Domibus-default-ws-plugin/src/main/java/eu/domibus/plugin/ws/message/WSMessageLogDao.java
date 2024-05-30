@@ -36,6 +36,7 @@ public class WSMessageLogDao extends WSBasicDao<WSMessageLogEntity> {
     private static final String CRIT_FINAL_RECIPIENT= "finalRecipient";
     private static final String CRIT_RECEIVED= "received";
     private static final String CRIT_ORIGINAL_SENDER = "originalSender";
+    private static final String ENTITY_ID = "ENTITY_ID";
 
 
     public WSMessageLogDao() {
@@ -171,11 +172,12 @@ public class WSMessageLogDao extends WSBasicDao<WSMessageLogEntity> {
      * Delete the entry related to a given MessageId.
      *
      * @param messageId the id of the message.
+     * @return the number of entities deleted
      */
-    public void deleteByMessageId(final String messageId) {
+    public int deleteByMessageId(final String messageId) {
         Query query = em.createNamedQuery("WSMessageLogEntity.deleteByMessageId");
         query.setParameter(MESSAGE_ID, messageId);
-        query.executeUpdate();
+        return query.executeUpdate();
     }
 
     /**

@@ -1,7 +1,7 @@
 package eu.domibus.ext.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessageLog;

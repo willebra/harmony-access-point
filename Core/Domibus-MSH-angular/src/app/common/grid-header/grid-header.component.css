@@ -1,6 +1,6 @@
 .group-filter-button {
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   margin-left: 0px;
   padding-top: 5px;
   margin-right: 16px;
@@ -15,8 +15,8 @@
 }
 
 .group-2 .row-limiter {
-  width: 200px;
-  /*flex: auto;*/
+  width: 120px;
+  padding-top: 15px;
 }
 
 .group-filter-button .column-filter-button a.hide-show-column {

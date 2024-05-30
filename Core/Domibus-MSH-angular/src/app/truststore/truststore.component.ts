@@ -2,7 +2,6 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {TrustStoreService} from './support/trustore.service';
-import {MatDialog} from '@angular/material';
 import {AlertService} from '../common/alert/alert.service';
 import {HttpClient} from '@angular/common/http';
 import {ApplicationContextService} from '../common/application-context.service';
@@ -20,9 +19,9 @@ import {DialogsService} from '../common/dialogs/dialogs.service';
 export class TruststoreComponent extends BaseTruststoreComponent implements OnInit {
 
   constructor(applicationService: ApplicationContextService, http: HttpClient, trustStoreService: TrustStoreService,
-              dialog: MatDialog, alertService: AlertService, changeDetector: ChangeDetectorRef,
+              alertService: AlertService, changeDetector: ChangeDetectorRef,
               fileUploadValidatorService: FileUploadValidatorService, dialogsService: DialogsService) {
-    super(applicationService, http, trustStoreService, dialog, alertService, changeDetector, fileUploadValidatorService, trustStoreService, dialogsService);
+    super(applicationService, http, trustStoreService, alertService, changeDetector, fileUploadValidatorService, trustStoreService, dialogsService);
 
     this.BASE_URL = 'rest/truststore';
     this.CSV_URL = this.BASE_URL + '/csv';

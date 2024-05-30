@@ -15,12 +15,20 @@ import javax.persistence.*;
 @Entity
 @Table(name = "TB_D_AGREEMENT")
 @NamedQueries({
-        @NamedQuery(name = "AgreementRef.findByValueAndType", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select serv from AgreementRefEntity serv where serv.value=:VALUE and serv.type=:TYPE"),
-        @NamedQuery(name = "AgreementRef.findByValue", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select serv from AgreementRefEntity serv where serv.value=:VALUE and serv.type is null")
+        @NamedQuery(name = "AgreementRef.findByValueAndType",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")
+                },
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select serv from AgreementRefEntity serv where serv.value=:VALUE and serv.type=:TYPE and :DOMAIN=:DOMAIN"),
+        @NamedQuery(name = "AgreementRef.findByValue",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")
+                },
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select serv from AgreementRefEntity serv where serv.value=:VALUE and serv.type is null and :DOMAIN=:DOMAIN")
 })
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AgreementRefEntity extends AbstractBaseEntity {

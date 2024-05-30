@@ -26,14 +26,12 @@ import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
 import org.bouncycastle.util.io.pem.PemObjectGenerator;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.hamcrest.core.Is;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.GreaterThan;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -49,12 +47,15 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 import static eu.domibus.logging.DomibusMessageCode.SEC_CERTIFICATE_SOON_REVOKED;
 import static eu.domibus.logging.DomibusMessageCode.SEC_DOMIBUS_CERTIFICATE_REVOKED;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.*;
 
 /**
@@ -253,14 +254,16 @@ public class CertificateServiceImplTest {
 
     @Test
     public void testCheckValidityValidWithExpiredCertificate() throws Exception {
-        X509Certificate x509Certificate = pkiUtil.createCertificate(BigInteger.ONE, new DateTime().minusDays(2).toDate(), new DateTime().minusDays(1).toDate(), null);
+        X509Certificate x509Certificate = pkiUtil.createCertificate(BigInteger.ONE, Date.from(LocalDate.now().minusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().minusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
         boolean certificateValid = certificateService.checkValidity(x509Certificate);
         assertFalse(certificateValid);
     }
 
     @Test
     public void testCheckValidityWithNotYetValidCertificate() throws Exception {
-        X509Certificate x509Certificate = pkiUtil.createCertificate(BigInteger.ONE, new DateTime().plusDays(2).toDate(), new DateTime().plusDays(5).toDate(), null);
+        X509Certificate x509Certificate = pkiUtil.createCertificate(BigInteger.ONE, Date.from(LocalDate.now().plusDays(2).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                Date.from(LocalDate.now().plusDays(5).atStartOfDay(ZoneId.systemDefault()).toInstant()), null);
 
         boolean certificateValid = certificateService.checkValidity(x509Certificate);
         assertFalse(certificateValid);
@@ -520,7 +523,7 @@ public class CertificateServiceImplTest {
             imminentExpirationCertificateConfiguration.getFrequency();
             result = imminentExpirationFrequency;
 
-            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), today, withArgThat(new GreaterThan<>(maxDate)));
+            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), today, withArgThat(greaterThan(maxDate)));
             result = certificates;
 
             certificate.getAlias();
@@ -532,7 +535,7 @@ public class CertificateServiceImplTest {
         }};
         certificateService.sendCertificateImminentExpirationAlerts();
         new VerificationsInOrder() {{
-            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), today, withArgThat(new GreaterThan<>(maxDate)));
+            certificateDao.findImminentExpirationToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), today, withArgThat(greaterThan(maxDate)));
             times = 1;
             certificateDao.saveOrUpdate(certificates.get(0));
             times = 1;
@@ -567,7 +570,7 @@ public class CertificateServiceImplTest {
             expiredCertificateConfiguration.getFrequency();
             result = revokedFrequency;
 
-            certificateDao.findExpiredToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), withArgThat(new GreaterThan<>(endNotification)));
+            certificateDao.findExpiredToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), withArgThat(greaterThan(endNotification)));
             result = certificates;
 
             certificate.getAlias();
@@ -579,7 +582,7 @@ public class CertificateServiceImplTest {
         }};
         certificateService.sendCertificateExpiredAlerts();
         new VerificationsInOrder() {{
-            certificateDao.findExpiredToNotifyAsAlert(withArgThat(new GreaterThan<>(notificationDate)), withArgThat(new GreaterThan<>(endNotification)));
+            certificateDao.findExpiredToNotifyAsAlert(withArgThat(greaterThan(notificationDate)), withArgThat(greaterThan(endNotification)));
             times = 1;
             certificateDao.saveOrUpdate(certificates.get(0));
             times = 1;

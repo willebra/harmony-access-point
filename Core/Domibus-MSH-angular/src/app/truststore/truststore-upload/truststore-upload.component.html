@@ -3,7 +3,7 @@
 <mat-dialog-content style="width:450px;">
 
   <form [formGroup]="truststoreForm" (submit)="submit()">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
 
         <label class="custom-file-upload">
@@ -13,7 +13,8 @@
         {{selectedFileName}}
 
         <mat-form-field class="password" style="margin-top: 20px;">
-          <input matInput placeholder="Password" id="password_id"  name="password" type="password" #passwordField
+          <mat-label>Password</mat-label>
+          <input matInput id="password_id"  name="password" type="password" #passwordField
                  [formControl]="truststoreForm.controls['password']" required="true">
           <span class="help-block" *ngIf="shouldShowErrors(truststoreForm.controls['password'])">
               <div *ngIf="truststoreForm.controls['password'].errors?.required" class="error">Password is required</div>

@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.niis</groupId>
         <artifactId>core</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
     <artifactId>harmony-msh-test-common</artifactId>
     <packaging>jar</packaging>
@@ -60,6 +60,12 @@
             <version>${project.version}</version>
         </dependency>
         <!-- End Domibus modules -->
+
+        <dependency>
+            <groupId>net.ttddyy</groupId>
+            <artifactId>datasource-proxy</artifactId>
+            <version>1.7</version>
+        </dependency>
 
         <!-- BouncyCastle -->
         <dependency>
@@ -185,6 +191,11 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-bindings-soap</artifactId>
         </dependency>
     </dependencies>
 </project>

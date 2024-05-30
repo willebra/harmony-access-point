@@ -16,8 +16,8 @@ public class SubmissionUtil {
 
     private static final String MIME_TYPE = "MimeType";
     private static final String DEFAULT_MT = "text/xml";
-    private static final String DOMIBUS_BLUE = "domibus-blue";
-    private static final String DOMIBUS_RED = "domibus-red";
+    public static final String DOMIBUS_BLUE = "domibus-blue";
+    public static final String DOMIBUS_RED = "domibus-red";
     private static final String INITIATOR_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator";
     private static final String RESPONDER_ROLE = "http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder";
     private static final String PAYLOAD_ID = "cid:message";
@@ -31,13 +31,20 @@ public class SubmissionUtil {
     private static final String PROPERTY_ENDPOINT = "endPointAddress";
 
     public Submission createSubmission() {
+        return createSubmission(null);
+    }
+
+    public Submission createSubmission(String messageId) {
         Submission submission = new Submission();
         submission.setMpc(Ebms3Constants.DEFAULT_MPC);
         submission.setAction(ACTION_TC1LEG1);
         submission.setService(SERVICE_NOPROCESS);
         submission.setServiceType(SERVICE_TYPE_TC1);
         submission.setConversationId("123");
-        submission.setMessageId(UUID.randomUUID() + "@domibus.eu");
+        if(messageId==null){
+            messageId = UUID.randomUUID() + "@domibus.eu";
+        }
+        submission.setMessageId(messageId);
         submission.addFromParty(DOMIBUS_BLUE, UNREGISTERED_PARTY_TYPE);
         submission.setFromRole(INITIATOR_ROLE);
         submission.addToParty(DOMIBUS_RED, UNREGISTERED_PARTY_TYPE);

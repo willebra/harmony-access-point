@@ -256,6 +256,7 @@
         <cve>CVE-2022-45688</cve>
         <!--Domibus receives json strings only from controlled environment -->
         <cve>CVE-2023-5072</cve>
+        <vulnerabilityName>CVE-2023-51074</vulnerabilityName>
     </suppress>
     <suppress>
         <notes><![CDATA[
@@ -674,11 +675,19 @@
         <cve>CVE-2023-39017</cve>
     </suppress>
     <suppress>
-      <notes><![CDATA[
-        file name: groovy-backports-compat23-2.4.4.jar
-        Only used in soapui-tests
-        ]]></notes>
-      <packageUrl regex="true">^pkg:maven/org\.codehaus\.groovy/groovy\-backports\-compat23@.*$</packageUrl>
-      <cve>CVE-2016-6814</cve>
+        <notes><![CDATA[
+   file name: groovy-backports-compat23-2.4.4.jar
+   Only used in soapui-tests
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/org\.codehaus\.groovy/groovy\-backports\-compat23@.*$</packageUrl>
+        <cve>CVE-2016-6814</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: dozer-5.4.0.jar
+   ]]></notes>
+        <packageUrl regex="true">^pkg:maven/net\.sf\.dozer/dozer@.*$</packageUrl>
+        <!-- Brought as a dependency by commons-test, used in testing environment -->
+        <cve>CVE-2014-9515</cve>
     </suppress>
 </suppressions>

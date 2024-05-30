@@ -1,6 +1,6 @@
 import {AlertService} from '../alert/alert.service';
 import {DownloadService} from '../download.service';
-import {OnInit} from '@angular/core';
+import {Directive, OnInit, ViewChild} from '@angular/core';
 import {ColumnPickerBase} from '../column-picker/column-picker-base';
 import {IBaseList} from './ibase-list';
 import {instanceOfFilterableList, instanceOfModifiableList} from './type.utils';
@@ -8,6 +8,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {PropertiesService} from '../../properties/support/properties.service';
 import {ApplicationContextService} from '../application-context.service';
 import {CustomURLEncoder} from '../custom-url-encoder';
+import {PageGridComponent} from '../page-grid/page-grid.component';
 
 /**
  * @author Ion Perpegel
@@ -22,6 +23,7 @@ export interface Constructable {
 export function ConstructableDecorator(constructor: Constructable) {
 }
 
+@Directive()
 @ConstructableDecorator
 export default class BaseListComponent<T> implements IBaseList<T>, OnInit {
   public rows: T[];
@@ -30,6 +32,7 @@ export default class BaseListComponent<T> implements IBaseList<T>, OnInit {
   public columnPicker: ColumnPickerBase;
   public isLoading: boolean;
   private propertiesService: PropertiesService;
+  @ViewChild(PageGridComponent) pageGrid: PageGridComponent;
 
   constructor(protected applicationService: ApplicationContextService, protected alertService: AlertService, protected http: HttpClient) {
     this.columnPicker = new ColumnPickerBase();
@@ -90,12 +93,11 @@ export default class BaseListComponent<T> implements IBaseList<T>, OnInit {
     try {
       result = await this.getDataAndSetResults();
     } catch (error) {
-      this.isLoading = false;
       this.onLoadDataError(error);
       return Promise.reject(error);
+    } finally {
+      this.isLoading = false;
     }
-
-    this.isLoading = false;
 
     if (instanceOfModifiableList(this)) {
       this.isChanged = false;

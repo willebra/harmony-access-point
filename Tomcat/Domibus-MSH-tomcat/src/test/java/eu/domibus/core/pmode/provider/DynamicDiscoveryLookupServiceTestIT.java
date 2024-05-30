@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode.provider;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.dynamicdyscovery.DynamicDiscoveryLookupEntity;
 import eu.domibus.core.pmode.provider.dynamicdiscovery.DynamicDiscoveryLookupDao;
 import eu.domibus.core.pmode.provider.dynamicdiscovery.DynamicDiscoveryLookupService;

@@ -1,9 +1,18 @@
-﻿import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild} from '@angular/core';
+﻿import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {ErrorLogResult} from './support/errorlogresult';
 import {AlertService} from '../common/alert/alert.service';
 import {ErrorlogDetailsComponent} from 'app/errorlog/errorlog-details/errorlog-details.component';
-import {MatDialog, MatDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material/dialog';
 import mix from '../common/mixins/mixin.utils';
 import BaseListComponent from '../common/mixins/base-list.component';
 import FilterableListMixin from '../common/mixins/filterable-list.mixin';
@@ -11,9 +20,11 @@ import {ServerSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {ServerPageableListMixin} from '../common/mixins/pageable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
+import {Moment} from 'moment';
+import {DialogsService} from '../common/dialogs/dialogs.service';
+import {DateService} from '../common/customDate/date.service';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'errorlog.component.html',
   providers: [],
   styleUrls: ['./errorlog.component.css']
@@ -26,22 +37,23 @@ export class ErrorLogComponent extends mix(BaseListComponent)
   static readonly ERROR_LOG_URL: string = 'rest/errorlogs';
   static readonly ERROR_LOG_CSV_URL: string = ErrorLogComponent.ERROR_LOG_URL + '/csv?';
 
-  @ViewChild('rowWithDateFormatTpl', {static: false}) rowWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rawTextTpl', {static: false}) public rawTextTpl: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rawTextTpl') public rawTextTpl: TemplateRef<any>;
 
-  timestampFromMaxDate: Date = new Date();
-  timestampToMinDate: Date = null;
-  timestampToMaxDate: Date = new Date();
+  timestampFromMaxDate: Date;
+  timestampToMinDate: Date;
+  timestampToMaxDate: Date;
 
-  notifiedFromMaxDate: Date = new Date();
-  notifiedToMinDate: Date = null;
-  notifiedToMaxDate: Date = new Date();
+  notifiedFromMaxDate: Date;
+  notifiedToMinDate: Date;
+  notifiedToMaxDate: Date;
 
   mshRoles: string[];
   errorCodes: string[];
 
   constructor(private applicationService: ApplicationContextService, private elementRef: ElementRef, private http: HttpClient,
-              private alertService: AlertService, public dialog: MatDialog, private changeDetector: ChangeDetectorRef) {
+              private alertService: AlertService, public dialogService: DialogsService, private changeDetector: ChangeDetectorRef,
+              private dateService: DateService) {
     super();
   }
 
@@ -51,43 +63,68 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     super.orderBy = 'timestamp';
     super.asc = false;
 
+    this.setDateParams();
+
     this.filterData();
+  }
+
+  private setDateParams() {
+    let todayEndDay = this.dateService.todayEndDay();
+
+    this.timestampFromMaxDate = todayEndDay;
+    this.timestampToMaxDate = todayEndDay;
+    this.filter.timestampTo = todayEndDay;
+
+    this.notifiedFromMaxDate = todayEndDay;
+    this.notifiedToMaxDate = todayEndDay;
+
+    this.timestampToMinDate = null;
+    this.notifiedToMinDate = null;
   }
 
   ngAfterViewInit() {
     this.columnPicker.allColumns = [
       {
         name: 'Signal Message Id',
-        prop: 'errorSignalMessageId'
+        prop: 'errorSignalMessageId',
+        width: 200,
+        minWidth: 190
       },
       {
         name: 'AP Role',
         prop: 'mshRole',
-        width: 50
+        width: 130,
+        minWidth: 120
       },
       {
         name: 'Message Id',
         cellTemplate: this.rawTextTpl,
         prop: 'messageInErrorId',
+        width: 350,
+        minWidth: 340
       },
       {
         name: 'Error Code',
-        // width: 50
+        width: 120,
+        minWidth: 120
       },
       {
         name: 'Error Detail',
         cellTemplate: this.rawTextTpl,
-        width: 350
+        width: 400,
+        minWidth: 390
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Timestamp',
-        // width: 180
+        width: 200,
+        minWidth: 190
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Notified',
-        width: 50
+        width: 200,
+        minWidth: 190
       }
 
     ];
@@ -127,24 +164,52 @@ export class ErrorLogComponent extends mix(BaseListComponent)
     this.errorCodes = result.errorCodes;
   }
 
-  onTimestampFromChange(event) {
-    this.timestampToMinDate = event.value;
+  onTimestampFromChange(param: Moment) {
+    if (param) {
+      this.timestampToMinDate = param.toDate();
+      this.filter.timestampFrom = param.toDate();
+    } else {
+      this.timestampToMinDate = null;
+      this.filter.timestampFrom = null;
+    }
   }
 
-  onTimestampToChange(event) {
-    this.timestampFromMaxDate = event.value;
+  onTimestampToChange(param: Moment) {
+    if (param) {
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.timestampFromMaxDate = date;
+      this.filter.timestampTo = date;
+    } else {
+      this.filter.timestampTo = null;
+      this.timestampFromMaxDate = this.dateService.todayEndDay();
+    }
   }
 
-  onNotifiedFromChange(event) {
-    this.notifiedToMinDate = event.value;
+  onNotifiedFromChange(param: Moment) {
+    if (param) {
+      this.notifiedToMinDate = param.toDate();
+      this.filter.notifiedFrom = param.toDate();
+    } else {
+      this.notifiedToMinDate = null;
+      this.filter.notifiedFrom = null;
+    }
   }
 
-  onNotifiedToChange(event) {
-    this.notifiedFromMaxDate = event.value;
+  onNotifiedToChange(param: Moment) {
+    if (param) {
+      let date = param.toDate();
+      this.dateService.setEndDay(date);
+      this.notifiedFromMaxDate = date;
+      this.filter.notifiedTo = date;
+    } else {
+      this.notifiedFromMaxDate = this.dateService.todayEndDay();
+      this.filter.notifiedTo = null;
+    }
   }
 
   showDetails(selectedRow: any) {
-    let dialogRef: MatDialogRef<ErrorlogDetailsComponent> = this.dialog.open(ErrorlogDetailsComponent);
+    let dialogRef: MatDialogRef<ErrorlogDetailsComponent> = this.dialogService.open(ErrorlogDetailsComponent, {autoFocus: false});
     dialogRef.componentInstance.message = selectedRow;
   }
 

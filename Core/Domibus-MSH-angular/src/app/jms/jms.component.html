@@ -2,15 +2,16 @@
   <page-header id="jmsmonitoringheader_id">JMS Monitoring</page-header>
 
   <div class="selectionCriteria">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
 
-            <mat-form-field class="domibus" style="width:40%">
-              <mat-select class="searchField" placeholder="Source Queue" [(ngModel)]="selectedSource" name="jmsQueueSelector"
-                          id="jmsQueueSelector" style="width:100%;">
-                <input matInput placeholder="type so filter" (keyup)="onFilterSourceQueuesKey($event.target.value)"
+            <mat-form-field style="width: 40% !important;">
+              <mat-label>Source Queue</mat-label>
+              <mat-select class="searchField" [(ngModel)]="selectedSource" name="jmsQueueSelector"
+                          id="jmsQueueSelector">
+                <input matInput placeholder="type to filter" (keyup)="onFilterSourceQueuesKey($event.target.value)"
                        style="width: 90%; padding: 10px 20px; border-bottom: grey solid 0.5px">
                 <mat-option *ngFor="let queue of filteredQueues" [value]="queue" class="queue-combo-item">
                   {{queue.internal ? "[internal]" : ""}} {{queue.name}} {{queue.numberOfMessages != -1 ? "(" + queue.numberOfMessages + ")" : ""}}
@@ -18,30 +19,37 @@
               </mat-select>
             </mat-form-field>
 
-            <md2-datepicker id="jmsFromDatePicker" appClearInvalid
-                            placeholder="Received From:"
-                            [(ngModel)]="filter.fromDate"
-                            name="receivedFrom"
-                            [type]="'datetime'"
-                            [max]="timestampFromMaxDate"
-                            (change)='onTimestampFromChange($event)'
-                            >
-            </md2-datepicker>
+            <mat-form-field>
+              <mat-label>Received From</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedFrom" id="jmsFromDatePicker" name="receivedFrom"
+                     [ngModel]="filter.fromDate" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [max]="timestampFromMaxDate">
+              <mat-datepicker-toggle matSuffix [for]="receivedFrom" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedFrom>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
 
-            <md2-datepicker id="jmsToDatePicker" appClearInvalid
-                            placeholder="Received Up To:"
-                            [(ngModel)]="filter.toDate"
-                            name="receivedTo"
-                            [min]="timestampToMinDate"
-                            [max]="timestampToMaxDate"
-                            (change)='onTimestampToChange($event)'
-                            [type]="'datetime'"
-                            >
-            </md2-datepicker>
+            <mat-form-field>
+              <mat-label>Received Up To</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedTo" id="jmsToDatePicker" name="receivedTo"
+                     [ngModel]="filter.toDate" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [min]="timestampToMinDate" [max]="timestampToMaxDate">
+              <mat-datepicker-toggle matSuffix [for]="receivedTo" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedTo>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
 
-            <mat-form-field *ngIf="isDLQQueue()" class="domibus" style="width:40%">
+            <br>
+            <mat-form-field *ngIf="isDLQQueue()" class="domibus" style="display: inline-block;width: 40% !important;">
+              <mat-label>Original Queue</mat-label>
               <mat-select [(ngModel)]="originalQueueName" (selectionChange)="onSelectOriginalQueue()"
-                           placeholder="Original Queue" name="sourceQueue" id="sourceQueue_id" style="width:100%">
+                          name="sourceQueue" id="sourceQueue_id" style="width:100%">
                 <input matInput placeholder="type so filter" (keyup)="onFilterOriginalQueuesKey($event.target.value)"
                        style="width: 90%; padding: 10px 20px; border-bottom: grey solid 0.5px">
                 <mat-option value=""></mat-option>
@@ -52,11 +60,13 @@
             </mat-form-field>
 
             <mat-form-field id="jmsSelector">
-              <input id="jmsSelectorinput" name="selector" matInput placeholder="Selector" [(ngModel)]="filter.selector">
+              <mat-label>Selector</mat-label>
+              <input id="jmsSelectorinput" name="selector" matInput [(ngModel)]="filter.selector">
             </mat-form-field>
 
             <mat-form-field id="jmsType">
-              <input id="jmsTypeInput" name="jmsType" matInput placeholder="JMS Type" [(ngModel)]="filter.jmsType">
+              <mat-label>JMS Type</mat-label>
+              <input id="jmsTypeInput" name="jmsType" matInput [(ngModel)]="filter.jmsType">
             </mat-form-field>
 
             <filter-area-footer [parent]="this" [isAdvancedVisible]="false" [form]="filterForm"></filter-area-footer>
@@ -110,7 +120,7 @@
         </button>
       </span>
       <button id="jmsDeleteAllButton" mat-raised-button color="primary" (click)="deleteAll()" [disabled]="!canDeleteAll()"
-             button-click-behaviour style="margin-left: 10px;" matTooltip="Delete all messages">
+              button-click-behaviour style="margin-left: 10px;" matTooltip="Delete all messages">
         <mat-icon>delete_forever</mat-icon>
         <span>Delete All</span>
       </button>

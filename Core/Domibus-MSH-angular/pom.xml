@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.niis</groupId>
     <artifactId>core</artifactId>
-    <version>2.3.0</version>
+    <version>2.4.0</version>
   </parent>
   <artifactId>harmony-msh-angular</artifactId>
   <packaging>jar</packaging>
@@ -45,7 +45,7 @@
                 <goal>npm</goal>
               </goals>
               <configuration>
-                <arguments>install --unsafe-perm</arguments>
+                <arguments>install --force --unsafe-perm</arguments>
               </configuration>
             </execution>
           </executions>

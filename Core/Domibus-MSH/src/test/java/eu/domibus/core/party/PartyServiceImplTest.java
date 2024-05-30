@@ -20,6 +20,7 @@ import eu.domibus.api.process.Process;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.common.model.configuration.*;
 import eu.domibus.core.converter.PartyCoreMapper;
+import eu.domibus.core.message.dictionary.PartyIdDao;
 import eu.domibus.core.pmode.provider.PModeProvider;
 import eu.domibus.core.pmode.validation.PModeValidationHelper;
 import eu.domibus.messaging.XmlProcessingException;
@@ -93,6 +94,9 @@ public class PartyServiceImplTest {
 
     @Injectable
     PartyCoreMapper partyCoreMapper;
+
+    @Injectable
+    private PartyIdDao partyIdDao;
 
     @Before
     public void setUp() {
