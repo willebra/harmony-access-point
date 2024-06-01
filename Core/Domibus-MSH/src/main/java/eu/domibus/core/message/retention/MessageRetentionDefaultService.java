@@ -3,15 +3,10 @@ package eu.domibus.core.message.retention;
 import eu.domibus.api.jms.JMSManager;
 import eu.domibus.api.jms.JMSMessageBuilder;
 import eu.domibus.api.jms.JmsMessage;
-import eu.domibus.api.model.MSHRole;
-import eu.domibus.api.model.UserMessage;
-import eu.domibus.api.model.UserMessageLog;
-import eu.domibus.api.model.UserMessageLogDto;
+import eu.domibus.api.model.*;
 import eu.domibus.api.payload.PartInfoService;
 import eu.domibus.api.property.DomibusPropertyProvider;
-import eu.domibus.core.message.UserMessageDefaultService;
-import eu.domibus.core.message.UserMessageLogDao;
-import eu.domibus.core.message.UserMessageServiceHelper;
+import eu.domibus.core.message.*;
 import eu.domibus.core.metrics.Counter;
 import eu.domibus.core.metrics.Timer;
 import eu.domibus.core.plugin.notification.BackendNotificationService;
@@ -66,6 +61,9 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
 
     @Autowired
     private UserMessageDefaultService userMessageDefaultService;
+
+    @Autowired
+    private UserMessageLogDefaultService userMessageLogService;
 
     @Autowired
     private UserMessageServiceHelper userMessageServiceHelper;
@@ -169,17 +167,18 @@ public class MessageRetentionDefaultService implements MessageRetentionService {
         }
 
         int metadataRetentionOffset = pModeProvider.getMetadataRetentionOffsetByMpcURI(mpc);
+        boolean isDeleteMessageMetadata= pModeProvider.isDeleteMessageMetadataByMpcURI(mpc);
         LOG.debug("Deleting expired sent messages for MPC [{}] using deleteMessagesLimit [{}], messageRetentionMinutes [{}], metadataRetentionOffset [{}]",
                 mpc, deleteMessagesLimit, messageRetentionMinutes, metadataRetentionOffset);
         Date messageRetentionDate = DateUtils.addMinutes(new Date(), messageRetentionMinutes * -1);
-        if (pModeProvider.isDeleteMessageMetadataByMpcURI(mpc) && metadataRetentionOffset == 0) {
+        if (isDeleteMessageMetadata && metadataRetentionOffset == 0) {
             List<UserMessageLogDto> messagesToClean = userMessageLogDao.getSentUserMessagesOlderThan(messageRetentionDate,
-                    mpc, deleteMessagesLimit, true, eArchiveIsActive);
+                    mpc, deleteMessagesLimit, eArchiveIsActive);
             deleteMessageMetadataAndPayload(mpc, messagesToClean);
+            return;
         }
-
         List<UserMessageLogDto> messagesToClean = userMessageLogDao.getSentUserMessagesOlderThan(messageRetentionDate,
-                mpc, deleteMessagesLimit, false, eArchiveIsActive);
+                mpc, deleteMessagesLimit, eArchiveIsActive);
         deleteMessagePayload(messagesToClean);
     }
 

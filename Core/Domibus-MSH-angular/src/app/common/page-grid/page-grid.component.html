@@ -1,14 +1,15 @@
-<div class="table-wrapper" #tableWrapper style="width: 100%;">
-  <ngx-datatable #table
+<div class="table-wrapper" #tableWrapper style="width: 100%; height: 100%;">
+  <ngx-datatable #table style="height: 100%"
                  id="pageGridId"
                  class="material striped"
                  [rows]="parent.rows"
                  [columns]="parent.columnPicker.selectedColumns"
                  [columnMode]="'force'"
+                 [scrollbarH]="true"
+                 [virtualization]="false"
                  [headerHeight]="50"
                  [footerHeight]="50"
                  [rowHeight]="'auto'"
-                 [scrollbarH]="true"
                  [externalPaging]="useExternalPaging()"
                  [externalSorting]="useExternalSorting()"
                  [loadingIndicator]="parent.isLoading"
@@ -35,15 +36,15 @@
           {{totalMessage?.replace('$1', rowCount.toLocaleString())}}
         </div>
         <domibus-datatable-pager [grid]="this"
-          [pagerLeftArrowIcon]="'datatable-icon-left'"
-          [pagerRightArrowIcon]="'datatable-icon-right'"
-          [pagerPreviousIcon]="'datatable-icon-prev'"
-          [pagerNextIcon]="'datatable-icon-skip'"
-          [page]="curPage"
-          [size]="pageSize"
-          [count]="rowCount"
-          [hidden]="!((rowCount / pageSize) > 1)"
-          (change)="onFooterChange($event)">
+                                 [pagerLeftArrowIcon]="'datatable-icon-left'"
+                                 [pagerRightArrowIcon]="'datatable-icon-right'"
+                                 [pagerPreviousIcon]="'datatable-icon-prev'"
+                                 [pagerNextIcon]="'datatable-icon-skip'"
+                                 [page]="curPage"
+                                 [size]="pageSize"
+                                 [count]="rowCount"
+                                 [hidden]="!((rowCount / pageSize) > 1)"
+                                 (change)="onFooterChange($event)">
         </domibus-datatable-pager>
       </ng-template>
     </ngx-datatable-footer>

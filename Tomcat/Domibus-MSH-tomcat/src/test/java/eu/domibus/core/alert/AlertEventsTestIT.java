@@ -1,6 +1,6 @@
 package eu.domibus.core.alert;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.MSHRole;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.UserMessageLog;
@@ -70,7 +70,6 @@ public class AlertEventsTestIT extends AbstractIT {
         EventType eventType = EventType.ARCHIVING_START_DATE_STOPPED;
         eventService.enqueueEvent(eventType, eventType.name(), new EventProperties());
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
         Alert alert = dispatchedAlerts.get(0);
         Assert.assertEquals(alert.getAlertType(), AlertType.ARCHIVING_START_DATE_STOPPED);
@@ -78,16 +77,15 @@ public class AlertEventsTestIT extends AbstractIT {
         Assert.assertEquals(alert.getEvents().toArray(new Event[0])[0].getType(), eventType);
     }
 
+    @Ignore
     @Test
-    @Ignore("Possible test config problem, alert type not enabled")
     public void sendEventMessageNotFinal() throws InterruptedException {
         String messageId = "messageId";
         MessageStatus messageStatus = MessageStatus.RECEIVED;
 
         eventService.enqueueEvent(EventType.ARCHIVING_MESSAGES_NON_FINAL, messageId, new EventProperties(messageId, messageStatus.name()));
 
-        Thread.sleep(1000);
-        Assert.assertEquals(dispatchedAlerts.size(), 1);
+        Assert.assertEquals(1, dispatchedAlerts.size());
         Alert alert = dispatchedAlerts.get(0);
         Assert.assertEquals(alert.getAlertType(), AlertType.ARCHIVING_MESSAGES_NON_FINAL);
         Assert.assertEquals(alert.getEvents().size(), 1);
@@ -106,7 +104,6 @@ public class AlertEventsTestIT extends AbstractIT {
         UserMessageLog uml = messageDaoTestUtil.createTestMessage(messageId);
         eventService.enqueueMessageStatusChangedEvent(messageId, MessageStatus.SEND_ENQUEUED, MessageStatus.SEND_FAILURE, MSHRole.SENDING);
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
         Alert alert = dispatchedAlerts.get(0);
         Assert.assertEquals(alert.getAlertType(), AlertType.MSG_STATUS_CHANGED);
@@ -128,7 +125,6 @@ public class AlertEventsTestIT extends AbstractIT {
         UserMessageLog uml = messageDaoTestUtil.createTestMessage(messageId);
         eventService.enqueueMessageStatusChangedEvent(messageId, MessageStatus.SEND_ENQUEUED, MessageStatus.ACKNOWLEDGED, MSHRole.SENDING);
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 0);
 
         messageDaoTestUtil.deleteMessages(Arrays.asList(uml.getEntityId()));
@@ -142,7 +138,6 @@ public class AlertEventsTestIT extends AbstractIT {
 
         eventService.enqueuePasswordExpirationEvent(eventType, user, maxPasswordAgeInDays);
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
         Alert alert = dispatchedAlerts.get(0);
         Assert.assertEquals(alert.getAlertType(), AlertType.PLUGIN_PASSWORD_EXPIRED);
@@ -150,11 +145,9 @@ public class AlertEventsTestIT extends AbstractIT {
         Assert.assertEquals(alert.getEvents().toArray(new Event[0])[0].getType(), eventType);
 
         eventService.enqueuePasswordExpirationEvent(eventType, user, maxPasswordAgeInDays);
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
 
         eventService.enqueuePasswordExpirationEvent(eventType, user, maxPasswordAgeInDays);
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
     }
 
@@ -164,7 +157,6 @@ public class AlertEventsTestIT extends AbstractIT {
 
         eventService.enqueueEvent(EventType.PARTITION_CHECK, partitionName, new EventProperties(partitionName));
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
         Alert alert = dispatchedAlerts.get(0);
         Assert.assertEquals(alert.getAlertType(), AlertType.PARTITION_CHECK);
@@ -172,11 +164,9 @@ public class AlertEventsTestIT extends AbstractIT {
         Assert.assertEquals(alert.getEvents().toArray(new Event[0])[0].getType(), EventType.PARTITION_CHECK);
 
         eventService.enqueueEvent(EventType.PARTITION_CHECK, partitionName, new EventProperties(partitionName));
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
 
         eventService.enqueueEvent(EventType.PARTITION_CHECK, partitionName, new EventProperties(partitionName));
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
     }
 
@@ -190,7 +180,6 @@ public class AlertEventsTestIT extends AbstractIT {
 
         eventService.enqueueMonitoringEvent(messageId, MSHRole.RECEIVING, oldStatus, newStatus, fromParty, toParty);
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 1);
         Alert alert = dispatchedAlerts.get(0);
         Assert.assertEquals(alert.getAlertType(), AlertType.CONNECTION_MONITORING_FAILED);
@@ -208,7 +197,6 @@ public class AlertEventsTestIT extends AbstractIT {
 
         eventService.enqueueMonitoringEvent(messageId, MSHRole.SENDING, oldStatus, newStatus, fromParty, toParty);
 
-        Thread.sleep(1000);
         Assert.assertEquals(dispatchedAlerts.size(), 0);
     }
 

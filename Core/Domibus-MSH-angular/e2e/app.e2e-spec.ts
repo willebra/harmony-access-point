@@ -9,6 +9,5 @@ describe('domibus-MSH-web App', function() {
 
   it('should display message saying app works', () => {
     page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
   });
 });

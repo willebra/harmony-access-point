@@ -1,19 +1,26 @@
 ﻿<div id="page" class="login-page">
   <div id="formContainer">
     <form name="loginForm" #loginForm="ngForm" (ngSubmit)="login()">
-      <mat-form-field>
-        <input matInput placeholder="Username" name="username" [(ngModel)]="model.username" #username="ngModel"
-               required id="username_id" autocomplete="username">
-      </mat-form-field>
-      <mat-form-field>
-        <input type="password" matInput placeholder="Password" name="password" [(ngModel)]="model.password"
-               #password="ngModel" required id="password_id" autocomplete="current-password">
-      </mat-form-field>
+      <mat-card appearance="outlined">
+        <mat-form-field [style.width]="'100%'">
+          <mat-label>User Name</mat-label>
+          <input matInput name="username" [(ngModel)]="model.username"
+                 required id="username_id" autocomplete="username">
+        </mat-form-field>
+
+        <mat-form-field [style.width]="'100%'">
+          <mat-label>Password</mat-label>
+          <input type="password" matInput name="password" [(ngModel)]="model.password"
+                 required id="password_id" autocomplete="current-password">
+        </mat-form-field>
+      </mat-card>
+
       <button mat-raised-button color="primary" [disabled]="!loginForm.form.valid" id="loginbutton_id"
               button-click-behaviour>
         <mat-icon>input</mat-icon>
         <span>Login</span>
       </button>
+
     </form>
   </div>
 </div>

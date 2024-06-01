@@ -199,4 +199,9 @@ public class OpenApiConfig {
     @Bean DomibusConfigurationExtService domibusConfigurationExtService() {
         return Mockito.mock(DomibusConfigurationExtService.class);
     }
+
+    @Bean
+    public TrustedListExtService beanTrustedListExtService() {
+        return Mockito.mock(TrustedListExtService.class);
+    }
 }

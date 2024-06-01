@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, Output, SimpleChanges} from '@angular/core';
+import {Component, EventEmitter, Input, Output, SimpleChanges} from '@angular/core';
 import {AlertService} from '../alert/alert.service';
 
 @Component({
@@ -6,7 +6,7 @@ import {AlertService} from '../alert/alert.service';
   templateUrl: './column-picker.component.html',
   styleUrls: ['./column-picker.component.css']
 })
-export class ColumnPickerComponent implements OnChanges {
+export class ColumnPickerComponent {
 
   columnSelection: boolean;
 
@@ -34,8 +34,8 @@ export class ColumnPickerComponent implements OnChanges {
   /*
   * Note: if an 'Actions' column exists, it will be the last one of the array
   * */
-  toggle(column) {
-    setTimeout(() => {
+  toggle(col) {
+    window.setTimeout(() => {
       this.selectedColumns = this.allColumns.filter(col => col.isSelected);
       this.onSelectedColumnsChanged.emit(this.selectedColumns);
     });

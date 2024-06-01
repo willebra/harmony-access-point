@@ -1,6 +1,6 @@
 import {Component, Inject, Input, OnInit} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {MessageLogEntry} from 'app/messagelog/support/messagelogentry';
 import {AlertService} from 'app/common/alert/alert.service';
 import {ConnectionsMonitorService} from '../support/connectionsmonitor.service';
@@ -14,7 +14,6 @@ import {PartyResponseRo} from '../../party/support/party';
  */
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'connection-details.component.html',
   styleUrls: ['connection-details.component.css'],
   providers: [ConnectionsMonitorService]
@@ -65,7 +64,7 @@ export class ConnectionDetailsComponent implements OnInit {
       // this will be sent as a param from the main page
       let senderPartyId = this.sender.identifiers[0].partyId;
       this.messageInfoSent.messageId = await this.connectionsMonitorService.sendTestMessage(this.partyId, senderPartyId);
-      setTimeout(() => {
+      window.setTimeout(() => {
         this.update();
       }, 1000);
     } catch (err) {
@@ -144,7 +143,7 @@ export class ConnectionDetailsComponent implements OnInit {
         this.messageInfoReceived.messageId = result.messageId;
       }
     } catch (err) {
-      this.alertService.exception(`Error retrieving the response signal for ${partyId}. `, err);
+      this.alertService.exception(`Error retrieving Last Received Test Message for ${partyId}`, err);
     } finally {
       this.isBusy = false;
     }

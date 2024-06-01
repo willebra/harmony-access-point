@@ -1,8 +1,10 @@
 package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.PartyRole;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public class PartyRoleDao extends BasicDao<PartyRole> {
 
+    @Autowired
+    protected DomainContextProvider domainProvider;
+
     public PartyRoleDao() {
         super(PartyRole.class);
     }
@@ -25,6 +30,7 @@ public class PartyRoleDao extends BasicDao<PartyRole> {
     public PartyRole findRoleByValue(final String value) {
         final TypedQuery<PartyRole> query = this.em.createNamedQuery("PartyRole.findByValue", PartyRole.class);
         query.setParameter("VALUE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 

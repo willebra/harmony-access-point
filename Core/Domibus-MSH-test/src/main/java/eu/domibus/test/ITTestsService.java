@@ -1,20 +1,31 @@
-package eu.domibus;
+package eu.domibus.test;
 
 import eu.domibus.api.model.*;
+import eu.domibus.common.model.configuration.Mpc;
+import eu.domibus.common.model.configuration.ReceptionAwareness;
 import eu.domibus.core.ebms3.receiver.MSHWebservice;
 import eu.domibus.core.message.UserMessageDao;
+import eu.domibus.core.message.UserMessageDefaultService;
+import eu.domibus.core.message.UserMessageDefaultServiceHelper;
 import eu.domibus.core.message.UserMessageLogDao;
 import eu.domibus.core.message.dictionary.*;
 import eu.domibus.core.plugin.handler.MessageSubmitterImpl;
+import eu.domibus.core.pmode.multitenancy.MultiDomainPModeProvider;
+import eu.domibus.core.pmode.provider.CachingPModeProvider;
+import eu.domibus.logging.DomibusLogger;
+import eu.domibus.logging.DomibusLoggerFactory;
 import eu.domibus.messaging.MessagingProcessingException;
 import eu.domibus.plugin.Submission;
 import eu.domibus.test.common.MessageTestUtility;
 import eu.domibus.test.common.SoapSampleUtil;
 import eu.domibus.test.common.SubmissionUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.soap.SOAPMessage;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -25,8 +36,17 @@ import java.util.List;
 @Service
 public class ITTestsService {
 
+    private static final DomibusLogger LOG = DomibusLoggerFactory.getLogger(ITTestsService.class);
+
     @Autowired
     protected UserMessageLogDao userMessageLogDao;
+
+    @Autowired
+    protected UserMessageDefaultService userMessageDefaultService;
+
+    @Autowired
+    protected UserMessageDefaultServiceHelper userMessageDefaultServiceHelper;
+
     @Autowired
     protected SubmissionUtil submissionUtil;
 
@@ -66,16 +86,27 @@ public class ITTestsService {
     @Autowired
     MSHWebservice mshWebserviceTest;
 
+    @Autowired
+    MultiDomainPModeProvider pModeProvider;
+
     @Transactional
     public String sendMessageWithStatus(MessageStatus endStatus) throws MessagingProcessingException {
 
-        Submission submission = submissionUtil.createSubmission();
-        final String messageId = messageSubmitter.submit(submission, "mybackend");
+        UserMessageLog userMessageLog = sendMessageWithStatus(endStatus, null);
+        return userMessageLog.getUserMessage().getMessageId();
+    }
 
-        final UserMessageLog userMessageLog = userMessageLogDao.findByMessageId(messageId, MSHRole.SENDING);
+    @Transactional
+    public UserMessageLog sendMessageWithStatus(MessageStatus endStatus, String messageId) throws MessagingProcessingException {
+
+
+        Submission submission = submissionUtil.createSubmission(messageId);
+        final String dbMessageId = messageSubmitter.submit(submission, "mybackend");
+
+        final UserMessageLog userMessageLog = userMessageLogDao.findByMessageId(dbMessageId, MSHRole.SENDING);
         userMessageLogDao.setMessageStatus(userMessageLog, endStatus);
 
-        return messageId;
+        return userMessageLog;
     }
 
     @Transactional
@@ -119,8 +150,44 @@ public class ITTestsService {
     @Transactional
     public void receiveMessage(String messageId) throws Exception {
         String filename = "SOAPMessage2.xml";
-        mshWebserviceTest.invoke(soapSampleUtil.createSOAPMessage(filename, messageId));
+        SOAPMessage soapMessage = soapSampleUtil.createSOAPMessage(filename, messageId);
+        mshWebserviceTest.invoke(soapMessage);
     }
 
+    @Transactional
+    public void deleteAllMessages(String... messageIds) {
+        List<UserMessageLogDto> allMessages = new ArrayList<>();
+        for (String messageId : messageIds) {
+            if (StringUtils.isNotBlank(messageId)) {
+                UserMessageLog byMessageId = userMessageLogDao.findByMessageId(messageId);
+                if (byMessageId != null) {
 
+                    UserMessageLogDto userMessageLogDto = new UserMessageLogDto(byMessageId.getUserMessage().getEntityId(), byMessageId.getUserMessage().getMessageId(), byMessageId.getBackend());
+                    userMessageLogDto.setProperties(userMessageDefaultServiceHelper.getProperties(byMessageId.getUserMessage()));
+                    allMessages.add(userMessageLogDto);
+                } else {
+                    LOG.warn("MessageId [{}] not found", messageId);
+                }
+            }
+        }
+        if (allMessages.size() > 0) {
+            userMessageDefaultService.deleteMessages(allMessages);
+        }
+    }
+
+    public void modifyPmodeRetryParameters(int retryTimeout, int retryCount) {
+        //we modify the retry policy so that the message fails immediately and not goes in WAITING_FOR_RETRY
+        final CachingPModeProvider currentPModeProvider = (CachingPModeProvider) pModeProvider.getCurrentPModeProvider();
+        final ReceptionAwareness receptionAwareness = currentPModeProvider.getConfiguration().getBusinessProcesses().getAs4ConfigReceptionAwareness().stream().findFirst().orElse(null);
+        receptionAwareness.setRetryCount(retryTimeout);
+        receptionAwareness.setRetryTimeout(retryCount);
+    }
+
+    public void modifyPmodeRetentionParameters(Integer retentionDownloaded, Integer retentionUnDownloaded) {
+        //we modify the retry policy so that the message fails immediately and not goes in WAITING_FOR_RETRY
+        final CachingPModeProvider currentPModeProvider = (CachingPModeProvider) pModeProvider.getCurrentPModeProvider();
+        final Mpc mpc = currentPModeProvider.getConfiguration().getMpcs().iterator().next();
+        mpc.setRetentionUndownloaded(retentionUnDownloaded);
+        mpc.setRetentionDownloaded(retentionDownloaded);
+    }
 }

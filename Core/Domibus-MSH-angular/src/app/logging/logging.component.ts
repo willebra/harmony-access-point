@@ -14,7 +14,6 @@ import {ComponentName} from '../common/component-name-decorator';
  * @since 4.1
  */
 @Component({
-  moduleId: module.id,
   templateUrl: 'logging.component.html',
   providers: [],
 })
@@ -26,7 +25,7 @@ export class LoggingComponent extends mix(BaseListComponent)
   static readonly LOGGING_URL: string = 'rest/logging/loglevel';
   static readonly RESET_LOGGING_URL: string = 'rest/logging/reset';
 
-  @ViewChild('rowWithToggleTpl', {static: false}) rowWithToggleTpl: TemplateRef<any>;
+  @ViewChild('rowWithToggleTpl') rowWithToggleTpl: TemplateRef<any>;
 
   levels: Array<String>;
 
@@ -83,7 +82,7 @@ export class LoggingComponent extends mix(BaseListComponent)
         level: newLevel,
       }, {headers: this.headers}).subscribe(
         () => {
-          this.page();
+          this.tryFilter();
         },
         error => {
           this.alertService.exception('An error occurred while setting logging level: ', error);

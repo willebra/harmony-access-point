@@ -15,15 +15,24 @@ import java.io.Serializable;
 @Entity
 @Table(name = "TB_D_PARTY")
 @NamedQueries({
-@NamedQuery(name = "PartyId.findByValueAndType", hints = {
-        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-        @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select part from PartyId part where part.value=:VALUE and part.type=:TYPE"),
-@NamedQuery(name = "PartyId.findByValue", hints = {
-        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-        @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select part from PartyId part where part.value=:VALUE and part.type is null"),
-        @NamedQuery(name = "PartyId.searchByValue", hints = {
-                @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
-                @QueryHint(name = "org.hibernate.cacheable", value = "true")}, query = "select part from PartyId part where part.value=:VALUE")
+        @NamedQuery(name = "PartyId.findByValueAndType",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select part from PartyId part where part.value=:VALUE and part.type=:TYPE and :DOMAIN=:DOMAIN"),
+        @NamedQuery(name = "PartyId.findByValue",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select part from PartyId part where part.value=:VALUE and part.type is null and :DOMAIN=:DOMAIN"),
+        @NamedQuery(name = "PartyId.searchByValue",
+                hints = {
+                        @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
+                        @QueryHint(name = "org.hibernate.cacheable", value = "true")},
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select part from PartyId part where part.value=:VALUE and :DOMAIN=:DOMAIN")
 })
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class PartyId extends AbstractBaseEntity implements Comparable<PartyId>, Serializable {

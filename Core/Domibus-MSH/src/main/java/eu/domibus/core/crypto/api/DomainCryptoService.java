@@ -88,4 +88,5 @@ public interface DomainCryptoService {
 
     boolean isKeyStoreChangedOnDisk();
 
+    void refreshTrustedLists();
 }

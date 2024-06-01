@@ -5,6 +5,9 @@ import eu.domibus.api.datasource.DataSourceConstants;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.logging.DomibusLogger;
 import eu.domibus.logging.DomibusLoggerFactory;
+import net.ttddyy.dsproxy.listener.logging.SLF4JLogLevel;
+import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -46,7 +49,17 @@ public class DomibusTestDatasourceConfiguration {
     @Bean(name = {DataSourceConstants.DOMIBUS_JDBC_DATA_SOURCE, DataSourceConstants.DOMIBUS_JDBC_QUARTZ_DATA_SOURCE}, destroyMethod = "close")
     public DataSource domibusDatasource() {
         HikariDataSource dataSource = createDataSource();
-        return dataSource;
+
+        SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
+        loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
+        return ProxyDataSourceBuilder
+                .create(dataSource)
+                .countQuery()
+                .logQueryBySlf4j(SLF4JLogLevel.INFO)
+                .name("domibusDatasourceProxy")
+                .listener(loggingListener)
+                .build();
+
     }
 
     private HikariDataSource createDataSource() {
@@ -76,10 +89,14 @@ public class DomibusTestDatasourceConfiguration {
         String domibusH2DataScriptFullPath = writeScriptFromClasspathToLocalDirectory("domibus-h2-data.sql", "test-sql-scripts");
         String schemaH2ScriptFullPath = writeScriptFromClasspathToLocalDirectory("schema-h2.sql", "config/database");
 
-        final String databaseSchema = domibusPropertyProvider.getProperty(DOMIBUS_DATABASE_SCHEMA);
+        final String databaseSchema = domibusPropertyProvider.getProperty(DOMIBUS_DATABASE_SCHEMA) + "_" + System.currentTimeMillis();
+        LOG.info(highlightInfo("Using schema [" + databaseSchema + "]"));
+
         //Enable logs for H2 with ';TRACE_LEVEL_FILE=4' at the end of databaseUrlTemplate
         final String databaseUrlTemplate = "jdbc:h2:mem:%s;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=DAY,VALUE;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DEFAULT_LOCK_TIMEOUT=3000;INIT=runscript from '" + FilenameUtils.separatorsToUnix(createSchemaScriptFullPath) + "'\\;runscript from '" + FilenameUtils.separatorsToUnix(domibusH2ScriptFullPath) + "'\\;runscript from '" + FilenameUtils.separatorsToUnix(domibusH2DataScriptFullPath) + "'\\;runscript from '" + FilenameUtils.separatorsToUnix(schemaH2ScriptFullPath) + "'";
         String databaseUrl = String.format(databaseUrlTemplate, databaseSchema);
+
+        System.setProperty(DOMIBUS_DATABASE_SCHEMA, databaseSchema);
 
         LOG.info("Using database URL [{}]", databaseUrl);
 
@@ -94,7 +111,7 @@ public class DomibusTestDatasourceConfiguration {
 
         final File testSqlScriptsDirectory = new File("target/test-sql-scripts");
         final File domibusScript = new File(testSqlScriptsDirectory, scriptName);
-        String scriptFullPath= null;
+        String scriptFullPath = null;
         try {
             scriptFullPath = domibusScript.getCanonicalPath();
         } catch (IOException e) {
@@ -112,6 +129,13 @@ public class DomibusTestDatasourceConfiguration {
             fail("Could not write script from classpath [" + sourceScriptPath + "] to the local file [" + domibusScript + "]");
         }
         return scriptFullPath;
+    }
+
+    private static String highlightInfo(String message) {
+        return "\n\n\n"+
+                "**************** INFO **************** INFO **************** INFO **************** \n"+
+                message+"\n"+
+                "*******************************************************************************************\n\n\n";
     }
 
 

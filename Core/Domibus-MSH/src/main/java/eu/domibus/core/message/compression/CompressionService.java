@@ -112,7 +112,7 @@ public class CompressionService {
         }
 
         final PartProperty compressionProperty = partPropertyDictionaryService.findOrCreatePartProperty(MessageConstants.COMPRESSION_PROPERTY_KEY, MessageConstants.COMPRESSION_PROPERTY_VALUE, null);
-        partInfo.getPartProperties().add(compressionProperty);
+        partInfo.addProperty(compressionProperty);
         final CompressedDataSource compressedDataSource = new CompressedDataSource(partInfo.getPayloadDatahandler().getDataSource());
         DataHandler gZipDataHandler = new DataHandler(compressedDataSource);
         partInfo.setPayloadDatahandler(gZipDataHandler);
@@ -163,7 +163,7 @@ public class CompressionService {
         final PartProperty compressionProperty = new PartProperty();
         compressionProperty.setName(MessageConstants.COMPRESSION_PROPERTY_KEY);
         compressionProperty.setValue(MessageConstants.COMPRESSION_PROPERTY_VALUE);
-        partInfo.getPartProperties().remove(compressionProperty);
+        partInfo.removeProperty(compressionProperty);
 
         if (mimeType == null) {
             LOG.businessError(DomibusMessageCode.BUS_MESSAGE_PAYLOAD_DECOMPRESSION_FAILURE_MISSING_MIME_TYPE, partInfo.getHref(), messageId);

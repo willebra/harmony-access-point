@@ -1,0 +1,7 @@
+::ng-deep .mdc-text-field--filled.mdc-text-field--disabled .mdc-text-field__input {
+  color: inherit !important;
+}
+
+::ng-deep .mdc-text-field--filled.mdc-text-field--disabled {
+  background-color: inherit !important;
+}

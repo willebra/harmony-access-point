@@ -112,28 +112,21 @@ public class EArchiveBatchDao extends BasicDao<EArchiveBatchEntity> {
     }
 
     public List<EArchiveBatchUserMessage> getNotArchivedMessages(Long startMessageId, Long endMessageId, Integer pageStart, Integer pageSize) {
-        TypedQuery<EArchiveBatchUserMessage> query = this.em.createNamedQuery("UserMessageLog.findMessagesForArchivingAsc", EArchiveBatchUserMessage.class);
+        TypedQuery<EArchiveBatchUserMessage> query = this.em.createNamedQuery("UserMessageLog.findMessagesNotArchivedAsc", EArchiveBatchUserMessage.class);
         query.setParameter("LAST_ENTITY_ID", startMessageId);
         query.setParameter("MAX_ENTITY_ID", endMessageId);
         query.setParameter("STATUSES", messageStatusDao.getEntitiesOf(MessageStatus.getSuccessfulStates()));
         queryUtil.setPaginationParametersToQuery(query, pageStart, pageSize);
-        List<EArchiveBatchUserMessage> res =  query.getResultList();
-        res.forEach(eArchiveBatchUserMessage -> {
-            MessageStatusEntity entity = messageStatusDao.read(eArchiveBatchUserMessage.getMessageStatusId());
-            if (entity != null) {
-                eArchiveBatchUserMessage.setMessageStatus(entity.getMessageStatus());
-            }
-        });
-        return res;
+        return query.getResultList();
     }
 
     public Long getNotArchivedMessageCountForPeriod(Long startMessageId, Long endMessageId) {
-        TypedQuery<Long> query = em.createNamedQuery("UserMessageLog.countMessagesForArchiving", Long.class);
+        TypedQuery<Long> query = em.createNamedQuery("UserMessageLog.countMessagesNotArchived", Long.class);
         query.setParameter("LAST_ENTITY_ID", startMessageId);
         query.setParameter("MAX_ENTITY_ID", endMessageId);
 
         List<MessageStatusEntity> statuses = messageStatusDao.getEntitiesOf(MessageStatus.getSuccessfulStates());
-        query.setParameter("STATUS_IDS", statuses);
+        query.setParameter("STATUSES", statuses);
 
         return query.getSingleResult();
     }

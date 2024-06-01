@@ -1,10 +1,11 @@
 package eu.domibus.core.ebms3.sender.retry;
 
-import eu.domibus.api.model.*;
+import eu.domibus.api.model.MSHRole;
+import eu.domibus.api.model.UserMessage;
+import eu.domibus.api.model.UserMessageLog;
 import eu.domibus.api.property.DomibusPropertyProvider;
 import eu.domibus.api.util.DateUtil;
 import eu.domibus.common.model.configuration.LegConfiguration;
-import eu.domibus.core.message.MessageStatusDao;
 import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageDefaultService;
 import eu.domibus.core.message.UserMessageLogDao;
@@ -19,11 +20,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static eu.domibus.api.property.DomibusPropertyMetadataManagerSPI.DOMIBUS_MSH_RETRY_TIMEOUT_DELAY;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static org.apache.commons.lang3.time.DateUtils.MILLIS_PER_MINUTE;
 
 /**
  * @author Christian Koch, Stefan Mueller
@@ -86,13 +90,13 @@ public class RetryDefaultService implements RetryService {
         LOG.trace("Enqueueing message for retrial with entityId [{}]", messageEntityId);
 
         final UserMessage userMessage = userMessageDao.findByEntityId(messageEntityId);
-        if(userMessage.isSourceMessage()) {
+        if (userMessage.isSourceMessage()) {
             LOG.debug("Source message [{}] not scheduled for retry.", userMessage.getMessageId());
             return;
         }
         LOG.trace("Enqueueing message for retrial [{}]", userMessage.getMessageId());
 
-        final LegConfiguration legConfiguration  = updateRetryLoggingService.getLegConfiguration(userMessage);
+        final LegConfiguration legConfiguration = updateRetryLoggingService.getLegConfiguration(userMessage);
 
         boolean invalidConfig = updateRetryLoggingService.failIfInvalidConfig(userMessage, legConfiguration);
         if (invalidConfig) {
@@ -117,7 +121,10 @@ public class RetryDefaultService implements RetryService {
         int retryTimeoutDelay = domibusPropertyProvider.getIntegerProperty(DOMIBUS_MSH_RETRY_TIMEOUT_DELAY);
         LOG.trace("maxRetryTimeout [{}], retryTimeoutDelay [{}]", maxRetryTimeout, retryTimeoutDelay);
 
-        long minEntityId = dateUtil.getMinEntityId(MINUTES.toSeconds(maxRetryTimeout + retryTimeoutDelay));
+        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+
+        int timeOutMin = maxRetryTimeout + retryTimeoutDelay;
+        long minEntityId = dateUtil.getMinEntityId(MINUTES.toSeconds(timeOutMin));
         long maxEntityId = dateUtil.getMaxEntityId(0);
 
         LOG.trace("minEntityId [{}], maxEntityId [{}]", minEntityId, maxEntityId);
@@ -128,7 +135,21 @@ public class RetryDefaultService implements RetryService {
         }
         LOG.trace("Found messages to be send [{}]", messageEntityIdsToSend);
 
-        return messageEntityIdsToSend;
+        // START - This part should NOT be propagated to 5.2 (TSID is making the filter works correctly)
+        for (Long entityId : messageEntityIdsToSend) {
+            UserMessageLog byEntityId = userMessageLogDao.findByEntityId(entityId);
+
+            long timeout = timeOutMin * MILLIS_PER_MINUTE;
+            if ((byEntityId.getCreationTime().getTime() + timeout) > now.toInstant().toEpochMilli()) {
+                LOG.debug("Add EntityId [{}] creationTime [{}] now [{}] timeout [{} m]", entityId, byEntityId.getCreationTime().toInstant().atOffset(ZoneOffset.UTC), now, timeOutMin);
+                result.add(entityId);
+            } else {
+                LOG.debug("Ignore EntityId [{}] creationTime [{}] now [{}] timeout [{} m]", entityId, byEntityId.getCreationTime().toInstant().atOffset(ZoneOffset.UTC), now, timeOutMin);
+            }
+        }
+        // END - This part should NOT be propagated to 5.2
+
+        return result;
     }
 
     /**

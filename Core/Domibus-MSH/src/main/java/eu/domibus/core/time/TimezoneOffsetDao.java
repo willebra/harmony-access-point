@@ -1,7 +1,9 @@
 package eu.domibus.core.time;
 
 import eu.domibus.api.model.TimezoneOffset;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -15,6 +17,9 @@ import javax.persistence.TypedQuery;
  */
 @Repository
 public class TimezoneOffsetDao extends BasicDao<TimezoneOffset> {
+
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public TimezoneOffsetDao() {
         super(TimezoneOffset.class);
@@ -54,6 +59,7 @@ public class TimezoneOffsetDao extends BasicDao<TimezoneOffset> {
         TypedQuery<TimezoneOffset> query = em.createNamedQuery("TimezoneOffset.findByTimezoneIdAndOffsetSeconds", TimezoneOffset.class);
         query.setParameter("TIMEZONE_ID", timezoneId);
         query.setParameter("OFFSET_SECONDS", offsetSeconds);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 }

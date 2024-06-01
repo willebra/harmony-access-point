@@ -1,8 +1,10 @@
 package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.MpcEntity;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +18,9 @@ import javax.persistence.TypedQuery;
  */
 @Repository
 public class MpcDao extends BasicDao<MpcEntity> {
+
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public MpcDao() {
         super(MpcEntity.class);
@@ -40,6 +45,7 @@ public class MpcDao extends BasicDao<MpcEntity> {
     public MpcEntity findMpc(final String mpc) {
         final TypedQuery<MpcEntity> query = this.em.createNamedQuery("Mpc.findByValue", MpcEntity.class);
         query.setParameter("MPC", mpc);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 }

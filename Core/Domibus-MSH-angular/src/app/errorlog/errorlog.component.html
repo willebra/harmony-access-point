@@ -2,78 +2,96 @@
   <page-header id="errorlogheader_id">Error Log</page-header>
 
   <div class="selectionCriteria">
-    <mat-card>
+    <mat-card appearance="outlined">
       <mat-card-content>
         <div class="panel">
           <form name="filterForm" #filterForm="ngForm" (submit)="tryFilter()">
             <mat-form-field>
-              <input matInput placeholder="Signal Message Id" name="errorSignalMessageId"
-                     [(ngModel)]="filter.errorSignalMessageId" #errorSignalMessageId="ngModel" id="signalmessageid_id"
-                     width="40px">
+              <mat-label>Signal Message Id</mat-label>
+              <input matInput name="errorSignalMessageId" [(ngModel)]="filter.errorSignalMessageId"  id="signalmessageid_id" width="40px">
             </mat-form-field>
 
             <mat-form-field>
-              <input matInput placeholder="Message Id" name="messageInErrorId" [(ngModel)]="filter.messageInErrorId"
-                     #messageInErrorId="ngModel" id="messageid_id">
+              <mat-label>Message Id</mat-label>
+              <input matInput name="messageInErrorId" [(ngModel)]="filter.messageInErrorId" id="messageid_id">
             </mat-form-field>
-            <md2-datepicker placeholder="Error From:" appClearInvalid
-                            [(ngModel)]="filter.timestampFrom"
-                            name="fromTimestmap"
-                            [type]="'datetime'"
-                            [max]="timestampFromMaxDate"
-                            (change)='onTimestampFromChange($event)'
-                            id="fromtimestamp_id"></md2-datepicker>
-            <md2-datepicker placeholder="Error To:" appClearInvalid
-                            [(ngModel)]="filter.timestampTo"
-                            name="toTimestmap"
-                            [min]="timestampToMinDate"
-                            [max]="timestampToMaxDate"
-                            (change)='onTimestampToChange($event)'
-                            [type]="'datetime'"
-                            id="totimestamp_id"></md2-datepicker>
+
+            <mat-form-field>
+              <mat-label>Error From</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedFrom" id="fromtimestamp_id" name="fromTimestmap"
+                     [ngModel]="filter.timestampFrom" (ngModelChange)='onTimestampFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [max]="timestampFromMaxDate">
+              <mat-datepicker-toggle matSuffix [for]="receivedFrom" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedFrom>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Error To</mat-label>
+              <input matInput [ngxMatDatetimePicker]="receivedTo" id="totimestamp_id" name="toTimestmap"
+                     [ngModel]="filter.timestampTo" (ngModelChange)='onTimestampToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [min]="timestampToMinDate" [max]="timestampToMaxDate">
+              <mat-datepicker-toggle matSuffix [for]="receivedTo" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #receivedTo>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
 
             <mat-form-field *ngIf="advancedSearch">
-              <input matInput placeholder="Error Detail" name="errorDetail" [(ngModel)]="filter.errorDetail"
-                     #errorDetail="ngModel" id="errordetail_id" advanced-filter-behaviour [parent]="this">
+              <mat-label>Error Detail</mat-label>
+              <input matInput name="errorDetail" [(ngModel)]="filter.errorDetail" id="errordetail_id" advanced-filter-behaviour [parent]="this">
             </mat-form-field>
-            <mat-select placeholder="AP Role" [(ngModel)]="filter.mshRole" name="mshRole" class="optionField"
-                        id="aprole_id" *ngIf="advancedSearch" advanced-filter-behaviour [parent]="this">
-              <mat-option [value]="">
-              </mat-option>
-              <mat-option *ngFor="let role of mshRoles" [value]="role">
-                {{role}}
-              </mat-option>
-            </mat-select>
 
-            <mat-select placeholder="Error Code" [(ngModel)]="filter.errorCode" name="errorCode" class="optionField"
-                        id="errorcode_id" *ngIf="advancedSearch" advanced-filter-behaviour [parent]="this">
-              <mat-option [value]="">
-              </mat-option>
-              <mat-option *ngFor="let code of errorCodes" [value]="code">
-                {{code}}
-              </mat-option>
-            </mat-select>
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>AP Role</mat-label>
+              <mat-select [(ngModel)]="filter.mshRole" name="mshRole" class="optionField" id="aprole_id" advanced-filter-behaviour [parent]="this">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let role of mshRoles" [value]="role">
+                  {{role}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
 
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Error Code</mat-label>
+              <mat-select [(ngModel)]="filter.errorCode" name="errorCode" class="optionField" id="errorcode_id" advanced-filter-behaviour [parent]="this">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let code of errorCodes" [value]="code">
+                  {{code}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
 
-            <md2-datepicker placeholder="Notified From:" appClearInvalid
-                            [(ngModel)]="filter.notifiedFrom"
-                            name="notifiedFrom"
-                            [type]="'datetime'"
-                            [max]="notifiedFromMaxDate"
-                            (change)='onNotifiedFromChange($event)'
-                            id="notifiedfrom_id"
-                            *ngIf="advancedSearch" advanced-filter-behaviour [parent]="this">
-            </md2-datepicker>
-            <md2-datepicker placeholder="Notified To:" appClearInvalid
-                            [(ngModel)]="filter.notifiedTo"
-                            name="notifiedTo"
-                            [type]="'datetime'"
-                            [min]="notifiedToMinDate"
-                            [max]="notifiedToMaxDate"
-                            (change)='onNotifiedToChange($event)'
-                            id="notifiedto_id"
-                            *ngIf="advancedSearch" advanced-filter-behaviour [parent]="this">
-            </md2-datepicker>
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Notified From</mat-label>
+              <input matInput [ngxMatDatetimePicker]="notifiedFrom" id="notifiedfrom_id" name="notifiedFrom"
+                     [ngModel]="filter.notifiedFrom" (ngModelChange)='onNotifiedFromChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [max]="notifiedFromMaxDate" advanced-filter-behaviour [parent]="this">
+              <mat-datepicker-toggle matSuffix [for]="notifiedFrom" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #notifiedFrom>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="advancedSearch">
+              <mat-label>Notified To</mat-label>
+              <input matInput [ngxMatDatetimePicker]="notifiedTo" id="notifiedto_id" name="notifiedTo"
+                     [ngModel]="filter.notifiedTo" (ngModelChange)='onNotifiedToChange($event)' [ngModelOptions]="{ updateOn: 'blur' }"
+                     [min]="notifiedToMinDate" [max]="notifiedToMaxDate" advanced-filter-behaviour [parent]="this">
+              <mat-datepicker-toggle matSuffix [for]="notifiedTo" ></mat-datepicker-toggle>
+              <ngx-mat-datetime-picker #notifiedTo>
+                <ngx-mat-datepicker-actions>
+                  <button mat-icon-button ngxMatDatepickerApply><mat-icon>check</mat-icon></button>
+                </ngx-mat-datepicker-actions>
+              </ngx-mat-datetime-picker>
+            </mat-form-field>
 
             <filter-area-footer [parent]="this" [form]="filterForm"></filter-area-footer>
 

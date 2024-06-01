@@ -12,6 +12,8 @@ public class DomibusInfoRO implements Serializable {
 
     private String versionNumber;
 
+    private String upstreamVersionNumber;
+
     public String getVersion() {
         return version;
     }
@@ -26,5 +28,13 @@ public class DomibusInfoRO implements Serializable {
 
     public void setVersionNumber(String versionNumber) {
         this.versionNumber = versionNumber;
+    }
+
+    public String getUpstreamVersionNumber() {
+      return upstreamVersionNumber;
+    }
+
+    public void setUpstreamVersionNumber(String upstreamVersionNumber) {
+      this.upstreamVersionNumber = upstreamVersionNumber;
     }
 }

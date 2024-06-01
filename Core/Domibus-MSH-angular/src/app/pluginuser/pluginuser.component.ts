@@ -1,11 +1,20 @@
-import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {ColumnPickerBase} from 'app/common/column-picker/column-picker-base';
 import {AlertService} from '../common/alert/alert.service';
 import {PluginUserSearchCriteria, PluginUserService} from './support/pluginuser.service';
 import {PluginUserRO} from './support/pluginuser';
-import {MatDialog} from '@angular/material';
 import {EditBasicPluginUserFormComponent} from './editpluginuser-form/edit-basic-plugin-user-form.component';
-import {EditCertificatePluginUserFormComponent} from './editpluginuser-form/edit-certificate-plugin-user-form.component';
+import {
+  EditCertificatePluginUserFormComponent
+} from './editpluginuser-form/edit-certificate-plugin-user-form.component';
 import {UserService} from '../user/support/user.service';
 import {UserState} from '../user/support/user';
 import mix from '../common/mixins/mixin.utils';
@@ -18,7 +27,8 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {ClientSortableListMixin} from '../common/mixins/sortable-list.mixin';
 import {ApplicationContextService} from '../common/application-context.service';
 import {ComponentName} from '../common/component-name-decorator';
-import {PluginUserValidatorService} from "./support/pluginuservalidator.service";
+import {PluginUserValidatorService} from './support/pluginuservalidator.service';
+import {SelectionType} from '@swimlane/ngx-datatable';
 
 @Component({
   templateUrl: './pluginuser.component.html',
@@ -30,9 +40,9 @@ export class PluginUserComponent extends mix(BaseListComponent)
   .with(FilterableListMixin, ClientPageableListMixin, ModifiableListMixin, ClientSortableListMixin)
   implements OnInit, AfterViewInit, AfterViewChecked {
 
-  @ViewChild('activeTpl', {static: false}) activeTpl: TemplateRef<any>;
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
-  @ViewChild('rowWithDateFormatTpl', {static: false}) public rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('activeTpl') activeTpl: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') public rowWithDateFormatTpl: TemplateRef<any>;
 
   columnPickerBasic: ColumnPickerBase = new ColumnPickerBase();
   columnPickerCert: ColumnPickerBase = new ColumnPickerBase();
@@ -44,7 +54,7 @@ export class PluginUserComponent extends mix(BaseListComponent)
   userRoles: Array<String>;
 
   constructor(private applicationService: ApplicationContextService, private alertService: AlertService,
-              private pluginUserService: PluginUserService, public dialog: MatDialog, private dialogsService: DialogsService,
+              private pluginUserService: PluginUserService, private dialogsService: DialogsService,
               private changeDetector: ChangeDetectorRef, private http: HttpClient, private pluginUserValidatorService: PluginUserValidatorService) {
     super();
   }
@@ -73,34 +83,81 @@ export class PluginUserComponent extends mix(BaseListComponent)
 
   private initColumns() {
     this.columnPickerBasic.allColumns = [
-      {name: 'User Name', prop: 'userName', width: 20, showInitially: true},
-      {name: 'Role', prop: 'authRoles', width: 10, showInitially: true},
-      {name: 'Active', prop: 'active', cellTemplate: this.activeTpl, width: 25, showInitially: true},
-      {name: 'Original User', prop: 'originalUser', width: 240, showInitially: true},
+      {
+        name: 'User Name',
+        prop: 'userName',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
+      {
+        name: 'Role',
+        prop: 'authRoles',
+        width: 100,
+        minWidth: 90,
+        showInitially: true
+      },
+      {
+        name: 'Active',
+        prop: 'active',
+        cellTemplate: this.activeTpl,
+        width: 70,
+        minWidth: 60,
+        showInitially: true
+      },
+      {
+        name: 'Original User',
+        prop: 'originalUser',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Expiration Date',
         prop: 'expirationDate',
         canAutoResize: true,
-        showInitially: true
+        showInitially: true,
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 60,
+        width: 100,
+        minWidth: 90,
         canAutoResize: true,
         sortable: false,
         showInitially: true
       }
     ];
     this.columnPickerCert.allColumns = [
-      {name: 'Certificate Id', prop: 'certificateId', width: 240, showInitially: true},
-      {name: 'Role', prop: 'authRoles', width: 10, showInitially: true},
-      {name: 'Original User', prop: 'originalUser', width: 240, showInitially: true},
+      {
+        name: 'Certificate Id',
+        prop: 'certificateId',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
+      {
+        name: 'Role',
+        prop: 'authRoles',
+        width: 70,
+        minWidth: 60,
+        showInitially: true
+      },
+      {
+        name: 'Original User',
+        prop: 'originalUser',
+        width: 200,
+        minWidth: 190,
+        showInitially: true
+      },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 60,
+        width: 100,
+        minWidth: 90,
         canAutoResize: true,
         sortable: false,
         showInitially: true
@@ -215,7 +272,7 @@ export class PluginUserComponent extends mix(BaseListComponent)
       editForm = EditCertificatePluginUserFormComponent;
     }
 
-    return this.dialog.open(editForm, {
+    return this.dialogsService.open(editForm, {
       data: {
         user: item,
         userroles: this.userRoles,
@@ -256,4 +313,5 @@ export class PluginUserComponent extends mix(BaseListComponent)
     return PluginUserService.CSV_URL + '?' + this.createAndSetParameters();
   }
 
+  protected readonly SelectionType = SelectionType;
 }

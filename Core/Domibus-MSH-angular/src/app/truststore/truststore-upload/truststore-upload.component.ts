@@ -1,7 +1,7 @@
 import {Component, Inject, ViewChild} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import {TrustStoreService} from '../support/trustore.service';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, NgControl, NgForm, Validators} from '@angular/forms';
+import {AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, NgControl, NgForm, Validators} from '@angular/forms';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 
 @Component({
@@ -12,17 +12,17 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 })
 export class TrustStoreUploadComponent {
 
-  truststoreForm: FormGroup;
+  truststoreForm: UntypedFormGroup;
   selectedFileName: string;
   fileSelected = false;
 
-  @ViewChild('fileInput', {static: false}) fileInput;
+  @ViewChild('fileInput') fileInput;
 
-  @ViewChild('passwordField', {static: false}) passwordField;
-  
-  constructor(public dialogRef: MatDialogRef<TrustStoreUploadComponent>, private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any) {
+  @ViewChild('passwordField') passwordField;
+
+  constructor(public dialogRef: MatDialogRef<TrustStoreUploadComponent>, private fb: UntypedFormBuilder, @Inject(MAT_DIALOG_DATA) public data: any) {
     this.truststoreForm = fb.group({
-      'password': new FormControl('', Validators.required),
+      'password': new UntypedFormControl('', Validators.required),
     });
   }
 
@@ -38,7 +38,7 @@ export class TrustStoreUploadComponent {
     const password = this.truststoreForm.get('password').value;
     const result = {
       file: fileToUpload,
-      password: password
+      password: password,
     };
     this.dialogRef.close(result);
   }

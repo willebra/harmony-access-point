@@ -11,7 +11,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {TrustStoreService} from './support/trustore.service';
 import {TruststoreDialogComponent} from './truststore-dialog/truststore-dialog.component';
-import {MatDialog} from '@angular/material';
 import {TrustStoreUploadComponent} from './truststore-upload/truststore-upload.component';
 import {AlertService} from '../common/alert/alert.service';
 import {HttpClient} from '@angular/common/http';
@@ -48,10 +47,10 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
   protected storeExists: boolean;
   showResetOperation: boolean;
 
-  @ViewChild('rowWithDateFormatTpl', {static: false}) rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') rowWithDateFormatTpl: TemplateRef<any>;
 
   constructor(private applicationService: ApplicationContextService, protected http: HttpClient, protected trustStoreService: TrustStoreService,
-              public dialog: MatDialog, public alertService: AlertService, private changeDetector: ChangeDetectorRef,
+              public alertService: AlertService, private changeDetector: ChangeDetectorRef,
               private fileUploadValidatorService: FileUploadValidatorService, protected truststoreService: TrustStoreService,
               private dialogsService: DialogsService) {
     super();
@@ -68,26 +67,35 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
     this.columnPicker.allColumns = [
       {
         name: 'Name',
-        prop: 'name'
+        prop: 'name',
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Subject',
         prop: 'subject',
+        width: 400,
+        minWidth: 390,
       },
       {
         name: 'Issuer',
         prop: 'issuer',
+        width: 400,
+        minWidth: 390,
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Valid from',
-        prop: 'validFrom'
-
+        prop: 'validFrom',
+        width: 200,
+        minWidth: 190,
       },
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Valid until',
         prop: 'validUntil',
+        width: 200,
+        minWidth: 190,
       }
 
     ];
@@ -125,7 +133,7 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
   }
 
   showDetails(selectedRow: any) {
-    this.dialog.open(TruststoreDialogComponent, {data: {trustStoreEntry: selectedRow}})
+    this.dialogsService.open(TruststoreDialogComponent, {data: {trustStoreEntry: selectedRow}})
       .afterClosed().subscribe(result => {
     });
   }
@@ -145,7 +153,7 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
         super.isLoading = false;
       }, err => {
         super.isLoading = false;
-        this.alertService.exception('Error downloading TrustStore:', err);
+        this.alertService.exception('Error downloading trustStore:', err);
       });
   }
 
@@ -199,7 +207,7 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
       let res = await this.truststoreService.removeCertificate(this.REMOVE_CERTIFICATE_URL, cert);
       this.alertService.success(res);
     } catch (err) {
-      this.alertService.exception(`Error removing the certificate (${cert.name}) from truststore.`, err);
+      this.alertService.exception(`Error removing the certificate [${cert.name}] from truststore.`, err);
     } finally {
       super.isLoading = false;
       this.loadServerData();
@@ -207,7 +215,7 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
   }
 
   protected async uploadFile(comp: ComponentType<unknown>, url: string) {
-    let params = await this.dialog.open(comp).afterClosed().toPromise();
+    let params = await this.dialogsService.open(comp).afterClosed().toPromise();
     if (params != null) {
       try {
         super.isLoading = true;
@@ -218,7 +226,7 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
 
         await this.getTrustStoreEntries();
       } catch (err) {
-        this.alertService.exception(`Error updating truststore file (${params.file.name})`, err);
+        this.alertService.exception(`Error updating trustStore file [${params.file.name}]`, err);
       } finally {
         super.isLoading = false;
       }
@@ -229,11 +237,11 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
     try {
       super.isLoading = true;
       await this.trustStoreService.reloadStore(this.BASE_URL + '/reset');
-      this.alertService.success('The ' + this.name + ' was successfully reset.')
+      this.alertService.success('The [' + this.name + '] was successfully reset.')
 
       await this.getTrustStoreEntries();
     } catch (ex) {
-      this.alertService.exception('Error reseting the ' + this.name + ':', ex);
+      this.alertService.exception('Error resetting the [' + this.name + ']:', ex);
     } finally {
       super.isLoading = false;
     }
@@ -243,14 +251,14 @@ export class BaseTruststoreComponent extends mix(BaseListComponent).with(ClientP
     try {
       const isChanged = await this.http.get<boolean>(this.BASE_URL + '/changedOnDisk').toPromise();
       if (isChanged) {
-        const refresh = await this.dialogsService.openYesNoDialog('The store file on the disk has different content than the one loaded and used in Harmony AP. ' +
+        const refresh = await this.dialogsService.openYesNoDialog('The trustStore file on the disk has different content than the one loaded and used in Harmony AP. ' +
           'Would you like to refresh?');
         if (refresh) {
           this.reloadStore();
         }
       }
     } catch (ex) {
-      this.alertService.exception('Error checking if the store has changed on disk:', ex);
+      this.alertService.exception('Error checking if the trustStore has changed on disk:', ex);
     }
   }
 

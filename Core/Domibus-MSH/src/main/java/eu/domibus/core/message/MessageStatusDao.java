@@ -3,7 +3,9 @@ package eu.domibus.core.message;
 import eu.domibus.api.model.AbstractBaseEntity;
 import eu.domibus.api.model.MessageStatus;
 import eu.domibus.api.model.MessageStatusEntity;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.SingleValueDictionaryDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MessageStatusDao extends SingleValueDictionaryDao<MessageStatusEntity> {
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public MessageStatusDao() {
         super(MessageStatusEntity.class);
@@ -63,6 +67,7 @@ public class MessageStatusDao extends SingleValueDictionaryDao<MessageStatusEnti
     private MessageStatusEntity getEntity(Object messageStatus) {
         TypedQuery<MessageStatusEntity> query = em.createNamedQuery("MessageStatusEntity.findByStatus", MessageStatusEntity.class);
         query.setParameter("MESSAGE_STATUS", messageStatus);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 }

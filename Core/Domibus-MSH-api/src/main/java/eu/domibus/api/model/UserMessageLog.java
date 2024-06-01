@@ -114,17 +114,6 @@ import java.util.Date;
                         "and um.mpc = :MPC                                                                              " +
                         "and uml.downloaded is not null and uml.downloaded < :DATE                                      " +
                         "and ((:EARCHIVE_IS_ACTIVE = true and uml.archived is not null) or :EARCHIVE_IS_ACTIVE = false)"),
-        @NamedQuery(name = "UserMessageLog.findSentUserMessagesWithPayloadNotClearedOlderThan",
-                query = "SELECT new eu.domibus.api.model.UserMessageLogDto(um.entityId,um.messageId,uml.backend,p)      " + // need this property in WSPlugin
-                        "FROM UserMessageLog uml                                                                        " +
-                        "INNER JOIN uml.userMessage um                                                                  " +
-                        "left join um.messageProperties p on p.name = 'finalRecipient'                                  " +
-                        "where uml.messageStatus IN :MSG_STATUSES                                                       " +
-                        "and um.mpc = :MPC                                                                              " +
-                        "and uml.deleted is null                                                                        " +
-                        "and uml.modificationTime is not null                                                           " +
-                        "and uml.modificationTime < :DATE                                                               " +
-                        "and ((:EARCHIVE_IS_ACTIVE = true and uml.archived is not null) or :EARCHIVE_IS_ACTIVE = false)"),
         @NamedQuery(name = "UserMessageLog.findSentUserMessagesOlderThan",
                 query = "SELECT new eu.domibus.api.model.UserMessageLogDto(um.entityId,um.messageId,uml.backend,p)      " + // need this property in WSPlugin
                         "FROM UserMessageLog uml                                                                        " +
@@ -164,11 +153,31 @@ import java.util.Date;
                 query = "select new java.lang.Long(count(uml.entityId)) " +
                         "from UserMessageLog uml " +
                         "where uml.entityId > :LAST_ENTITY_ID " +
-                        "  and uml.entityId < :MAX_ENTITY_ID " +
+                        "  and (:MAX_ENTITY_ID IS NULL OR uml.entityId < :MAX_ENTITY_ID) " +
                         "  and uml.messageStatus in :STATUSES " +
                         "  and uml.userMessage.testMessage IS FALSE " +
                         "  and uml.deleted IS NULL " +
                         "  and uml.exported IS NULL "),
+        @NamedQuery(name = "UserMessageLog.findMessagesNotArchivedAsc",
+                query = "select new EArchiveBatchUserMessage(uml.entityId, uml.userMessage.messageId)                " +
+                        "from UserMessageLog uml                                                                     " +
+                        "where uml.entityId > :LAST_ENTITY_ID                                                        " +
+                        "  and (:MAX_ENTITY_ID IS NULL OR uml.entityId < :MAX_ENTITY_ID)                             " +
+                        "  and uml.messageStatus in :STATUSES                                          " +
+                        "  and uml.deleted IS NULL                                                                   " +
+                        "  and uml.archived IS NULL                                                                  " +
+                        "  and uml.userMessage.testMessage IS FALSE                                                  " +
+                        "  and (uml.userMessage.messageFragment IS FALSE OR uml.userMessage.messageFragment IS NULL) " +
+                        "order by uml.entityId asc                                                                   "),
+        @NamedQuery(name = "UserMessageLog.countMessagesNotArchived",
+                query = "select new java.lang.Long(count(uml.entityId)) " +
+                        "from UserMessageLog uml " +
+                        "where uml.entityId > :LAST_ENTITY_ID " +
+                        "  and (:MAX_ENTITY_ID IS NULL OR uml.entityId < :MAX_ENTITY_ID) " +
+                        "  and uml.messageStatus in :STATUSES " +
+                        "  and uml.userMessage.testMessage IS FALSE " +
+                        "  and uml.deleted IS NULL " +
+                        "  and uml.archived IS NULL "),
         @NamedQuery(name = "UserMessageLog.deleteMessageLogs", query =
                 "delete from UserMessageLog uml where uml.entityId in :IDS"),
         @NamedQuery(name = "UserMessageLog.updateArchived", query =

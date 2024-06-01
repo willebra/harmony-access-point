@@ -15,7 +15,8 @@ import java.util.Objects;
                 hints = {
                         @QueryHint(name = "org.hibernate.cacheRegion", value = CacheConstants.DICTIONARY_QUERIES),
                         @QueryHint(name = "org.hibernate.cacheable", value = "true")},
-                query = "select t from TimezoneOffset t where t.nextAttemptTimezoneId = :TIMEZONE_ID and t.nextAttemptOffsetSeconds = :OFFSET_SECONDS")
+                // NOTE: the domain parameter is added to the query to ensure hibernate includes the domain in the cache key
+                query = "select t from TimezoneOffset t where t.nextAttemptTimezoneId = :TIMEZONE_ID and t.nextAttemptOffsetSeconds = :OFFSET_SECONDS and :DOMAIN=:DOMAIN")
 })
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TimezoneOffset extends AbstractBaseEntity {

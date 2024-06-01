@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
-import {CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, CanDeactivate} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
-import {MatDialog} from '@angular/material';
+import {ActivatedRouteSnapshot, RouterStateSnapshot} from '@angular/router';
 import {SecurityService} from '../../security/security.service';
 
 @Injectable()
-export class DefaultPasswordGuard implements CanActivate, CanDeactivate<any> {
+export class DefaultPasswordGuard {
 
-  constructor(public dialog: MatDialog, private securityService: SecurityService) {
+  constructor(private securityService: SecurityService) {
   };
 
   async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
@@ -15,14 +13,6 @@ export class DefaultPasswordGuard implements CanActivate, CanDeactivate<any> {
     await this.securityService.isAppInitialized();
 
     return !this.securityService.mustChangePassword();
-
-  }
-
-  canDeactivate(component: any, currentRoute: ActivatedRouteSnapshot,
-                currentState: RouterStateSnapshot,
-                nextState?: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-
-    return true;
 
   }
 

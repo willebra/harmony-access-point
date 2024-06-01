@@ -1,6 +1,6 @@
 package eu.domibus.core.pmode.provider;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.ebms3.Ebms3Constants;
 import eu.domibus.api.ebms3.MessageExchangePattern;
 import eu.domibus.api.multitenancy.DomainContextProvider;
@@ -79,20 +79,17 @@ public class CachingPmodeProviderTestIT extends AbstractIT {
     @Test
     public void checkMpcMismatch() {
         LegConfiguration legConfiguration = new LegConfiguration();
+        legConfiguration.setName("leg1");
         final Mpc mpc = new Mpc();
         mpc.setQualifiedName("defaultMpc1");
         legConfiguration.setDefaultMpc(mpc);
         LegFilterCriteria legFilterCriteria = new LegFilterCriteria(null, null, null, null, null, null, null, null, "defaultMpc");
         final CachingPModeProvider pmodeProvider = (CachingPModeProvider) pModeProviderFactory.createDomainPModeProvider(domainContextProvider.getCurrentDomain());
 
-        Set<String> mismatchedMPcs = new HashSet<>();
         String DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED = "domibus.pmode.legconfiguration.mpc.validation.enabled";
         DomibusProperty initialValue = configurationPropertyResourceHelper.getProperty(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED);
-        configurationPropertyResourceHelper.setPropertyValue(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED, true, "false");
-
-        boolean matchedMpc = pmodeProvider.checkMpcMismatch(legConfiguration, legFilterCriteria, mismatchedMPcs);
-
-        assertEquals(mismatchedMPcs.size(), 1);
+        configurationPropertyResourceHelper.setPropertyValue(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED, true, "true");
+        boolean matchedMpc = pmodeProvider.checkMpcMismatch(legConfiguration, legFilterCriteria);
         assertFalse(matchedMpc);
         configurationPropertyResourceHelper.setPropertyValue(DOMIBUS_PMODE_LEGCONFIGURATION_MPC_VALIDATION_ENABLED, true, initialValue.getValue());
     }

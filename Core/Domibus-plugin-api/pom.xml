@@ -9,11 +9,11 @@
     <parent>
         <groupId>org.niis</groupId>
         <artifactId>core</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
     <artifactId>harmony-plugin-api</artifactId>
     <packaging>jar</packaging>
-	<name>Harmony MSH Plugin API</name>
+	  <name>Harmony MSH Plugin API</name>
 
     <build>
         <plugins>

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.domibus.api.ebms3.Ebms3Constants;
 import eu.domibus.api.exceptions.DomibusCoreErrorCode;
 import eu.domibus.api.model.*;
+import eu.domibus.api.party.PartyService;
 import eu.domibus.api.usermessage.UserMessageService;
 import eu.domibus.common.model.configuration.Agreement;
 import eu.domibus.common.model.configuration.Party;
@@ -11,7 +12,6 @@ import eu.domibus.core.error.ErrorLogEntry;
 import eu.domibus.core.error.ErrorLogService;
 import eu.domibus.core.message.UserMessageDao;
 import eu.domibus.core.message.UserMessageLogDao;
-import eu.domibus.core.message.dictionary.PartyIdDao;
 import eu.domibus.core.message.signal.SignalMessageDao;
 import eu.domibus.core.monitoring.ConnectionMonitoringHelper;
 import eu.domibus.core.pmode.provider.PModeProvider;
@@ -26,7 +26,6 @@ import eu.domibus.web.rest.ro.TestMessageErrorRo;
 import eu.domibus.web.rest.ro.TestServiceMessageInfoRO;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -73,12 +72,11 @@ public class TestService {
 
     private final ConnectionMonitoringHelper connectionMonitoringHelper;
 
-    @Autowired
-    private PartyIdDao partyIdDao;
+    private final PartyService partyService;
 
-    public TestService(PModeProvider pModeProvider, MessageSubmitter messageSubmitter, UserMessageLogDao userMessageLogDao, UserMessageDao userMessageDao,
-                       SignalMessageDao signalMessageDao, ErrorLogService errorLogService,
-                       UserMessageService userMessageService, ConnectionMonitoringHelper connectionMonitoringHelper) {
+    public TestService(PModeProvider pModeProvider, MessageSubmitter messageSubmitter, UserMessageLogDao userMessageLogDao,
+                       UserMessageDao userMessageDao, SignalMessageDao signalMessageDao, ErrorLogService errorLogService,
+                       UserMessageService userMessageService, ConnectionMonitoringHelper connectionMonitoringHelper, PartyService partyService) {
         this.pModeProvider = pModeProvider;
         this.messageSubmitter = messageSubmitter;
         this.userMessageLogDao = userMessageLogDao;
@@ -87,6 +85,7 @@ public class TestService {
         this.errorLogService = errorLogService;
         this.userMessageService = userMessageService;
         this.connectionMonitoringHelper = connectionMonitoringHelper;
+        this.partyService = partyService;
     }
 
     public String submitTest(String senderParty, String receiverParty) throws IOException, MessagingProcessingException {
@@ -163,12 +162,12 @@ public class TestService {
     public TestServiceMessageInfoRO getLastTestSent(String senderPartyId, String partyId) {
         LOG.debug("Getting last sent test message for partyId [{}]", partyId);
 
-        PartyId senderParty = partyIdDao.findFirstByValue(senderPartyId);
+        PartyId senderParty = partyService.getPartyIdByValue(senderPartyId);
         if (senderParty == null) {
             LOG.debug("No Party found with id value [{}]", senderPartyId);
             return null;
         }
-        PartyId party = partyIdDao.findFirstByValue(partyId);
+        PartyId party = partyService.getPartyIdByValue(partyId);
         if (party == null) {
             LOG.debug("No Party found with id value [{}]", partyId);
             return null;
@@ -225,12 +224,12 @@ public class TestService {
                 return null;
             }
         } else {
-            PartyId senderParty = partyIdDao.findFirstByValue(senderPartyId);
+            PartyId senderParty = partyService.getPartyIdByValue(senderPartyId);
             if (senderParty == null) {
                 LOG.debug("No Party found with id value [{}]", senderPartyId);
                 return null;
             }
-            PartyId party = partyIdDao.findFirstByValue(partyId);
+            PartyId party = partyService.getPartyIdByValue(partyId);
             if (party == null) {
                 LOG.debug("No Party found with id value [{}]", partyId);
                 return null;

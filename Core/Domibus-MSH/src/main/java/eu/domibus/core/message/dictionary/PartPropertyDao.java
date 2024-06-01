@@ -1,14 +1,18 @@
 package eu.domibus.core.message.dictionary;
 
 import eu.domibus.api.model.PartProperty;
+import eu.domibus.api.multitenancy.DomainContextProvider;
 import eu.domibus.core.dao.BasicDao;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.List;
 
 /**
  * @author Cosmin Baciu
@@ -16,6 +20,9 @@ import javax.persistence.TypedQuery;
  */
 @Repository
 public class PartPropertyDao extends BasicDao<PartProperty> {
+
+    @Autowired
+    protected DomainContextProvider domainProvider;
 
     public PartPropertyDao() {
         super(PartProperty.class);
@@ -51,6 +58,7 @@ public class PartPropertyDao extends BasicDao<PartProperty> {
         query.setParameter("NAME", name);
         query.setParameter("VALUE", value);
         query.setParameter("TYPE", type);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
     }
 
@@ -58,6 +66,14 @@ public class PartPropertyDao extends BasicDao<PartProperty> {
         final TypedQuery<PartProperty> query = this.em.createNamedQuery("PartProperty.findByNameAndValue", PartProperty.class);
         query.setParameter("NAME", name);
         query.setParameter("VALUE", value);
+        query.setParameter("DOMAIN", domainProvider.getCurrentDomain().getCode());
         return DataAccessUtils.singleResult(query.getResultList());
+    }
+
+    public List<PartProperty> findByEntityIDs(final List<Long> entityIDs) {
+        final Query query = this.em.createNamedQuery("PartProperty.findByIDs");
+        query.setParameter("IDS", entityIDs);
+        List<PartProperty> partInfos = query.getResultList();
+        return partInfos;
     }
 }

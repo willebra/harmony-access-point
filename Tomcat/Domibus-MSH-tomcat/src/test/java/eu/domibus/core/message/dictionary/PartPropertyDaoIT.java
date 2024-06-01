@@ -1,6 +1,6 @@
 package eu.domibus.core.message.dictionary;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.model.PartProperty;
 import org.junit.Assert;
 import org.junit.Test;

@@ -29,16 +29,16 @@ import java.util.Set;
         @NamedQuery(name = "UserMessage.findTestMessageToPartyDesc",
                 query = "select um from UserMessage um " +
                         "where um.testMessage=true and um.mshRole = :MSH_ROLE " +
-                        "and um.partyInfo.to.toPartyId = :PARTY " +
+                        "and um.partyInfo.to.toPartyId IN :PARTIES " +
                         "order by um.entityId desc"),
         @NamedQuery(name = "UserMessage.findSentTestMessageWithStatusDesc",
                 query = "select uml.userMessage from UserMessageLog uml " +
                         "where uml.userMessage.testMessage=true and uml.userMessage.mshRole = :MSH_ROLE " +
-                        "and uml.userMessage.partyInfo.to.toPartyId = :PARTY and uml.messageStatus = :STATUS " +
+                        "and uml.userMessage.partyInfo.to.toPartyId IN :PARTIES and uml.messageStatus = :STATUS " +
                         "order by uml.userMessage.entityId desc"),
         @NamedQuery(name = "UserMessage.findTestMessageFromPartyDesc",
                 query = "select um from UserMessage um " +
-                        "where um.testMessage=true and um.mshRole = :MSH_ROLE and um.partyInfo.from.fromPartyId = :PARTY " +
+                        "where um.testMessage=true and um.mshRole = :MSH_ROLE and um.partyInfo.from.fromPartyId IN :PARTIES " +
                         "order by um.entityId desc"),
 })
 @NamedNativeQueries({

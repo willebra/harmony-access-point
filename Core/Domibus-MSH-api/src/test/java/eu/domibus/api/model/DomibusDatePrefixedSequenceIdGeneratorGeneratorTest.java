@@ -10,7 +10,6 @@ import org.hibernate.type.Type;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.io.Serializable;
@@ -29,6 +28,7 @@ public class DomibusDatePrefixedSequenceIdGeneratorGeneratorTest {
     public static Collection<Object[]> data() {
         return asList(new Object[][]{
                 {"Base Integer sequence generator", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), Integer.valueOf(50)},
+                {"Base Integer sequence generator with negative number", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), Integer.valueOf(-50)},
                 {"Base Long sequence generator ", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), Long.valueOf(50)},
                 {"Base BigInteger sequence generator ", new Long("210809150000000050"), LocalDateTime.parse("2021-08-09T15:15:30"), BigInteger.valueOf(50)},
                 {"Base BigInteger change hour", new Long("210809170000000050"), LocalDateTime.parse("2021-08-09T17:15:30"), BigInteger.valueOf(50)},
@@ -73,10 +73,10 @@ public class DomibusDatePrefixedSequenceIdGeneratorGeneratorTest {
     @Test
     public void generateDomibus() {
         // given
-        Mockito.when(testInstance.generate(Matchers.anyObject(), Matchers.anyObject())).thenReturn(generatedSequenceObject);
+        Mockito.when(testInstance.generate(Mockito.any(), Mockito.any())).thenReturn(generatedSequenceObject);
         Mockito.when(testInstance.getCurrentDate()).thenReturn(currentDate);
         // when
-        Serializable sequence = testInstance.generateDomibus(Matchers.anyObject(), Matchers.anyObject());
+        Serializable sequence = testInstance.generateDomibus(Mockito.any(), Mockito.any());
         //then
         assertEquals(result, sequence);
     }

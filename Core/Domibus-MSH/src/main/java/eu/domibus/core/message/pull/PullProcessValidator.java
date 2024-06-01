@@ -102,9 +102,7 @@ public class PullProcessValidator {
 
     private PullProcessStatus checkOnlyOnePullProcess(final Set<Process> pullProcesses) {
         PullProcessStatus status = ONE_MATCHING_PROCESS;
-        if (pullProcesses.size() > 1) {
-            status = TOO_MANY_PROCESSES;
-        } else if (pullProcesses.size() == 0) {
+        if (pullProcesses.size() == 0) {
             status = NO_PROCESSES;
         }
         return status;
@@ -222,8 +220,6 @@ public class PullProcessValidator {
                 return "No leg configuration found";
             case MORE_THAN_ONE_LEG_FOR_THE_SAME_MPC:
                 return "More than one leg for the same mpc";
-            case TOO_MANY_PROCESSES:
-                return "Too many processes found";
             case TOO_MANY_RESPONDER:
                 return "Pull process should only have one responder configured for mpc";
             case NO_RESPONDER:

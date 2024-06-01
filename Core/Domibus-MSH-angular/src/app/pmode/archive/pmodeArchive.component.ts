@@ -1,12 +1,19 @@
-import {AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {AlertService} from 'app/common/alert/alert.service';
-import {MatDialog} from '@angular/material';
 import {PmodeUploadComponent} from '../upload/pmode-upload.component';
 import * as FileSaver from 'file-saver';
 import {ActionDirtyDialogComponent} from 'app/pmode/action-dirty-dialog/action-dirty-dialog.component';
 import {Observable} from 'rxjs/Observable';
-import {DateFormatService} from 'app/common/customDate/dateformat.service';
+import {DateService} from 'app/common/customDate/date.service';
 import {PmodeViewComponent} from './pmode-view/pmode-view.component';
 import {CurrentPModeComponent} from '../current/currentPMode.component';
 import {DomainService} from '../../security/domain.service';
@@ -20,7 +27,6 @@ import {ApplicationContextService} from '../../common/application-context.servic
 import {ComponentName} from '../../common/component-name-decorator';
 
 @Component({
-  moduleId: module.id,
   templateUrl: 'pmodeArchive.component.html',
   providers: [],
   styleUrls: ['./pmodeArchive.component.css']
@@ -33,9 +39,9 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
   static readonly PMODE_URL: string = 'rest/pmode';
   static readonly PMODE_CSV_URL: string = PModeArchiveComponent.PMODE_URL + '/csv';
 
-  @ViewChild('descriptionTpl', {static: false}) public descriptionTpl: TemplateRef<any>;
-  @ViewChild('rowWithDateFormatTpl', {static: false}) public rowWithDateFormatTpl: TemplateRef<any>;
-  @ViewChild('rowActions', {static: false}) rowActions: TemplateRef<any>;
+  @ViewChild('descriptionTpl') public descriptionTpl: TemplateRef<any>;
+  @ViewChild('rowWithDateFormatTpl') public rowWithDateFormatTpl: TemplateRef<any>;
+  @ViewChild('rowActions') rowActions: TemplateRef<any>;
 
   deleteList: any[];
 
@@ -43,7 +49,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
   currentPMode: any;
 
   constructor(private applicationService: ApplicationContextService, private http: HttpClient, private alertService: AlertService,
-              public dialog: MatDialog, private dialogsService: DialogsService,
+              private dialogsService: DialogsService, private dateService: DateService,
               private domainService: DomainService, private changeDetector: ChangeDetectorRef) {
     super();
   }
@@ -66,21 +72,28 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
       {
         cellTemplate: this.rowWithDateFormatTpl,
         name: 'Configuration Date',
-        sortable: false
+        sortable: false,
+        width: 200,
+        minWidth: 190,
       },
       {
         name: 'Username',
-        sortable: false
+        sortable: false,
+        width: 150,
+        minWidth: 140,
       },
       {
         cellTemplate: this.descriptionTpl,
         name: 'Description',
-        sortable: false
+        sortable: false,
+        width: 500,
+        minWidth: 490,
       },
       {
         cellTemplate: this.rowActions,
         name: 'Actions',
-        width: 80,
+        width: 150,
+        minWidth: 140,
         sortable: false
       }
     ];
@@ -173,7 +186,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
     }
     super.rows = [...this.rows];
 
-    setTimeout(() => {
+    window.setTimeout(() => {
       super.selected = [];
       super.isChanged = true;
     }, 100);
@@ -204,7 +217,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
   }
 
   private openUserDialog() {
-    return this.dialog.open(ActionDirtyDialogComponent, {
+    return this.dialogsService.open(ActionDirtyDialogComponent, {
       data: {
         actionTitle: 'You will now also Restore an older version of the PMode',
         actionName: 'restore',
@@ -232,7 +245,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
   }
 
   private uploadPmode() {
-    this.dialog.open(PmodeUploadComponent)
+    this.dialogsService.open(PmodeUploadComponent)
       .afterClosed().subscribe(result => {
       this.getAllPModeEntries();
     });
@@ -243,8 +256,11 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
    * @param id The id of the selected entry on the DB
    */
   download(row) {
-    this.http.get(PModeArchiveComponent.PMODE_URL + '/' + row.id + '?archiveAudit=true', {observe: 'response', responseType: 'text'}).subscribe(res => {
-      const uploadDateStr = DateFormatService.format(new Date(row.configurationDate));
+    this.http.get(PModeArchiveComponent.PMODE_URL + '/' + row.id + '?archiveAudit=true', {
+      observe: 'response',
+      responseType: 'text'
+    }).subscribe(res => {
+      const uploadDateStr = this.dateService.format(new Date(row.configurationDate));
       this.downloadFile(res.body, this.currentDomain.name, uploadDateStr);
     }, err => {
       this.alertService.exception('Error downloading pMode from archive:', err);
@@ -286,7 +302,7 @@ export class PModeArchiveComponent extends mix(BaseListComponent)
       const HTTP_OK = 200;
       if (res.status === HTTP_OK) {
         const content = res.body;
-        this.dialog.open(PmodeViewComponent, {
+        this.dialogsService.open(PmodeViewComponent, {
           data: {metadata: row, content: content}
         });
       }

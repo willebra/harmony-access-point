@@ -1,6 +1,6 @@
 package eu.domibus.core.earchive;
 
-import eu.domibus.AbstractIT;
+import eu.domibus.test.AbstractIT;
 import eu.domibus.api.earchive.EArchiveBatchFilter;
 import eu.domibus.api.earchive.EArchiveBatchRequestDTO;
 import eu.domibus.api.earchive.EArchiveBatchStatus;
@@ -82,7 +82,6 @@ public class EArchivingDefaultServiceIT extends AbstractIT {
 
     @Before
     public void setUp() throws Exception {
-        waitUntilDatabaseIsInitialized();
         Assert.assertEquals(101000000000000L, ((long) eArchiveBatchStartDao.findByReference(CONTINUOUS_ID).getLastPkUserMessage()));
         Assert.assertEquals(101000000000000L, ((long) eArchiveBatchStartDao.findByReference(SANITY_ID).getLastPkUserMessage()));
         // prepare
@@ -240,6 +239,23 @@ public class EArchivingDefaultServiceIT extends AbstractIT {
         Assert.assertTrue(expectedCount <= messages.size()); // the db may contain messages from other non-transactional tests
         Assert.assertTrue(messages.contains(uml1.getUserMessage().getMessageId()));
         Assert.assertTrue(messages.contains(uml8_not_archived.getUserMessage().getMessageId()));
+    }
+
+    @Test
+    @Transactional
+    public void getNotArchivedMessagesCount() {
+        Date currentDate = Calendar.getInstance().getTime();
+        Long startDate =  Long.parseLong(ZonedDateTime.ofInstant(DateUtils.addDays(currentDate, -30).toInstant(),
+                ZoneOffset.UTC).format(ofPattern(DATETIME_FORMAT_DEFAULT, ENGLISH)) + MAX);
+        Long endDate  = Long.parseLong(ZonedDateTime.ofInstant(DateUtils.addDays(currentDate, 1).toInstant(),
+                ZoneOffset.UTC).format(ofPattern(DATETIME_FORMAT_DEFAULT, ENGLISH)) + MAX);
+
+        Long count = eArchivingService.getNotArchivedMessagesCount(startDate,
+                endDate);
+
+        // According to the discussion service must return all messages which does not have set archive date!
+        int expectedCount = 8;
+        Assert.assertTrue(expectedCount <= count); // the db may contain messages from other non-transactional tests
     }
     @Test
     @Transactional

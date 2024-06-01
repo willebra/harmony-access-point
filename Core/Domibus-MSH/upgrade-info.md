@@ -1,5 +1,91 @@
-# Domibus upgrade information
+```
+Release checklist: 
+    Replace the Domibus war
+    Replace the default plugin(s) property file(s) and jar(s) into "conf/domibus/plugins/config" respectively into "conf/domibus/plugins/lib"
+    Replace the dss extension property files and jar into "conf/domibus/extensions/config" respectively into "conf/domibus/extensions/lib"
+    Run the appropriate DB upgrade script (mysql-5.1.1-to-5.1.2-upgrade.ddl for MySQL or oracle-5.1.1-to-5.1.2-upgrade.ddl for Oracle)
+    Upgrade the domibus.properties and logback.xml files present in "conf/domibus" and in case of multitenancy "conf/domibus/domains/domain_name"
+    Upgrade the ehcache.xml file present in "conf/domibus/internal"
+    Tomcat only: Upgarde the file activemq.xml present in "conf/domibus/internal"
+    Wildfly only: Upgrade the file standalone-full.xml present in "domibus/standalone/configuration"
+    WebLogic only: Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties
+                     wlstapi.cmd ../scripts/import.py --property ../5.0-to-5.0.8-WeblogicCluster.properties
+```
 
+
+# Domibus upgrade information
+## Domibus 5.1.4 (from 5.1.3)
+                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s) 
+                - Run the appropriate DB upgrade script (mysql-5.1.2-to-5.4-upgrade.ddl for MySQL or oracle-5.1.2-to-5.1.4-upgrade.ddl for Oracle)
+                - Update property name from "domibus.cacerts.validation.enabled" to "domibus.cacerts.download.enabled"
+                - Marked 'mustUnderstand' attribute from Domibus MSH Default WS Plugin Stubs V2 webservicePlugin-header.xsd as deprecated. The attribute will be removed in 6.0
+
+#### PULL only if not already applied
+                - Update the roles in the pull processes to reflect the correct matching of From party role matches the initiatorRole and To party role matches the responderRole. If you are using the sample pModes, 
+                replace
+                     <process name="tc2Process"
+                     mep="oneway"
+                     binding="pull"
+                     initiatorRole="defaultInitiatorRole"
+                     responderRole="defaultResponderRole">
+                with
+                     <process name="tc2Process"
+                     mep="oneway"
+                     binding="pull"
+                     initiatorRole="defaultResponderRole"
+                     responderRole="defaultInitiatorRole">
+                A workaround for this change is to disable the roles validation by setting domibus.partyinfo.roles.validation.enabled=false in domibus.properties
+     
+#### Tomcat only if not already applied
+                - Add values for quartz data source properties if defaults are not good
+                     #the name of the DataSource class provided by the JDBC driver
+                     domibus.quartz.datasource.driverClassName=${domibus.datasource.driverClassName}
+                     #the JDBC url for the DB
+                     domibus.quartz.datasource.url=${domibus.datasource.url}
+                     #default authentication username used when obtaining Connections from the underlying driver
+                     domibus.quartz.datasource.user=${domibus.datasource.user}
+                     #the default authentication password used when obtaining Connections from the underlying driver
+                     domibus.quartz.datasource.password=${domibus.datasource.password}
+                     #HikariCP specific
+                     #Controls the maximum lifetime of a connection in the pool (in seconds)
+                     domibus.quartz.datasource.maxLifetime=1800
+                     #Controls the maximum amount of time (in seconds) that a client will wait for a connection from the pool
+                     domibus.quartz.datasource.connectionTimeout=30
+                     #Controls the maximum amount of time (in seconds) that a connection is allowed to sit idle in the pool
+                     domibus.quartz.datasource.idleTimeout=600
+                     #Controls the maximum size that the pool is allowed to reach, including both idle and in-use connections
+                     domibus.quartz.datasource.maxPoolSize=10
+                     #Controls the minimum number of idle connections that HikariCP tries to maintain in the pool
+                     domibus.quartz.datasource.minimumIdle=1
+     
+#### Weblogic only if not already applied
+                - Execute the WLST API script remove.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-removeObsoleteJDBCDatasource.properties to remove the edeliveryNonXA datasource:
+                     wlstapi.cmd ../scripts/remove.py --property ../5.0-to-5.0.8-Weblogic-removeObsoleteJDBCDatasource.properties
+                - Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties to add the eDeliveryQuartzDs datasource: 
+                     wlstapi.cmd ../scripts/import.py --property ../5.0-to-5.0.8-WeblogicCluster.properties
+    
+#### Wildfly only if not already applied
+                - In file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml" replace the following datasource and pool names from
+
+                     .............................
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryMysqlNonXADS" enabled="true" use-ccm="true">
+                     .....................    
+                to
+                     .............................
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryMysqlQuartzDS" enabled="true" use-ccm="true">
+                     .....................
+                and from Oracle
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryOracleNonXADS" enabled="true" use-ccm="true">
+                     .............................
+                to Oracle
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryOracleQuartzDS" enabled="true" use-ccm="true">
+                     .............................
+
+## Domibus 5.1.3 (from 5.1.2)
+                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+
+### Multitenancy only
+                - In all domain specific logback.xml files (ie. all *-logback.xml files under the domain folders present in conf/domibus/domains) delete the element <property name="domainName" value="your_domain_name" scope="local" /> and replace all occurences of the string ${domainName} with your_domain_name 
 
 ## Domibus 5.1.2 (from 5.1.1)
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
@@ -17,10 +103,10 @@
                 - Remove property domibus.fourcornermodel.enabled if configured
                 - In all eDeliveryAS4Policy xml files, the hardcoded algorithm suite name defined in AsymmetricBinding/Policy/AlgorithSuite/ (e.g Basic128GCMSha256MgfSha256) was replaced with the placeholder: ${algorithmSuitePlaceholder} which will be automatically replaced in code according to the security setup
                 - Replace/update all policy files that have the AsymmetricBinding/Policy/AlgorithSuite tag defined(e.g. eDeliveryAS4Policy.xml, eDeliveryAS4Policy_BST.xml, eDeliveryAS4Policy_BST_PKIP.xml,eDeliveryAS4Policy_IS.xml, signOnly.xml etc.) to accomodate this change
-                The policy xml config files can be found in the Domibus distribution inside the file domibus-msh-distribution-5.1.1-application_server_name-configuration.zip under the folder /policies or inside the file domibus-msh-distribution-5.1.1-application_server_name-full.zip under the folder domibus/conf/domibus/policies
+                 The policy xml config files can be found in the Domibus distribution inside the file domibus-msh-distribution-5.1.1-application_server_name-configuration.zip under the folder /policies or inside the file domibus-msh-distribution-5.1.1-application_server_name-full.zip under the folder domibus/conf/domibus/policies
                 - Update all the domibus.UI.title.name domain property names to domibus.ui.title.name
                 - Update all the property names prefixed with domibus.metrics.sl4j to domibus.metrics.slf4j 
-## Domibus 5.1 (from 5.0.6)
+## Domibus 5.1 (from 5.0.8)
                 - Update the file cef_edelivery_path/domibus/conf/domibus/internal/activemq.xml and make sure the <property-placeholder> section has the attribute system-properties-mode="ENVIRONMENT". Ideally the line should look exactly like this: <context:property-placeholder system-properties-mode="ENVIRONMENT" ignore-resource-not-found="false" ignore-unresolvable="false"/>
                 - Update the "/conf/domibus/internal/ehcache.xml" cache definitions file by removing domainValidity if exists
                 - Update your logback.xml configuration so that logs contain the correct origin line number. At the begginging of your <configuration> declare the conversion word domibusLine: 
@@ -50,30 +136,103 @@
 
                 - Run the appropriate DB upgrade script:
                     o [Oracle only]
-                        - single tenancy: oracle-5.0.6-to-5.1-upgrade.ddl, oracle-5.0.6-to-5.1-data-upgrade.ddl
+                        - single tenancy: oracle-5.0.8-to-5.1-upgrade.ddl, oracle-5.0.8-to-5.1-data-upgrade.ddl
                         - multitenancy:
-                            - general schema: oracle-5.0.6-to-5.1-multi-tenancy-upgrade.ddl
-                            - domain schemas: oracle-5.0.6-to-5.1-upgrade.ddl, oracle-5.1-data-upgrade.ddl
-                        - partitioning the database:
-                            - if your database is not partitioned then run @oracle-5.0.5-to-5.0.6-partitioning-upgrade.ddl
+                            - general schema: oracle-5.0.8-to-5.1-multi-tenancy-upgrade.ddl
+                            - domain schemas: oracle-5.0.8-to-5.1-upgrade.ddl, oracle-5.0.8-to-5.1-data-upgrade.ddl
                   o [MySQL only]
                       The scripts below - please adapt to your local configuration (i.e. users, database names) - can be run using either:
                           - the root user, specifying the target databases as part of the command. For example, for single tenancy:
-                                  mysql -u root -p domibus < mysql-5.0.6-to-5.1-upgrade.ddl
-                                  mysql -u root -p domibus < mysql-5.0.6-to-5.1-data-upgrade.ddl
+                                  mysql -u root -p domibus < mysql-5.0.8-to-5.1-upgrade.ddl
+                                  mysql -u root -p domibus < mysql-5.0.8-to-5.1-data-upgrade.ddl
                               or, for multitenancy:
-                                  mysql -u root -p domibus_general < mysql-5.0.6-to-5.1-multi-tenancy-upgrade.ddl
-                                  mysql -u root -p domibus_domain_1 < mysql-5.0.6-to-5.1-upgrade.ddl
-                                  mysql -u root -p domibus_domain_1 < mysql-5.1-data-upgrade.ddl
+                                  mysql -u root -p domibus_general < mysql-5.0.8-to-5.1-multi-tenancy-upgrade.ddl
+                                  mysql -u root -p domibus_domain_1 < mysql-5.0.8-to-5.1-upgrade.ddl
+                                  mysql -u root -p domibus_domain_1 < mysql-5.0.8-to-5.1-data-upgrade.ddl
                           - the non-root user (e.g. edelivery): for which the root user must first relax the conditions on function creation by granting the SYSTEM_VARIABLES_ADMIN right to the non-root user:
                                   GRANT SYSTEM_VARIABLES_ADMIN ON *.* TO 'edelivery'@'localhost';
                             and then specifying the target databases as part of the command. For example, for single tenancy:
-                                   mysql -u edelivery -p domibus < mysql-5.0.6-to-5.1-upgrade.ddl
-                                   mysql -u edelivery -p domibus < mysql-5.1-data-upgrade.ddl
+                                   mysql -u edelivery -p domibus < mysql-5.0.8-to-5.1-upgrade.ddl
+                                   mysql -u edelivery -p domibus < mysql-5.0.8-to-5.1-data-upgrade.ddl
                                or, for multitenancy:
-                                   mysql -u edelivery -p domibus_general < mysql-5.0.6-to-5.1-multi-tenancy-upgrade.ddl
-                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.0.6-to-5.1-upgrade.ddl
-                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.1-data-upgrade.ddl.
+                                   mysql -u edelivery -p domibus_general < mysql-5.0.8-to-5.1-multi-tenancy-upgrade.ddl
+                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.0.8-to-5.1-upgrade.ddl
+                                   mysql -u edelivery -p domibus_domain_1 < mysql-5.0.8-to-5.1-data-upgrade.ddl.
+## Domibus 5.0.8 (from 5.0.7):
+                - Update the properties domibus.pmode.validation.action.pattern and domibus.pmode.validation.service.value.pattern in case of backward compatibility issues regarding the action and service values
+                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+                - Replace the default dss extension jar into  "/conf/domibus/extensions/lib"
+                - Run the appropriate DB upgrade script (`mysql-5.0.5-to-5.0.8-upgrade.ddl` for MySQL or `oracle-5.0.5-to-5.0.8-upgrade.ddl` for Oracle)
+                - Update all the `domibus.UI.title.name` domain property names to `domibus.ui.title.name`
+                - Update all the property names prefixed with `domibus.metrics.sl4j` to `domibus.metrics.slf4j`
+                - Any custom dss-cache settings should be moved from `/conf/domibus/internal/ehcache.xml` to `/conf/domibus/extensions/config/dss-extension-ehcache.xml`
+
+### PULL only
+                - Update the roles in the pull processes to reflect the correct matching of From party role matches the initiatorRole and To party role matches the responderRole. If you are using the sample pModes, 
+                replace
+                     <process name="tc2Process"
+                     mep="oneway"
+                     binding="pull"
+                     initiatorRole="defaultInitiatorRole"
+                     responderRole="defaultResponderRole">
+                with
+                     <process name="tc2Process"
+                     mep="oneway"
+                     binding="pull"
+                     initiatorRole="defaultResponderRole"
+                     responderRole="defaultInitiatorRole">
+
+                A workaround for this change is to disable the roles validation by setting domibus.partyinfo.roles.validation.enabled=false in domibus.properties
+
+### Tomcat only
+                - Add values for quartz data source properties if defaults are not good
+                     #the name of the DataSource class provided by the JDBC driver
+                     domibus.quartz.datasource.driverClassName=${domibus.datasource.driverClassName}
+                     #the JDBC url for the DB
+                     domibus.quartz.datasource.url=${domibus.datasource.url}
+                     #default authentication username used when obtaining Connections from the underlying driver
+                     domibus.quartz.datasource.user=${domibus.datasource.user}
+                     #the default authentication password used when obtaining Connections from the underlying driver
+                     domibus.quartz.datasource.password=${domibus.datasource.password}
+                     #HikariCP specific
+                     #Controls the maximum lifetime of a connection in the pool (in seconds)
+                     domibus.quartz.datasource.maxLifetime=1800
+                     #Controls the maximum amount of time (in seconds) that a client will wait for a connection from the pool
+                     domibus.quartz.datasource.connectionTimeout=30
+                     #Controls the maximum amount of time (in seconds) that a connection is allowed to sit idle in the pool
+                     domibus.quartz.datasource.idleTimeout=600
+                     #Controls the maximum size that the pool is allowed to reach, including both idle and in-use connections
+                     domibus.quartz.datasource.maxPoolSize=10
+                     #Controls the minimum number of idle connections that HikariCP tries to maintain in the pool
+                     domibus.quartz.datasource.minimumIdle=1
+
+### Weblogic only
+                - Execute the WLST API script remove.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-Weblogic-removeObsoleteJDBCDatasource.properties to remove the edeliveryNonXA datasource:
+                     wlstapi.cmd ../scripts/remove.py --property ../5.0-to-5.0.8-Weblogic-removeObsoleteJDBCDatasource.properties
+                - Execute the WLST API script import.py (from "/conf/domibus/scripts/upgrades") 5.0-to-5.0.8-WeblogicCluster.properties or 5.0-to-5.0.8-WeblogicSingleServer.properties to add the eDeliveryQuartzDs datasource: 
+                     wlstapi.cmd ../scripts/import.py --property ../5.0-to-5.0.8-WeblogicCluster.properties
+
+### Wildfly only
+                - In file "cef_edelivery_path/domibus/standalone/configuration/standalone-full.xml" replace the following datasource and pool names from
+
+                     .............................
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryMysqlNonXADS" enabled="true" use-ccm="true">
+                     .....................    
+                to
+                     .............................
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryMysqlQuartzDS" enabled="true" use-ccm="true">
+                     .....................
+                and from Oracle
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryNonXADs" pool-name="eDeliveryOracleNonXADS" enabled="true" use-ccm="true">
+                     .............................
+                to Oracle
+                     <datasource jndi-name="java:/jdbc/cipaeDeliveryQuartzDs" pool-name="eDeliveryOracleQuartzDS" enabled="true" use-ccm="true">
+                     .............................
+
+## Domibus 5.0.7 (from 5.0.6):
+                - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
+                - Update the file `cef_edelivery_path/domibus/conf/domibus/internal/activemq.xml` and make sure the <property-placeholder> section has the attribute `system-properties-mode="ENVIRONMENT"`. The line should look exactly like this:
+                 `<context:property-placeholder system-properties-mode="ENVIRONMENT" ignore-resource-not-found="false" ignore-unresolvable="false"/>`
 ## Domibus 5.0.6 (from 5.0.5):
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s)
                 - Replace the default dss extension jar into "/domibus/conf/domibus/extensions/lib"
@@ -147,7 +306,7 @@
                 - Replace the Domibus war
                 - Run the appropriate DB upgrade script(mysql-5.0-to-5.0.1-upgrade.ddl for MySQL or oracle-5.0-to-5.0.1-upgrade.ddl for Oracle)
 
-## Domibus 5.0 (from 4.2.9)
+## Domibus 5.0 (from 4.2.13)
 
   ### Multitenancy only
                     - domibus.security.keystore.* and domibus.security.truststore.* properties are used only the first time domibus starts and persisted in the DB to be used from there on;
@@ -454,6 +613,9 @@
                                eu.domibus.common.MessageStatusChangeEvent.getProperties, eu.domibus.common.PayloadAbstractEvent.getProperties, eu.domibus.ext.services.DomibusPropertyExtService.getDomainProperty(eu.domibus.ext.domain.DomainDTO, java.lang.String),
                                eu.domibus.ext.services.DomibusPropertyExtService.setDomainProperty, eu.domibus.ext.services.DomibusPropertyExtService.getDomainProperty, eu.domibus.ext.services.DomibusPropertyExtService.getDomainResolvedProperty,
                                eu.domibus.ext.services.DomibusPropertyExtService.getResolvedProperty, eu.domibus.ext.services.PModeExtService.updatePModeFile(byte[], java.lang.String)
+## Domibus 4.2.13 (from 4.2.12):
+                - Replace the Domibus war
+                - Replace the default dss extension jar into  "/conf/domibus/extensions/lib"
 ## Domibus 4.2.12 (from 4.2.11):
                 - Replace the Domibus war
                 - Replace the default dss extension jar into  "/conf/domibus/extensions/lib"
@@ -494,6 +656,7 @@
 
                     - If you don't use custom caches just replace the old file with the new file version
                 - Replace the Domibus war and the default plugin(s) config file(s), property file(s) and jar(s) into "/conf/domibus/plugins/config" respectively into "/conf/domibus/plugins/lib"
+                - Run the DB upgrade script for Oracle only oracle-4.2.3-to-4.2.6-upgrade.ddl
  ## Domibus 4.2.5 (from 4.2.4):
                 - Replace the Domibus war
                 - Replace the default dss extension jar into "/conf/domibus/extensions/lib"

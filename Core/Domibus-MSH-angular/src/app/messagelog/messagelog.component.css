@@ -1,12 +1,8 @@
-/* --- Select ---*/
-.mat-select{
-  padding:20px 0;
-}
 
 /* --- Button  ---*/
 .group-btn {
-   margin-top:20px;
- }
+  margin-top:20px;
+}
 
 #hiddenButtonId {
   position: fixed;

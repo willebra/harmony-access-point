@@ -39,6 +39,11 @@ import {PageGridComponent} from './page-grid.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataTablePagerComponent {
+  _count = 0;
+  _page = 1;
+  _size = 0;
+  pages: any;
+
   @Input() grid: PageGridComponent;
 
   @Input() pagerLeftArrowIcon: string;
@@ -83,11 +88,6 @@ export class DataTablePagerComponent {
 
   @Output() change: EventEmitter<any> = new EventEmitter();
 
-  _count: number = 0;
-  _page: number = 1;
-  _size: number = 0;
-  pages: any;
-
   canPrevious(): boolean {
     return this.page > 1;
   }
@@ -108,7 +108,7 @@ export class DataTablePagerComponent {
     if (this.grid.parent.isLoading) {
       return;
     }
-    
+
     if (page > 0 && page <= this.totalPages && page !== this.page) {
       this.page = page;
 

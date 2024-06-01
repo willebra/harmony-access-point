@@ -158,8 +158,8 @@
                  agreement=""
                  mep="oneway"
                  binding="pull"
-                 initiatorRole="defaultInitiatorRole"
-                 responderRole="defaultResponderRole">
+                 initiatorRole="defaultResponderRole"
+                 responderRole="defaultInitiatorRole">
             <initiatorParties>
                 <initiatorParty name="red_gw"/>
             </initiatorParties>

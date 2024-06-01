@@ -3,7 +3,7 @@ import {IPageableList, PaginationType} from '../mixins/ipageable-list';
 import BaseListComponent from '../mixins/base-list.component';
 import {ISortableList} from '../mixins/isortable-list';
 import {instanceOfPageableList, instanceOfSortableList} from '../mixins/type.utils';
-import {DatatableComponent} from '@swimlane/ngx-datatable';
+import {DatatableComponent, SelectionType} from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'page-grid',
@@ -11,9 +11,10 @@ import {DatatableComponent} from '@swimlane/ngx-datatable';
   styleUrls: ['./page-grid.component.css']
 })
 
-export class PageGridComponent implements AfterViewChecked {
-  @ViewChild('tableWrapper', {static: false}) tableWrapper;
-  @ViewChild(DatatableComponent, {static: false}) table: DatatableComponent;
+export class PageGridComponent {
+  @ViewChild('tableWrapper') tableWrapper;
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+
   private currentComponentWidth;
 
   messages = {};
@@ -25,7 +26,7 @@ export class PageGridComponent implements AfterViewChecked {
   parent: BaseListComponent<any> & IPageableList & ISortableList;
 
   @Input()
-  selectionType: undefined | 'single' | 'multi' = undefined;
+  selectionType: SelectionType | undefined = undefined;
 
   @Input()
   sortedColumns: { prop: string, dir: string }[] = [];
@@ -35,22 +36,6 @@ export class PageGridComponent implements AfterViewChecked {
 
   @Input()
   totalMessage = `$1 total`;
-
-  // ugly hack but otherwise the ng-datatable doesn't resize when collapsing the menu
-  ngAfterViewChecked() {
-    // Check if the table size has changed,
-    if (this.table && this.table.recalculate && (this.tableWrapper.nativeElement.clientWidth !== this.currentComponentWidth)) {
-      this.currentComponentWidth = this.tableWrapper.nativeElement.clientWidth;
-      this.table.recalculate();
-      this.changeDetector.detectChanges();
-
-      setTimeout(() => {
-        let evt = document.createEvent('HTMLEvents');
-        evt.initEvent('resize', true, false);
-        window.dispatchEvent(evt)
-      }, 100);
-    }
-  }
 
   useExternalPaging() {
     return instanceOfPageableList(this.parent) && this.parent.type != PaginationType.Client;

@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 
 import javax.persistence.*;
@@ -76,7 +76,7 @@ public class DbSchemaUtilImplTest {
 
     @Before
     public void init() {
-        Mockito.when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
+//        Mockito.when(entityManagerFactory.createEntityManager()).thenReturn(entityManager);
         dbSchemaUtilImpl = new DbSchemaUtilImpl(dataSource, domibusConfigurationService,
                 domibusPropertyProvider, schedulingTaskExecutor);
     }

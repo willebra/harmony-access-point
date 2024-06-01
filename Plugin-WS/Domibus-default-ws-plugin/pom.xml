@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.niis</groupId>
         <artifactId>plugin-ws</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
     <artifactId>harmony-default-ws-plugin</artifactId>
     <packaging>jar</packaging>
@@ -200,6 +200,12 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.niis</groupId>
+            <artifactId>harmony-MSH-tomcat</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!--        END TEST        -->
     </dependencies>
     <build>
@@ -267,17 +273,18 @@
                                 <bannedDependencies>
                                     <searchTransitive>false</searchTransitive>
                                     <excludes>
-                                        <exclude>eu.domibus:*</exclude>
+                                        <exclude>org.niis:*</exclude>
                                     </excludes>
                                     <includes>
-                                        <include>eu.domibus:domibus-plugin-api</include>
-                                        <include>eu.domibus:domibus-ext-model</include>
-                                        <include>eu.domibus:domibus-ws-stubs</include>
-                                        <include>eu.domibus:domibus-default-ws-plugin-stubs</include>
-                                        <include>eu.domibus:domibus-default-ws-plugin-backend-ws-stubs</include>
-                                        <include>eu.domibus:domibus-logging</include>
-                                        <include>eu.domibus:domibus-msh-test-common</include>
-                                        <include>eu.domibus:domibus-msh-test</include>
+                                        <include>org.niis:harmony-plugin-api</include>
+                                        <include>org.niis:harmony-ext-model</include>
+                                        <include>org.niis:harmony-ws-stubs</include>
+                                        <include>org.niis:harmony-default-ws-plugin-stubs</include>
+                                        <include>org.niis:harmony-default-ws-plugin-backend-ws-stubs</include>
+                                        <include>org.niis:harmony-logging</include>
+                                        <include>org.niis:harmony-msh-test-common</include>
+                                        <include>org.niis:harmony-msh-test</include>
+                                        <include>org.niis:harmony-MSH-tomcat:${project.version}:jar:test</include>
                                     </includes>
                                 </bannedDependencies>
                             </rules>
@@ -288,4 +295,174 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>tomcat</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-msh-test-common</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-logging</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+
+                            <!-- needed to get the server dependencies from the classes directory -->
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-MSH-tomcat-distribution</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>classes</classifier>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-duplicate-dependencies-tomcat</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <duplicateDependenciesRule>
+                                            <equivalentDuplicateDependencies>
+                                                <item>bcpkix-jdk15on,bcpkix-jdk18on,bcpkix-jdk15to18</item>
+                                                <item>bcutil-jdk15on,bcutil-jdk18on,bcutil-jdk15to18</item>
+                                                <item>bcprov-jdk15on,bcprov-jdk18on,bcprov-jdk15to18</item>
+                                            </equivalentDuplicateDependencies>
+
+                                            <checkAgainstServerDependencies>
+                                                <item>tomcat</item>
+                                            </checkAgainstServerDependencies>
+                                        </duplicateDependenciesRule>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>weblogic</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-msh-test-common</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-logging</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+
+                            <!-- needed to get the server dependencies from the classes directory -->
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-MSH-weblogic</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>classes</classifier>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-duplicate-dependencies-weblogic</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <duplicateDependenciesRule>
+                                            <equivalentDuplicateDependencies>
+                                                <item>bcpkix-jdk15on,bcpkix-jdk18on,bcpkix-jdk15to18</item>
+                                                <item>bcutil-jdk15on,bcutil-jdk18on,bcutil-jdk15to18</item>
+                                                <item>bcprov-jdk15on,bcprov-jdk18on,bcprov-jdk15to18</item>
+                                            </equivalentDuplicateDependencies>
+
+                                            <checkAgainstServerDependencies>
+                                                <item>weblogic</item>
+                                            </checkAgainstServerDependencies>
+                                        </duplicateDependenciesRule>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>wildfly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-msh-test-common</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-logging</artifactId>
+                                <version>${project.version}</version>
+                            </dependency>
+
+                            <!-- needed to get the server dependencies from the classes directory -->
+                            <dependency>
+                                <groupId>org.niis</groupId>
+                                <artifactId>harmony-MSH-wildfly</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>classes</classifier>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>enforce-no-duplicate-dependencies-wildfly</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <duplicateDependenciesRule>
+                                            <equivalentDuplicateDependencies>
+                                                <item>bcpkix-jdk15on,bcpkix-jdk18on,bcpkix-jdk15to18</item>
+                                                <item>bcutil-jdk15on,bcutil-jdk18on,bcutil-jdk15to18</item>
+                                                <item>bcprov-jdk15on,bcprov-jdk18on,bcprov-jdk15to18</item>
+                                            </equivalentDuplicateDependencies>
+
+                                            <checkAgainstServerDependencies>
+                                                <item>wildfly</item>
+                                            </checkAgainstServerDependencies>
+                                        </duplicateDependenciesRule>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
