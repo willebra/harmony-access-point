@@ -1,4 +1,10 @@
 ---
+analyzer:
+  packageManagers:
+    NPM:
+      options:
+        legacyPeerDeps: true
+
 excludes:
   paths:
   - pattern: "Plugin-FS/**"
