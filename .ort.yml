@@ -1,6 +1,6 @@
 ---
 analyzer:
-  packageManagers:
+  package_managers:
     NPM:
       options:
         legacyPeerDeps: true
