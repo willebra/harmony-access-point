@@ -162,6 +162,18 @@ resolutions:
     - message: "ccommercial license LicenseRef-scancode-commercial-license in Maven:org.glassfish:javax.el:3.0.*"
       reason: "LICENSE_ACQUIRED_EXCEPTION"
       comment: "This fonts licensed under this license are not in use, therefore the license is complied with."
+    - message: ".*license LicenseRef-scancode-sun-prop-non-commercial in Maven:org.apache.geronimo.specs:geronimo.*"
+      reason: "LICENSE_ACQUIRED_EXCEPTION"
+      comment: "These refer to such older versions schema files contained in the source distribution which are not used and distributed, therefore the license is complied with."
+    - message: "commercial license LicenseRef-scancode-commercial-license in Maven:org.glassfish:javax.el:3.0.*"
+      reason: "LICENSE_ACQUIRED_EXCEPTION"
+      comment: "These fonts licensed under this license are not in use, therefore the license is complied with."
+    - message: "commercial license LicenseRef-scancode-proprietary-license in Maven:com.sun.xml.ws:policy:2.7.*"
+      reason: "LICENSE_ACQUIRED_EXCEPTION"
+      comment: "These refer to hits of OASIS-files under an unspecified license, but which are not in use, therefore the license is complied with."
+    - message: "source-available license Elastic-2.0 in Maven:com.hazelcast:hazelcast.*"
+      reason: "LICENSE_ACQUIRED_EXCEPTION"
+      comment: "This refers to extensions or connectors towards Elastic search and these are not used, therefore the license is complied with."
 
 curations:
   license_findings:
